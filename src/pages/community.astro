@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import EventCard from '../components/EventCard.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { upcomingEvents } from '../lib/utils';
+
+const weekly = upcomingEvents().filter((e) => e.recurring);
+---
+
+<BaseLayout
+  title="Community — Clubs, Social Volleyball, Coaching & Participation"
+  description="Discover the many ways to get involved in beach volleyball, from social games and beginner lessons to coaching and competitive training. Join our WhatsApp community."
+>
+  <PageHeader
+    eyebrow="Community"
+    title="Clubs, social volleyball, <em>coaching & participation</em>"
+    lede="Discover the many ways to get involved in beach volleyball, from local clubs and social games to beginner lessons, professional coaching and competitive training."
+    image="busy-beach"
+    imageAlt="A busy summer beach lined with colourful umbrellas"
+  >
+    <Fragment slot="actions">
+      <a class="btn" href={site.whatsappCommunity} target="_blank" rel="noopener"><Icon name="whatsapp" /> Join our WhatsApp community<span class="sr-only"> (opens in a new tab)</span></a>
+    </Fragment>
+  </PageHeader>
+
+  <section class="section">
+    <div class="container split">
+      <div data-reveal>
+        <span class="eyebrow">For everyone</span>
+        <h2 class="display-l" style="margin-top:14px">Play, learn <em>and connect</em></h2>
+        <p class="lede" style="margin-top:20px">Whether you’re picking up a volleyball for the first time or looking to take your skills to the next level, explore opportunities to play, learn and connect with others.</p>
+        <p class="lede" style="margin-top:14px">We aim to make beach volleyball accessible, inclusive and enjoyable for all ages, abilities and backgrounds, while supporting clubs, coaches and communities that help our sport grow.</p>
+      </div>
+      <div class="info-cards">
+        <article class="info-card" data-reveal style="--d:.06s">
+          <span class="info-card__icon"><Icon name="whatsapp" /></span>
+          <h3>Join our WhatsApp community</h3>
+          <p>Ask questions in the group, find a game and hear about events first.</p>
+          <div class="info-card__actions">
+            <a class="btn btn--sm" href={site.whatsappCommunity} target="_blank" rel="noopener">Join the community</a>
+          </div>
+        </article>
+        <article class="info-card" data-reveal style="--d:.12s">
+          <span class="info-card__icon"><Icon name="instagram" /></span>
+          <h3>Instagram group</h3>
+          <p>The full schedule and event updates, straight from Beach Volleyball TV.</p>
+          <div class="info-card__actions">
+            <a class="btn btn--sm btn--ghost" href={site.instagramGroup} target="_blank" rel="noopener">Join on Instagram</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  {weekly.length > 0 && (
+    <section class="section section--soft" aria-labelledby="play-title">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div class="section-head__text">
+            <span class="eyebrow">Come and play</span>
+            <h2 id="play-title" class="display-l">Free weekly games</h2>
+            <p>No need to book — just walk up and ask to play.</p>
+          </div>
+          <a class="link-arrow" href="/events/">All events <Icon name="arrow" /></a>
+        </div>
+        <div class="grid-cards">{weekly.map((e, i) => <EventCard event={e} delay={i * 0.06} />)}</div>
+      </div>
+    </section>
+  )}
+</BaseLayout>

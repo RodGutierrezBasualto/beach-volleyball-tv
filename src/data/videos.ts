@@ -14,6 +14,8 @@ export interface Video {
   image?: string;
   /** Shown large at the top of the YouTube page (first match wins). */
   featured?: boolean;
+  /** Athlete name — when set, the video appears as a profile on the Athletes page. */
+  athlete?: string;
 }
 
 export const videoCategories: VideoCategory[] = ['Interviews', 'Tournaments', 'Highlights', 'Podcasts'];

@@ -4,35 +4,39 @@ import Icon from '../components/Icon.astro';
 import Photo from '../components/Photo.astro';
 import SectionHead from '../components/SectionHead.astro';
 import EventCard from '../components/EventCard.astro';
+import EventCta from '../components/EventCta.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import VideoCard from '../components/VideoCard.astro';
 import LiteYouTube from '../components/LiteYouTube.astro';
+import ContactButton from '../components/ContactButton.astro';
 import { site } from '../data/site';
 import { channel } from '../data/videos';
 import { getArticles, getVideos, featuredVideo as getFeaturedVideo } from '../lib/content';
-import { upcomingEvents } from '../lib/utils';
+import { upcomingEvents, eventDateLabel, eventTimeLabel } from '../lib/utils';
 
-const nextEvents = upcomingEvents().slice(0, 3);
+const upcoming = upcomingEvents();
+const spotlight = upcoming.find((e) => e.featured);
+const nextEvents = upcoming.filter((e) => e !== spotlight).slice(0, 3);
 const [lead, ...rest] = getArticles();
+const sideStories = rest.slice(0, 3);
 const videos = getVideos();
 const featuredVideo = getFeaturedVideo();
-const sideStories = rest.slice(0, 3);
-const sideVideos = videos.filter((v) => v.youtubeId !== featuredVideo.youtubeId).slice(0, 2);
+const sideVideos = videos.filter((v) => v.youtubeId !== featuredVideo?.youtubeId).slice(0, 2);
 
-const tiles = [
-  { n: '01', title: 'Events', text: 'Tournaments, clinics and sunrise socials across Bondi and the Eastern Suburbs.', href: '/events/', image: 'bv-sunset-silhouettes', alt: 'Players leaping at the net at sunset' },
-  { n: '02', title: 'News', text: 'Tournament highlights, athlete profiles and stories from the community.', href: '/news/', image: 'yt-U8XTZGnaD1o', alt: 'An athlete relaxing on the grass above Bondi Beach' },
-  { n: '03', title: 'YouTube', text: 'Interviews with Olympians, finals, mic’d up games and our weekly news show.', href: '/youtube/', image: 'yt-Yn0AGAttFps', alt: 'Players mic’d up on the sand at Bondi Beach' },
-];
+const platforms = [
+  { n: '01', icon: 'youtube', title: 'Latest episodes on YouTube', text: 'Interviews, weekly broadcasts and match highlights.', href: site.youtube.url },
+  { n: '02', icon: 'instagram', title: 'Latest posts on Instagram', text: 'Where our community connects every day.', href: site.instagram.url },
+  { n: '03', icon: 'tiktok', title: 'Latest posts on TikTok', text: 'Quick clips from the sand.', href: site.tiktok.url },
+] as const;
 ---
 
-<BaseLayout description="Beach Volleyball TV is an Australian beach volleyball community born in Bondi. Find tournaments, clinics and social sessions, read stories from the sand and watch interviews and highlights.">
+<BaseLayout description={site.description}>
   <!-- Hero -->
   <section class="hero" data-hero aria-labelledby="hero-title">
     <canvas class="hero__canvas" data-hero-ball aria-hidden="true"></canvas>
     <div class="container hero__inner">
       <div class="hero__content" data-hero-content>
-        <p class="hero__kicker" data-hero-in="1">Born in Bondi · Sydney, Australia</p>
+        <p class="hero__kicker" data-hero-in="1">{site.strapline}</p>
         <h1 id="hero-title" data-hero-in="2"><span>Beach</span> <span>Volleyball <em>TV</em></span></h1>
         <p class="hero__tagline" data-hero-in="3">{site.tagline}</p>
         <div class="hero__actions" data-hero-in="4">
@@ -44,26 +48,30 @@ const tiles = [
       </div>
     </div>
     <div class="container hero__bar" data-hero-ground data-hero-in="5">
-      <span>Est. on the sand at Bondi</span>
+      <span>Born in Bondi</span>
       <span class="hero__hint" aria-hidden="true">Give the ball a nudge</span>
       <span>33.89° S · 151.27° E</span>
     </div>
   </section>
 
-  <!-- Intro -->
+  <!-- Welcome -->
   <section class="section" id="community" aria-labelledby="intro-title">
     <div class="container intro">
       <div data-reveal>
-        <span class="eyebrow">Born in Bondi</span>
-        <h2 id="intro-title" class="display-l" style="margin-top:14px">From 6am socials to Olympic stories — <em>this is our beach.</em></h2>
+        <span class="eyebrow">Welcome to Beach Volleyball TV</span>
+        <h2 id="intro-title" class="display-l" style="margin-top:14px">Your home for beach volleyball — <em>from Bondi to the world.</em></h2>
         <p class="lede" style="margin-top:22px">
-          Beach Volleyball TV started on the sand at Bondi with a camera, a net and a crew who couldn’t stop talking about the game.
-          Today we’re a home for everyone who loves beach volleyball in Australia — the players, the coaches, the legends and the people who just turn up to watch.
+          Your home for beach volleyball news, weekly broadcasts, athlete interviews, tournament highlights and inspiring stories from Australia and around the world.
         </p>
+        <p class="lede" style="margin-top:14px">We go beyond the game to celebrate the athletes, people and communities that make our sport special.</p>
         <div class="pillars">
-          <div class="pillar"><span class="pillar__n">01</span><h3>Community</h3><p>Social sessions, clinics and events that welcome every level onto the sand.</p></div>
-          <div class="pillar"><span class="pillar__n">02</span><h3>Sport</h3><p>Tournaments across Bondi and the Eastern Suburbs, filmed for the channel.</p></div>
-          <div class="pillar"><span class="pillar__n">03</span><h3>Stories</h3><p>Interviews with Olympians, rising athletes and the beach icons behind the game.</p></div>
+          {platforms.map((p) => (
+            <a class="pillar pillar--link" href={p.href} target="_blank" rel="noopener">
+              <span class="pillar__n">{p.n}</span>
+              <h3>{p.title} <Icon name="external" class="pillar__icon" /></h3>
+              <p>{p.text}</p>
+            </a>
+          ))}
         </div>
       </div>
       <div class="intro__collage" data-reveal style="--d:.12s">
@@ -77,88 +85,137 @@ const tiles = [
     </div>
   </section>
 
-  <!-- Explore tiles -->
-  <section class="section section--soft" aria-labelledby="explore-title">
-    <div class="container">
-      <SectionHead id="explore-title" eyebrow="Explore" title="Find your way <em>onto the sand</em>" />
-      <div class="tiles">
-        {tiles.map((tile, i) => (
-          <article class="tile" data-reveal style={`--d:${i * 0.08}s`}>
-            <Photo name={tile.image} alt={tile.alt} sizes="(min-width: 800px) 33vw, 100vw" />
-            <span class="tile__n" aria-hidden="true">{tile.n}</span>
-            <span class="tile__arrow" aria-hidden="true"><Icon name="arrow" /></span>
-            <h3><a class="stretched" href={tile.href}>{tile.title}</a></h3>
-            <p>{tile.text}</p>
-          </article>
-        ))}
+  <!-- Spotlight event -->
+  {spotlight && (
+    <section class="section section--tight section--soft" aria-labelledby="spotlight-title">
+      <div class="container">
+        <article class="event-feature" data-reveal>
+          <Photo name={spotlight.image} alt={spotlight.imageAlt} sizes="(min-width: 900px) 55vw, 100vw" />
+          <div class="event-feature__body">
+            <span class="eyebrow eyebrow--light">Coming up · Free community event</span>
+            <h2 id="spotlight-title"><a class="stretched" href={`/events/${spotlight.slug}/`}>{spotlight.title}</a></h2>
+            <p>{spotlight.excerpt}</p>
+            <div class="event-feature__facts">
+              <span><Icon name="calendar" />{eventDateLabel(spotlight)}</span>
+              <span><Icon name="clock" />{eventTimeLabel(spotlight)}</span>
+              <span><Icon name="pin" />{spotlight.venue}</span>
+            </div>
+            <div class="event-feature__actions">
+              <EventCta event={spotlight} class="btn btn--light" />
+              <a class="btn btn--ghost-light" href={`/events/${spotlight.slug}/`}>Event details</a>
+            </div>
+          </div>
+        </article>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
-  <!-- Upcoming events -->
-  <section class="section" aria-labelledby="events-title">
+  <!-- Latest news & weekly broadcasts -->
+  <section class="section band-dark" aria-labelledby="video-title">
     <div class="container">
-      <SectionHead id="events-title" eyebrow="What’s on" title="Upcoming <em>on the sand</em>" text="Tournaments, clinics and community sessions around Bondi and the Eastern Suburbs.">
-        <a class="link-arrow" href="/events/">All events <Icon name="arrow" /></a>
+      <SectionHead id="video-title" eyebrow="Watch now" title="Latest news & <em>weekly broadcasts</em>" text="Stay connected with exclusive interviews, match highlights, behind-the-scenes coverage and our weekly Beach Volleyball TV content of entertainment and inspiration.">
+        <a class="btn btn--light" href={channel.subscribeUrl} target="_blank" rel="noopener"><Icon name="youtube" /> Subscribe<span class="sr-only"> on YouTube (opens in a new tab)</span></a>
       </SectionHead>
-      {nextEvents.length ? (
-        <div class="grid-cards">
-          {nextEvents.map((e, i) => <EventCard event={e} delay={i * 0.08} />)}
+      {featuredVideo && (
+        <div class="video-split">
+          <div data-reveal>
+            <LiteYouTube youtubeId={featuredVideo.youtubeId} title={featuredVideo.title} image={featuredVideo.image} label="Featured" />
+          </div>
+          <div class="video-split__side">
+            {sideVideos.map((v, i) => <VideoCard video={v} delay={0.08 * (i + 1)} />)}
+            <a class="link-arrow" href="/youtube/" style="color: var(--teal-300)">Browse all videos <Icon name="arrow" /></a>
+          </div>
         </div>
-      ) : (
-        <div class="empty"><strong>New dates coming soon</strong>Follow us on Instagram to hear first.</div>
       )}
     </div>
   </section>
 
-  <!-- Latest stories -->
-  <section class="section section--soft" aria-labelledby="news-title">
-    <div class="container">
-      <SectionHead id="news-title" eyebrow="Latest stories" title="News from <em>the beach</em>">
-        <a class="link-arrow" href="/news/">All stories <Icon name="arrow" /></a>
-      </SectionHead>
-      <div class="magazine">
-        <ArticleCard article={lead} variant="lead" />
-        <div class="magazine__side">
-          {sideStories.map((a, i) => <ArticleCard article={a} variant="compact" delay={0.08 * (i + 1)} />)}
+  <!-- Stories -->
+  {lead && (
+    <section class="section" aria-labelledby="news-title">
+      <div class="container">
+        <SectionHead id="news-title" eyebrow="News & media" title="Stories from <em>the beach</em>">
+          <a class="link-arrow" href="/news/">All news & media <Icon name="arrow" /></a>
+        </SectionHead>
+        <div class="magazine">
+          <ArticleCard article={lead} variant="lead" />
+          <div class="magazine__side">
+            {sideStories.map((a, i) => <ArticleCard article={a} variant="compact" delay={0.08 * (i + 1)} />)}
+          </div>
         </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Upcoming events -->
+  {nextEvents.length > 0 && (
+    <section class="section section--soft" aria-labelledby="events-title">
+      <div class="container">
+        <SectionHead id="events-title" eyebrow="Events" title="Play with us <em>every week</em>" text="Free social beach volleyball at Bondi Beach — no need to book.">
+          <a class="link-arrow" href="/events/">All events <Icon name="arrow" /></a>
+        </SectionHead>
+        <div class="grid-cards">
+          {nextEvents.map((e, i) => <EventCard event={e} delay={i * 0.08} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- More than just sport / Get involved / Join -->
+  <section class="section" aria-labelledby="mission-title">
+    <div class="container split">
+      <div data-reveal>
+        <span class="eyebrow">Our purpose</span>
+        <h2 id="mission-title" class="display-l" style="margin-top:14px">More than <em>just sport</em></h2>
+        <p class="lede" style="margin-top:20px">We believe in the power of sport to bring people together, inspire positive change and build stronger communities.</p>
+        <p class="lede" style="margin-top:14px">Through storytelling, media, events and community initiatives, our mission is to uplift, serve and support others.</p>
+        <a class="link-arrow" href="/about/" style="margin-top:22px">About Beach Volleyball TV <Icon name="arrow" /></a>
+      </div>
+      <div class="info-cards">
+        <article class="info-card" data-reveal style="--d:.06s">
+          <span class="info-card__icon"><Icon name="heart" /></span>
+          <h3>Get involved</h3>
+          <p>Become a reporter, volunteer, contributor or collaborator. Whether you’re an athlete, creator, business or sporting enthusiast, there’s a place for you in our community.</p>
+          <a class="link-arrow" href="/get-involved/">Find your place <Icon name="arrow" /></a>
+        </article>
+        <article class="info-card" data-reveal style="--d:.12s">
+          <span class="info-card__icon"><Icon name="users" /></span>
+          <h3>Join our community</h3>
+          <p>Chat with players, find a game and hear about events first.</p>
+          <div class="info-card__actions">
+            <a class="btn btn--sm" href={site.instagramGroup} target="_blank" rel="noopener"><Icon name="instagram" /> Instagram group</a>
+            <a class="btn btn--sm btn--ghost" href={site.whatsappGroup} target="_blank" rel="noopener"><Icon name="whatsapp" /> WhatsApp group</a>
+          </div>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- Video -->
-  <section class="section band-dark" aria-labelledby="video-title">
-    <div class="container">
-      <SectionHead id="video-title" eyebrow="Watch" title="Fresh from <em>the channel</em>" text="Interviews with Olympians and local legends, tournament finals and our weekly beach volleyball news.">
-        <a class="btn btn--light" href={channel.subscribeUrl} target="_blank" rel="noopener"><Icon name="youtube" /> Subscribe<span class="sr-only"> on YouTube (opens in a new tab)</span></a>
-      </SectionHead>
-      <div class="video-split">
-        <div data-reveal>
-          <LiteYouTube youtubeId={featuredVideo.youtubeId} title={featuredVideo.title} image={featuredVideo.image} label="Featured" />
-        </div>
-        <div class="video-split__side">
-          {sideVideos.map((v, i) => <VideoCard video={v} delay={0.08 * (i + 1)} />)}
-          <a class="link-arrow" href="/youtube/" style="color: var(--teal-300)">Browse the full video library <Icon name="arrow" /></a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Join -->
-  <section class="section" aria-labelledby="join-title">
+  <!-- Partner with us -->
+  <section class="section section--soft" aria-labelledby="partner-title">
     <div class="container">
       <div class="cta-band" data-reveal>
         <div>
-          <span class="eyebrow" style="color: var(--ink)">Join us</span>
-          <h2 id="join-title" style="margin-top:14px">Come play. Come watch. <em>Come say g’day.</em></h2>
-          <p>Whether you want to play, partner with us or tell your story on the channel — we’d love to hear from you.</p>
+          <span class="eyebrow" style="color: var(--ink)">Partner with us</span>
+          <h2 id="partner-title" style="margin-top:14px">Let’s make a difference <em>together.</em></h2>
+          <p>Beach Volleyball TV welcomes partnerships with businesses, brands, sporting organisations and individuals who share our passion for sport, community and positive change.</p>
+          <p class="cta-band__note">We are currently running a 10-week podcast at the Budgy Smuggler store in Bondi, with a beach volleyball community day and gala night coming 12 December.</p>
         </div>
         <div class="cta-band__actions">
-          <a class="btn" href="/contact/">Get in touch <Icon name="arrow" class="arrow" /></a>
-          <a class="btn btn--light" href={site.instagram.url} target="_blank" rel="noopener"><Icon name="instagram" /> {site.instagram.handle}</a>
+          <a class="btn" href="/partners/">Partners & sponsors <Icon name="arrow" class="arrow" /></a>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- Connect -->
+  <section class="section section--tight" aria-labelledby="connect-title">
+    <div class="container connect" data-reveal>
+      <div>
+        <span class="eyebrow">Connect with us</span>
+        <h2 id="connect-title" class="display-m" style="margin-top:12px">For media enquiries, interviews, event coverage, sponsorships, bookings and collaborations, we’d love to hear from you.</h2>
+      </div>
+      <ContactButton label="Contact us" />
+    </div>
+  </section>
 </BaseLayout>

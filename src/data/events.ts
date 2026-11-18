@@ -11,9 +11,11 @@ export interface EventItem {
   date: string;
   /** Optional ISO end date for multi-week events. */
   endDate?: string;
-  /** 24h times, Sydney local time. */
-  startTime: string;
-  endTime: string;
+  /** 24h times, Sydney local time (optional). */
+  startTime?: string;
+  endTime?: string;
+  /** Shown instead of the times, e.g. "10am till late" or "Check Instagram to see if it's on". */
+  timeNote?: string;
   /** Shown alongside the date for recurring sessions, e.g. "Every Wednesday". */
   recurring?: string;
   venue: string;
@@ -27,7 +29,9 @@ export interface EventItem {
   format?: string;
   includes?: string[];
   ctaLabel: string;
-  cta: 'register' | 'enquire';
+  /** register/enquire open the contact form; link opens ctaUrl (e.g. a WhatsApp group). */
+  cta: 'register' | 'enquire' | 'link';
+  ctaUrl?: string;
   featured?: boolean;
   /** Drafts are only visible to logged-in admins. */
   draft?: boolean;

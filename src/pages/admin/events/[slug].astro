@@ -4,12 +4,13 @@ import ImagePicker from '../../../components/admin/ImagePicker.astro';
 import { getEvent } from '../../../lib/content';
 import { eventTypes, type EventItem } from '../../../data/events';
 import { todaySydney } from '../../../lib/utils';
+import { site } from '../../../data/site';
 
 const slug = Astro.params.slug ?? 'new';
 const isNew = slug === 'new';
 const found = isNew ? undefined : getEvent(slug, true);
 if (!isNew && !found) return Astro.redirect('/admin/events/');
-const e: Partial<EventItem> = found ?? { type: 'Community', date: todaySydney(), startTime: '08:00', endTime: '10:00', suburb: 'Bondi Beach, NSW', cta: 'register', ctaLabel: 'Register now' };
+const e: Partial<EventItem> = found ?? { type: 'Community', date: todaySydney(), startTime: '10:00', suburb: 'Bondi Beach, NSW', cta: 'link', ctaLabel: 'Join the Instagram group', ctaUrl: site.instagramGroup };
 const saved = Astro.url.searchParams.has('saved');
 ---
 
@@ -52,9 +53,14 @@ const saved = Astro.url.searchParams.has('saved');
         <div class="postbox__body">
           <div class="field-row field-row--4">
             <div class="field"><label for="date">Date</label><input id="date" name="date" type="date" value={e.date} required /></div>
-            <div class="field"><label for="startTime">Starts</label><input id="startTime" name="startTime" type="time" value={e.startTime} required /></div>
-            <div class="field"><label for="endTime">Finishes</label><input id="endTime" name="endTime" type="time" value={e.endTime} required /></div>
+            <div class="field"><label for="startTime">Starts</label><input id="startTime" name="startTime" type="time" value={e.startTime} /></div>
+            <div class="field"><label for="endTime">Finishes <small>(optional)</small></label><input id="endTime" name="endTime" type="time" value={e.endTime} /></div>
             <div class="field"><label for="endDate">Last day <small>(optional)</small></label><input id="endDate" name="endDate" type="date" value={e.endDate} /></div>
+          </div>
+          <div class="field">
+            <label for="timeNote">Time note <small>(optional)</small></label>
+            <input id="timeNote" name="timeNote" type="text" value={e.timeNote} maxlength="120" placeholder="e.g. 10am till late · or · Check Instagram to see if it’s on" />
+            <span class="hint">Shown instead of the start/finish times. Handy when there’s no fixed finish time.</span>
           </div>
           <div class="field">
             <label for="recurring">Repeats <small>(optional)</small></label>
@@ -95,10 +101,15 @@ const saved = Astro.url.searchParams.has('saved');
             <div class="field">
               <label for="cta">When clicked</label>
               <select id="cta" name="cta">
-                <option value="register" selected={e.cta !== 'enquire'}>Open the contact form for registration</option>
+                <option value="link" selected={e.cta === 'link'}>Open a web link (e.g. WhatsApp or Instagram group)</option>
+                <option value="register" selected={e.cta === 'register'}>Open the contact form for registration</option>
                 <option value="enquire" selected={e.cta === 'enquire'}>Open the contact form for a general enquiry</option>
               </select>
             </div>
+          </div>
+          <div class="field">
+            <label for="ctaUrl">Web link <small>(for the “web link” option)</small></label>
+            <input id="ctaUrl" name="ctaUrl" type="url" value={e.ctaUrl} placeholder="https://chat.whatsapp.com/…" />
           </div>
         </div>
       </section>

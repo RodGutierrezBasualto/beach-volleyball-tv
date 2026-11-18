@@ -34,8 +34,8 @@ function sydneyOffset(iso: string) {
   return name?.replace('GMT', '') || '+10:00';
 }
 
-export function isoDateTime(date: string, time: string) {
-  return `${date}T${time}:00${sydneyOffset(date)}`;
+export function isoDateTime(date: string, time?: string) {
+  return time ? `${date}T${time}:00${sydneyOffset(date)}` : date;
 }
 
 export function todaySydney() {
@@ -51,20 +51,27 @@ export function upcomingEvents() {
 export const isPastEvent = (e: EventItem) => (e.endDate ?? e.date) < todaySydney();
 
 export function eventDateLabel(e: EventItem) {
+  if (e.recurring && !e.endDate) return `${e.recurring} · from ${formatDate(e.date, { day: 'numeric', month: 'long' })}`;
   if (e.endDate) return `${formatDate(e.date, { day: 'numeric', month: 'short' })} – ${formatDate(e.endDate)}`;
   return formatDate(e.date, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 export function eventTimeLabel(e: EventItem) {
-  return `${formatTime(e.startTime)} – ${formatTime(e.endTime)}`;
+  if (e.timeNote) return e.timeNote;
+  if (e.startTime && e.endTime) return `${formatTime(e.startTime)} – ${formatTime(e.endTime)}`;
+  if (e.startTime) return `From ${formatTime(e.startTime)}`;
+  return 'Times to be confirmed';
 }
 
 export function googleCalendarUrl(e: EventItem) {
   const stamp = (d: string, t: string) => `${d.replaceAll('-', '')}T${t.replace(':', '')}00`;
+  const nextDay = (d: string) => new Date(Date.parse(`${d}T12:00:00Z`) + 864e5).toISOString().slice(0, 10).replaceAll('-', '');
+  const end = e.endTime ?? (e.startTime ? `${String(Math.min(23, Number(e.startTime.slice(0, 2)) + 3)).padStart(2, '0')}${e.startTime.slice(2)}` : undefined);
+  const dates = e.startTime && end ? `${stamp(e.date, e.startTime)}/${stamp(e.date, end)}` : `${e.date.replaceAll('-', '')}/${nextDay(e.date)}`;
   const params = new URLSearchParams({
     action: 'TEMPLATE',
     text: e.title,
-    dates: `${stamp(e.date, e.startTime)}/${stamp(e.date, e.endTime)}`,
+    dates,
     ctz: TZ,
     details: `${e.excerpt}\n\n${site.url}/events/${e.slug}/`,
     location: `${e.venue}, ${e.suburb}`,

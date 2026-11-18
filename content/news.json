@@ -7,7 +7,7 @@
     "author": "Beach Volleyball TV",
     "image": "u-summer-on-the-sand-6e32b1",
     "imageAlt": "Players silhouetted at the net against a golden sunset",
-    "excerpt": "From sunrise socials to the Bondi Summer Open, here’s everything happening on the sand between now and February.",
+    "excerpt": "From free Budgy Tuesdays to our Community Day on 12 December — here’s how to get on the sand at Bondi this summer.",
     "featured": true,
     "content": {
       "type": "doc",
@@ -17,39 +17,7 @@
           "content": [
             {
               "type": "text",
-              "text": "The days are getting longer, the water is warming up and the nets are going back up along the Eastern Suburbs. Summer is the best time of year to be part of the beach volleyball community, and this season is our biggest yet.\n\nDon't forget to visit our "
-            },
-            {
-              "type": "text",
-              "text": "youtube channel",
-              "marks": [
-                {
-                  "type": "link",
-                  "attrs": {
-                    "href": "https://www.youtube.com/"
-                  }
-                }
-              ]
-            },
-            {
-              "type": "text",
-              "text": ".\n\nFrom sunrise socials to the Bondi Summer Open, here’s everything happening on the sand between now and February.\n\nIf you’re new, the easiest way in is our Wednesday "
-            },
-            {
-              "type": "text",
-              "text": "Sunrise Social Sessions",
-              "marks": [
-                {
-                  "type": "link",
-                  "attrs": {
-                    "href": "/events/sunrise-social-sessions/"
-                  }
-                }
-              ]
-            },
-            {
-              "type": "text",
-              "text": " at North Bondi. Games rotate so everyone plays, there’s no pressure, and the post-session coffee crew is half the reason people keep coming back."
+              "text": "The days are getting longer, the water is warming up and the nets are going back up at Bondi. Summer is the best time of year to be part of the beach volleyball community."
             }
           ]
         },
@@ -61,53 +29,7 @@
           "content": [
             {
               "type": "text",
-              "text": "Start with a sunrise"
-            }
-          ]
-        },
-        {
-          "type": "paragraph",
-          "content": [
-            {
-              "type": "text",
-              "text": "If you’re new, the easiest way in is our Wednesday "
-            },
-            {
-              "type": "text",
-              "text": "Sunrise Social Sessions",
-              "marks": [
-                {
-                  "type": "link",
-                  "attrs": {
-                    "href": "/events/sunrise-social-sessions/"
-                  }
-                }
-              ]
-            },
-            {
-              "type": "text",
-              "text": " at North Bondi. Games rotate so everyone plays, there’s no pressure, and the post-session coffee crew is half the reason people keep coming back."
-            }
-          ]
-        },
-        {
-          "type": "paragraph",
-          "content": [
-            {
-              "type": "text",
-              "text": "Want to sharpen up first? Our Beginners’ Clinic covers the fundamentals in small, coached groups, and the Intermediate Clinic at Coogee is built for players ready to start winning points with their serve and defence."
-            }
-          ]
-        },
-        {
-          "type": "heading",
-          "attrs": {
-            "level": 2
-          },
-          "content": [
-            {
-              "type": "text",
-              "text": "The big days"
+              "text": "Play every week — for free"
             }
           ]
         },
@@ -122,19 +44,19 @@
                   "content": [
                     {
                       "type": "text",
-                      "text": "Bondi Summer Open",
+                      "text": "Budgy Tuesdays",
                       "marks": [
                         {
                           "type": "link",
                           "attrs": {
-                            "href": "/events/bondi-summer-open/"
+                            "href": "/events/budgy-tuesdays/"
                           }
                         }
                       ]
                     },
                     {
                       "type": "text",
-                      "text": " — our flagship pairs tournament, with every division final filmed for the channel."
+                      "text": " — free social games at Bondi Beach, Ramp 2, from 10am to 2pm (sometimes later!). No need to book: just walk up and ask to play."
                     }
                   ]
                 }
@@ -148,71 +70,19 @@
                   "content": [
                     {
                       "type": "text",
-                      "text": "Christmas Charity Beach Bash",
+                      "text": "Saturday Socials",
                       "marks": [
                         {
                           "type": "link",
                           "attrs": {
-                            "href": "/events/christmas-charity-bash/"
+                            "href": "/events/saturday-socials/"
                           }
                         }
                       ]
                     },
                     {
                       "type": "text",
-                      "text": " — fancy dress, mixed fours and every dollar to a local cause."
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "listItem",
-              "content": [
-                {
-                  "type": "paragraph",
-                  "content": [
-                    {
-                      "type": "text",
-                      "text": "Coogee King & Queen of the Beach",
-                      "marks": [
-                        {
-                          "type": "link",
-                          "attrs": {
-                            "href": "/events/coogee-king-and-queen-of-the-beach/"
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "text": " — individual entry, rotating partners, one king and one queen."
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "listItem",
-              "content": [
-                {
-                  "type": "paragraph",
-                  "content": [
-                    {
-                      "type": "text",
-                      "text": "Australia Day Beach Cup",
-                      "marks": [
-                        {
-                          "type": "link",
-                          "attrs": {
-                            "href": "/events/australia-day-beach-cup/"
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "type": "text",
-                      "text": " — mixed pairs at Maroubra on the public holiday."
+                      "text": " — free social beach volleyball for all levels and ages from 12. Check our Instagram or WhatsApp group to know if it’s on."
                     }
                   ]
                 }
@@ -221,16 +91,14 @@
           ]
         },
         {
-          "type": "blockquote",
+          "type": "heading",
+          "attrs": {
+            "level": 2
+          },
           "content": [
             {
-              "type": "paragraph",
-              "content": [
-                {
-                  "type": "text",
-                  "text": "Bondi has hosted Olympic beach volleyball. Every summer it hosts something just as important: everyone else."
-                }
-              ]
+              "type": "text",
+              "text": "Community Day — Saturday 12 December"
             }
           ]
         },
@@ -239,23 +107,78 @@
           "content": [
             {
               "type": "text",
-              "text": "Full details, prices and registration for every event are on our "
+              "text": "Our free community day at Bondi Beach, Ramp 2 (near the skate park) runs from 10am till late, proudly supported by Budgy Smuggler. Special guest athletes include Olympic, World and Commonwealth Games medallist Mariafe Artacho del Solar and Australian National Team player Oliver Merritt."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "There’ll be activities for toddlers and kids, coaching sessions for every level, exhibition matches, prizes and giveaways — plus an Aussie Athlete Fundraising BBQ at 12 noon to support beach volleyball athlete Brooke Ronan. "
             },
             {
               "type": "text",
-              "text": "Events page",
+              "text": "See the full details",
               "marks": [
                 {
                   "type": "link",
                   "attrs": {
-                    "href": "/events/"
+                    "href": "/events/bondi-community-day/"
                   }
                 }
               ]
             },
             {
               "type": "text",
-              "text": ". See you on the sand."
+              "text": "."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Listen in"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "We’re also running a 10-week podcast at the Budgy Smuggler store in Bondi — catch the episodes in our "
+            },
+            {
+              "type": "text",
+              "text": "video library",
+              "marks": [
+                {
+                  "type": "link",
+                  "attrs": {
+                    "href": "/youtube/"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "See you on the sand!"
             }
           ]
         }
@@ -313,7 +236,7 @@
                 {
                   "type": "link",
                   "attrs": {
-                    "href": "https://www.youtube.com/channel/UCvXiojAM79J7MOaNVd7F4Og?sub_confirmation=1"
+                    "href": "https://www.youtube.com/@beachvolleyballtv?sub_confirmation=1"
                   }
                 }
               ]
@@ -386,151 +309,6 @@
             {
               "type": "text",
               "text": " — we’d love to hear about them."
-            }
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "slug": "sunrise-crew-north-bondi",
-    "title": "Sand, Salt and 6am Starts: Meet the Sunrise Crew",
-    "category": "Community",
-    "date": "2026-10-28",
-    "author": "Beach Volleyball TV",
-    "image": "beach-sunrise",
-    "imageAlt": "Morning sun over calm waves washing onto the sand",
-    "excerpt": "Before most of Sydney is awake, the nets are up at North Bondi. Here’s why the early session has become the heart of our community.",
-    "content": {
-      "type": "doc",
-      "content": [
-        {
-          "type": "paragraph",
-          "content": [
-            {
-              "type": "text",
-              "text": "There is a particular kind of quiet on Bondi at 5:45am. The water is glassy, the ocean pool swimmers are already out, and a small group is unrolling court lines on the sand at the north end."
-            }
-          ]
-        },
-        {
-          "type": "paragraph",
-          "content": [
-            {
-              "type": "text",
-              "text": "Our Wednesday Sunrise Social Sessions started as a handful of friends looking for a game before work. Today they’re the easiest way into the Beach Volleyball TV community — free, friendly and open to anyone who can make it down by six."
-            }
-          ]
-        },
-        {
-          "type": "heading",
-          "attrs": {
-            "level": 2
-          },
-          "content": [
-            {
-              "type": "text",
-              "text": "How it works"
-            }
-          ]
-        },
-        {
-          "type": "bulletList",
-          "content": [
-            {
-              "type": "listItem",
-              "content": [
-                {
-                  "type": "paragraph",
-                  "content": [
-                    {
-                      "type": "text",
-                      "text": "Courts go up at first light and games run on a rolling rotation."
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "listItem",
-              "content": [
-                {
-                  "type": "paragraph",
-                  "content": [
-                    {
-                      "type": "text",
-                      "text": "Players are grouped by level so every game is competitive and fun."
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "listItem",
-              "content": [
-                {
-                  "type": "paragraph",
-                  "content": [
-                    {
-                      "type": "text",
-                      "text": "Nets and balls are provided — just bring water and sunscreen."
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "listItem",
-              "content": [
-                {
-                  "type": "paragraph",
-                  "content": [
-                    {
-                      "type": "text",
-                      "text": "Coffee afterwards is optional, but highly recommended."
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "blockquote",
-          "content": [
-            {
-              "type": "paragraph",
-              "content": [
-                {
-                  "type": "text",
-                  "text": "You come for the volleyball. You stay because of the people."
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "paragraph",
-          "content": [
-            {
-              "type": "text",
-              "text": "If you’ve been meaning to try beach volleyball, this is your sign. Check the "
-            },
-            {
-              "type": "text",
-              "text": "Events page",
-              "marks": [
-                {
-                  "type": "link",
-                  "attrs": {
-                    "href": "/events/sunrise-social-sessions/"
-                  }
-                }
-              ]
-            },
-            {
-              "type": "text",
-              "text": " for the next session and come say g’day."
             }
           ]
         }
@@ -984,23 +762,23 @@
           "content": [
             {
               "type": "text",
-              "text": "Want coaching on these in person? Our "
+              "text": "Want to put them into practice? Come along to "
             },
             {
               "type": "text",
-              "text": "Intermediate Clinic at Coogee",
+              "text": "Budgy Tuesdays",
               "marks": [
                 {
                   "type": "link",
                   "attrs": {
-                    "href": "/events/intermediate-clinic-serve-and-defence/"
+                    "href": "/events/budgy-tuesdays/"
                   }
                 }
               ]
             },
             {
               "type": "text",
-              "text": " is built around serve and defence."
+              "text": " — free social games at Bondi every week."
             }
           ]
         }

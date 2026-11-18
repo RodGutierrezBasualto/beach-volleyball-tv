@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Photo from '../components/Photo.astro';
+import InstagramStats from '../components/InstagramStats.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+
+const values = [
+  { title: 'Uplift & Edify', text: 'We inspire, encourage and build others up through positive words, actions and meaningful stories.' },
+  { title: 'Serve Others', text: 'We lead with humility and selflessness, placing the needs and wellbeing of others above our own.' },
+  { title: 'Support Others', text: 'We stand alongside individuals and communities, helping them grow, overcome challenges and achieve their goals.' },
+  { title: 'Transparency & Authenticity', text: 'We communicate openly, share genuine stories and remain true to who we are and what we stand for.' },
+  { title: 'Trust & Integrity', text: 'We act with honesty, accountability and consistency, honouring our commitments and doing what is right.' },
+  { title: 'Teamwork', text: 'We work together with unity, mutual respect and a shared purpose, recognising that we achieve more when we support one another.' },
+];
+---
+
+<BaseLayout
+  title="About Us — Born in Bondi"
+  description="Beach Volleyball TV was born in Bondi from social games and tournaments. Our vision, mission, values and team — led by Sydney 2000 Olympian Christie Mokotupu."
+>
+  <PageHeader
+    eyebrow="About us"
+    title="Born in Bondi, <em>made for the community</em>"
+    lede="Beach Volleyball TV was born in Bondi from social games and tournaments, eventually leading to interviews — and now Beach Volleyball TV."
+    image="yt-u9tlUaKomis"
+    imageAlt="A player passing the ball on Bondi Beach"
+  />
+
+  <section class="section">
+    <div class="container split">
+      <div data-reveal>
+        <span class="eyebrow">Our story</span>
+        <h2 class="display-l" style="margin-top:14px">From a social group <em>to an international page</em></h2>
+        <p class="lede" style="margin-top:20px">What began as a social beach volleyball group page evolved into an international Beach Volleyball TV page in October 2026.</p>
+        <p class="lede" style="margin-top:14px">We started posting interviews that became popular, with strong community engagement that led to many people wanting to be part of helping grow our sport. Instagram is where we connect with our community, and through collaboration we help support the work of others as well.</p>
+        <a class="link-arrow" href={site.instagram.url} target="_blank" rel="noopener" style="margin-top:20px">Check out our growing Instagram page <Icon name="external" /></a>
+      </div>
+      <div class="info-cards">
+        <article class="info-card" data-reveal style="--d:.06s">
+          <span class="info-card__icon"><Icon name="star" /></span>
+          <h3>Vision</h3>
+          <p>To help grow beach volleyball into one of the most watched sports on earth, and to inspire businesses to invest and collaborate with beach volleyball.</p>
+        </article>
+        <article class="info-card info-card--accent" data-reveal style="--d:.12s">
+          <span class="info-card__icon"><Icon name="heart" /></span>
+          <h3>Mission</h3>
+          <p>To be a beautiful, fresh breeze of entertainment, stories and a place of edification and support for the beach volleyball community.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="growth-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="section-head__text">
+          <span class="eyebrow">Growing fast</span>
+          <h2 id="growth-title" class="display-l">Our latest <em>Instagram statistics</em></h2>
+          <p>Over the past 30 days our Instagram platform has experienced significant growth, demonstrating increasing interest in our content and community initiatives.</p>
+        </div>
+      </div>
+      <InstagramStats />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="values-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="section-head__text">
+          <span class="eyebrow">What we stand for</span>
+          <h2 id="values-title" class="display-l">Our values</h2>
+        </div>
+      </div>
+      <ol class="values" role="list">
+        {values.map((v, i) => (
+          <li class="value" data-reveal style={`--d:${(i % 3) * 0.06}s`}>
+            <span class="value__n">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{v.title}</h3>
+            <p>{v.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="team-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="section-head__text">
+          <span class="eyebrow">Team</span>
+          <h2 id="team-title" class="display-l">The people behind <em>Beach Volleyball TV</em></h2>
+        </div>
+      </div>
+      <article class="profile" data-reveal>
+        <figure class="profile__photo">
+          <Photo name="christie" alt="Christie Mokotupu smiling on the sand in a visor and sunglasses" sizes="(min-width: 900px) 420px, 100vw" />
+          <figcaption>Photo: @kirana_design_photo</figcaption>
+        </figure>
+        <div class="profile__body">
+          <h3>Christie Mokotupu</h3>
+          <p class="profile__role">Founder & Managing Director | Beach Volleyball TV</p>
+          <div class="profile__text">
+            <p>Christie Mokotupu is a Sydney 2000 Australian Volleyball Olympian who represented Australia in more than 200 international matches. Her sporting career includes playing professionally for A2 Padova in Italy in 2002, competing at the 2002 Volleyball World Championships and participating in the World Beach Volleyball Tour in 2005.</p>
+            <p>In 2015, Christie publicly shared her journey of overcoming drug and alcohol addiction and reaching rock bottom in an interview with <i>The Sydney Morning Herald</i>. Her story of resilience, recovery and personal transformation led her into public speaking, advocacy and community campaigns, where she has sought to inspire and encourage others facing adversity.</p>
+            <p>A born-again Christian, Christie is also a qualified Commercial Helicopter Pilot and is currently pursuing a double degree in Law and Theology.</p>
+            <p>As a single mother to an 18-year-old son, Christie places family, faith, and service to others as her highest values.</p>
+            <p>Today, as Founder and Managing Director of <b>Beach Volleyball TV</b>, Christie combines her experience in elite sport, media, advocacy and community engagement to create a platform that celebrates athletes, shares meaningful stories and brings people together through sport.</p>
+            <p class="profile__quote">Her mission is to uplift, serve and support others through sport.</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

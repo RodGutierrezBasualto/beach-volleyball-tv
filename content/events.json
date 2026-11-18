@@ -1,249 +1,82 @@
 [
   {
-    "slug": "sunrise-social-sessions",
-    "title": "Sunrise Social Sessions",
+    "slug": "bondi-community-day",
+    "title": "Bondi Beach Volleyball Community Day",
     "type": "Community",
-    "date": "2026-11-25",
-    "startTime": "06:00",
-    "endTime": "07:30",
-    "recurring": "Every Wednesday",
-    "venue": "North Bondi courts",
-    "suburb": "Bondi Beach, NSW",
-    "image": "beach-sunrise",
-    "imageAlt": "Soft sunrise light over gentle waves breaking on an empty beach",
-    "excerpt": "Mid-week, first light, all levels. Turn up, rotate in and start the day with sand between your toes.",
-    "description": [
-      "Our Wednesday sunrise sessions are the heartbeat of the Beach Volleyball TV community. Courts go up at first light and games run on a rolling, king-of-the-court style rotation so everyone gets plenty of touches.",
-      "Whether you played last weekend or haven’t touched a ball since school, you’ll be matched into games at your level. Bring water, sunscreen and a friend."
-    ],
-    "price": "Free · gold coin donation for equipment",
-    "level": "All levels",
-    "format": "Rotating social games, 2s and 4s",
-    "includes": [
-      "Nets and balls provided",
-      "Friendly rotation system",
-      "Post-session coffee crew"
-    ],
-    "ctaLabel": "Let us know you’re coming",
-    "cta": "enquire"
-  },
-  {
-    "slug": "beginners-clinic-fundamentals",
-    "title": "Beginners’ Clinic: Fundamentals",
-    "type": "Clinic",
-    "date": "2026-11-29",
-    "startTime": "08:00",
-    "endTime": "10:00",
-    "venue": "Bondi Beach, south end",
-    "suburb": "Bondi Beach, NSW",
-    "image": "bv-ball-sand",
-    "imageAlt": "A yellow and blue volleyball resting in the sand beside the court line",
-    "excerpt": "Two hours on the essentials — platform passing, setting, serving and moving on sand — in small, coached groups.",
-    "description": [
-      "New to beach volleyball, or coming across from indoor? This clinic builds the foundations that make the game fun: a reliable platform pass, clean hands when setting, a consistent serve and the footwork that keeps you balanced on soft sand.",
-      "Groups are capped at eight players per coach so you get real feedback, and every drill finishes with game play so the skills stick."
-    ],
-    "price": "$35 per player",
-    "level": "Beginner",
-    "format": "Coached small groups (max 8 per coach)",
-    "includes": [
-      "Qualified coaches",
-      "All equipment",
-      "Take-home practice plan"
-    ],
-    "ctaLabel": "Book a spot",
-    "cta": "register"
-  },
-  {
-    "slug": "bondi-summer-open",
-    "title": "Bondi Summer Open",
-    "type": "Tournament",
-    "date": "2026-12-06",
-    "startTime": "07:30",
-    "endTime": "16:30",
-    "venue": "Bondi Beach, south end courts",
+    "date": "2026-12-12",
+    "startTime": "10:00",
+    "timeNote": "10am till late",
+    "venue": "Bondi Beach, Ramp 2 (near the skate park)",
     "suburb": "Bondi Beach, NSW",
     "image": "bv-sunset-silhouettes",
-    "imageAlt": "Silhouetted players leap for the ball at the net against a golden sunset",
-    "excerpt": "Our flagship pairs tournament returns to Bondi — open, intermediate and mixed divisions, finals filmed for the channel.",
+    "imageAlt": "Players leaping at the net against a golden sunset",
+    "excerpt": "A free community event for all ages and abilities, with Olympic medallist Mariafe Artacho del Solar and Australian National Team player Oliver Merritt. Proudly supported by Budgy Smuggler.",
     "description": [
-      "The Bondi Summer Open is the biggest day on our calendar. Pairs battle through pool play in the morning before knockout rounds take over in the afternoon, with every division final filmed for Beach Volleyball TV.",
-      "Expect a packed beach, a DJ on the sand and a community that cheers just as loudly for the social division as it does for the open final."
+      "Proudly supported by Budgy Smuggler. Join us at Bondi Beach, Ramp 2 (near the skate park) on Saturday 12 December 2026, from 10am till late — a free community event for all ages and abilities!",
+      "Special guest athletes: Olympic, World and Commonwealth Games medallist Mariafe Artacho del Solar and Australian National Team player Oliver Merritt!",
+      "Aussie Athlete Fundraising BBQ | 12 noon — near Bondi Pavilion and the children’s playground. Buy lunch at our BBQ and help fundraise for beach volleyball athlete Brooke Ronan. Meet and greet with Olympians and VIP guests.",
+      "Everyone welcome | Family friendly | Free entry. Follow Beach Volleyball TV on Instagram and join our Instagram group for the full schedule and event updates."
     ],
-    "price": "$90 per team",
-    "level": "Open · Intermediate · Mixed social",
-    "format": "Pairs — pool play, then single elimination",
+    "price": "Free entry",
+    "level": "All ages & abilities",
+    "format": "Special guests: Mariafe Artacho del Solar & Oliver Merritt",
     "includes": [
-      "Guaranteed minimum four matches",
-      "Finals filmed and published on YouTube",
-      "Prizes for each division"
+      "Beach volleyball activities for toddlers and kids",
+      "Coaching sessions for beginners, intermediate and advanced players",
+      "Men’s and women’s exhibition matches featuring Olympians and Australian athletes",
+      "Prizes, giveaways and raffle drawn",
+      "Free snacks and water",
+      "Aussie Athlete Fundraising BBQ at 12 noon — supporting Brooke Ronan"
     ],
-    "ctaLabel": "Register your team",
-    "cta": "register",
+    "ctaLabel": "Join the Instagram group",
+    "cta": "link",
+    "ctaUrl": "https://ig.me/j/YmY7KdVv6y4uCYsf/",
     "featured": true
   },
   {
-    "slug": "intermediate-clinic-serve-and-defence",
-    "title": "Intermediate Clinic: Serve & Defence",
-    "type": "Clinic",
-    "date": "2026-12-13",
-    "startTime": "08:00",
-    "endTime": "10:30",
-    "venue": "Coogee Beach",
-    "suburb": "Coogee, NSW",
-    "image": "volleyball-ball",
-    "imageAlt": "Close-up of a yellow and blue match volleyball",
-    "excerpt": "Turn your serve into a weapon and learn to read hitters — a focused session for players who already rally comfortably.",
-    "description": [
-      "This clinic is for players who can hold a rally and want to start winning points. We’ll work on float and topspin serving, serving to zones, and the reading cues that put you in the right place on defence.",
-      "Expect high repetition, video feedback on your serve, and plenty of live play."
-    ],
-    "price": "$45 per player",
-    "level": "Intermediate",
-    "format": "Coached drills + live play",
-    "includes": [
-      "Video analysis of your serve",
-      "All equipment",
-      "Small groups"
-    ],
-    "ctaLabel": "Book a spot",
-    "cta": "register"
-  },
-  {
-    "slug": "christmas-charity-bash",
-    "title": "Christmas Charity Beach Bash",
+    "slug": "budgy-tuesdays",
+    "title": "Budgy Tuesdays",
     "type": "Community",
-    "date": "2026-12-20",
-    "startTime": "09:00",
-    "endTime": "15:00",
-    "venue": "Bondi Beach, north end",
+    "date": "2026-11-24",
+    "startTime": "10:00",
+    "endTime": "14:00",
+    "timeNote": "10am – 2pm (sometimes later!)",
+    "recurring": "Every Tuesday",
+    "venue": "Bondi Beach, Ramp 2",
     "suburb": "Bondi Beach, NSW",
-    "image": "busy-beach",
-    "imageAlt": "A lively beach crowded with colourful umbrellas and swimmers",
-    "excerpt": "Fancy dress, mixed fours and a sausage sizzle — our end-of-year party on the sand, raising money for a local cause.",
+    "image": "bv-ball-sand",
+    "imageAlt": "A volleyball resting in the sand beside the court line",
+    "excerpt": "Free social beach volleyball games at Bondi Beach, Ramp 2. No need to book — just walk up and ask to play!",
     "description": [
-      "Our end-of-year celebration is all about community. Teams of four play short, silly, competitive games in their best festive outfits, with prizes for costumes as well as results.",
-      "All entry fees and donations go to a local Eastern Suburbs charity, announced closer to the day."
+      "Free social beach volleyball games at Bondi Beach, Ramp 2, every Tuesday from 10am to 2pm — sometimes later!",
+      "No need to book. Just walk up and ask to play!"
     ],
-    "price": "$20 per player · donations welcome",
+    "price": "Free",
     "level": "All levels",
-    "format": "Mixed fours, short-format games",
-    "includes": [
-      "Costume prizes",
-      "Sausage sizzle",
-      "Every dollar to charity"
-    ],
-    "ctaLabel": "Register your four",
-    "cta": "register"
+    "ctaLabel": "Join the WhatsApp group",
+    "cta": "link",
+    "ctaUrl": "https://chat.whatsapp.com/GFYWqurPR2ODjwgTqa6paM"
   },
   {
-    "slug": "twilight-mixed-fours-league",
-    "title": "Twilight Mixed Fours League",
-    "type": "Competition",
-    "date": "2027-01-14",
-    "endDate": "2027-02-18",
-    "startTime": "18:00",
-    "endTime": "20:30",
-    "recurring": "Thursdays · 6 weeks",
-    "venue": "Bondi Beach, south end courts",
+    "slug": "saturday-socials",
+    "title": "Saturday Socials",
+    "type": "Community",
+    "date": "2026-11-21",
+    "timeNote": "Check our Instagram or WhatsApp group to know if it’s on",
+    "recurring": "Every Saturday",
+    "venue": "Bondi Beach",
     "suburb": "Bondi Beach, NSW",
-    "image": "beach-sunset",
-    "imageAlt": "Waves rolling onto the shore under a warm evening sky",
-    "excerpt": "Six weeks of after-work mixed fours as the sun goes down. Weekly fixtures, a ladder and a finals night.",
-    "description": [
-      "Summer evenings at Bondi don’t get better than this. The Twilight League is a six-week mixed fours competition with weekly fixtures, a live ladder and a finals night in week six.",
-      "Enter as a team or register individually and we’ll place you with players at your level."
-    ],
-    "price": "$240 per team · $65 individual",
-    "level": "Social & intermediate divisions",
-    "format": "Mixed fours, weekly fixtures + finals",
-    "includes": [
-      "Six guaranteed match nights",
-      "Weekly ladder updates",
-      "Finals night highlights on YouTube"
-    ],
-    "ctaLabel": "Enter a team",
-    "cta": "register"
-  },
-  {
-    "slug": "coogee-king-and-queen-of-the-beach",
-    "title": "Coogee King & Queen of the Beach",
-    "type": "Tournament",
-    "date": "2027-01-17",
-    "startTime": "08:00",
-    "endTime": "15:00",
-    "venue": "Coogee Beach",
-    "suburb": "Coogee, NSW",
     "image": "sand-and-sea",
-    "imageAlt": "Smooth golden sand meeting clear turquoise water under a blue sky",
-    "excerpt": "Individual entry, rotating partners. Every point you win is yours — crown one King and one Queen of Coogee.",
+    "imageAlt": "Golden sand meeting clear turquoise water under a blue sky",
+    "excerpt": "Free social beach volleyball at Bondi Beach for all levels and ages from 12. Check our Instagram or WhatsApp group to know if it’s on.",
     "description": [
-      "King & Queen is the purest test on sand. You enter as an individual and play with a new partner each game, scoring individually across every round.",
-      "The top players advance to a final pool, with the last king and queen standing crowned at Coogee."
+      "Free social beach volleyball at Bondi Beach for all levels and ages from 12!",
+      "Make sure to check our Instagram or WhatsApp group to know if it’s on."
     ],
-    "price": "$40 per player",
-    "level": "Intermediate & open",
-    "format": "Individual entry, rotating partners",
-    "includes": [
-      "Minimum five games",
-      "Champion trophies",
-      "Final filmed for the channel"
-    ],
-    "ctaLabel": "Register now",
-    "cta": "register"
-  },
-  {
-    "slug": "australia-day-beach-cup",
-    "title": "Australia Day Beach Cup",
-    "type": "Tournament",
-    "date": "2027-01-26",
-    "startTime": "08:00",
-    "endTime": "16:00",
-    "venue": "Maroubra Beach",
-    "suburb": "Maroubra, NSW",
-    "image": "beach-birds",
-    "imageAlt": "Seagulls gliding over the ocean at sunrise",
-    "excerpt": "Mixed pairs on the public holiday at Maroubra. Social and competitive divisions, plenty of shade and good vibes.",
-    "description": [
-      "Spend the public holiday on the sand. The Beach Cup is a mixed pairs tournament with social and competitive divisions, played across courts at Maroubra.",
-      "Pool play guarantees plenty of volleyball, and the afternoon finals are always a crowd favourite."
-    ],
-    "price": "$80 per team",
-    "level": "Social & competitive",
-    "format": "Mixed pairs",
-    "includes": [
-      "Guaranteed four matches",
-      "Shade marquee",
-      "Prizes for each division"
-    ],
-    "ctaLabel": "Register your pair",
-    "cta": "register"
-  },
-  {
-    "slug": "junior-summer-camp",
-    "title": "Junior Summer Camp (12–17)",
-    "type": "Clinic",
-    "date": "2027-02-06",
-    "startTime": "09:00",
-    "endTime": "12:00",
-    "venue": "Bondi Beach, south end",
-    "suburb": "Bondi Beach, NSW",
-    "image": "volleyball-celebrate",
-    "imageAlt": "Young volleyball players celebrating a point together",
-    "excerpt": "A morning camp for young players aged 12 to 17 — skills, games and a pathway into beach volleyball.",
-    "description": [
-      "Our junior camp introduces teenagers to the beach game in a fun, supportive environment. Coaches cover the core skills, then let players loose in modified games designed for lots of touches.",
-      "Parents are welcome to stay and watch. Players should bring water, a hat and sunscreen."
-    ],
-    "price": "$30 per player",
-    "level": "Ages 12–17 · all abilities",
-    "format": "Coached skills + modified games",
-    "includes": [
-      "Working With Children-checked coaches",
-      "All equipment",
-      "Pathway advice for parents"
-    ],
-    "ctaLabel": "Enrol a player",
-    "cta": "register"
+    "price": "Free",
+    "level": "All levels · ages 12+",
+    "ctaLabel": "Check the Instagram group",
+    "cta": "link",
+    "ctaUrl": "https://ig.me/j/YmY7KdVv6y4uCYsf/"
   }
 ]

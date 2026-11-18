@@ -3,25 +3,34 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import Icon from '../../components/Icon.astro';
 import { newsCategories } from '../../data/news';
-import { getArticles, featuredArticle as getFeaturedArticle } from '../../lib/content';
+import { getArticles, getVideos, featuredArticle as getFeaturedArticle } from '../../lib/content';
+import VideoCard from '../../components/VideoCard.astro';
+import ContactButton from '../../components/ContactButton.astro';
+import { site } from '../../data/site';
 
 const sortedArticles = getArticles();
 const featuredArticle = getFeaturedArticle();
 
 const others = sortedArticles.filter((a) => a !== featuredArticle);
+const latestVideos = getVideos().slice(0, 3);
 const counts = Object.fromEntries(newsCategories.map((c) => [c, others.filter((a) => a.category === c).length]));
 ---
 
 <BaseLayout
-  title="News — Stories from the Sand"
+  title="News & Media — Latest News, Videos, Podcasts & Interviews"
   description="Tournament highlights, interviews, athlete profiles and community stories from Beach Volleyball TV — Australian beach volleyball, born in Bondi."
 >
   <header class="page-head">
     <div class="container">
       <div data-reveal style="max-width: 980px">
         <span class="eyebrow">News</span>
-        <h1 class="display-xl">Stories from <em>the sand</em></h1>
-        <p class="lede">Tournament highlights, interviews, athlete profiles and the people who make Australian beach volleyball what it is.</p>
+        <h1 class="display-xl">Latest news, videos, <em>podcasts & interviews</em></h1>
+        <p class="lede">Stay up to date with the latest beach volleyball news, tournament highlights, exclusive interviews, podcasts and behind-the-scenes action from Australia and around the world.</p>
+        <p class="lede" style="margin-top:12px">Discover inspiring stories, celebrate athletes and connect with the people and communities that make our sport special.</p>
+        <div class="page-head__actions">
+          <a class="btn" href={site.youtube.url} target="_blank" rel="noopener"><Icon name="youtube" /> YouTube<span class="sr-only"> (opens in a new tab)</span></a>
+          <a class="btn btn--ghost" href={site.instagram.url} target="_blank" rel="noopener"><Icon name="instagram" /> Instagram<span class="sr-only"> (opens in a new tab)</span></a>
+        </div>
       </div>
     </div>
   </header>
@@ -54,6 +63,20 @@ const counts = Object.fromEntries(newsCategories.map((c) => [c, others.filter((a
     </div>
   </section>
 
+  <section class="section band-dark" aria-labelledby="videos-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="section-head__text">
+          <span class="eyebrow">Videos & podcasts</span>
+          <h2 id="videos-title" class="display-l">Watch the latest</h2>
+          <p>Interviews, weekly broadcasts, podcasts and highlights from the Beach Volleyball TV channel.</p>
+        </div>
+        <a class="btn btn--light" href="/youtube/">All videos <Icon name="arrow" class="arrow" /></a>
+      </div>
+      <div class="grid-cards">{latestVideos.map((v, i) => <VideoCard video={v} delay={i * 0.06} />)}</div>
+    </div>
+  </section>
+
   <section class="section" aria-labelledby="pitch-title">
     <div class="container">
       <div class="cta-band" data-reveal>
@@ -63,7 +86,7 @@ const counts = Object.fromEntries(newsCategories.map((c) => [c, others.filter((a
           <p>Know a player, coach or club whose story deserves telling? Send us a tip.</p>
         </div>
         <div class="cta-band__actions">
-          <a class="btn" href="/contact/?type=media&subject=Story%20tip">Share a story <Icon name="arrow" class="arrow" /></a>
+          <ContactButton label="Share a story" href="/contact/?type=media&subject=Story%20tip" />
         </div>
       </div>
     </div>

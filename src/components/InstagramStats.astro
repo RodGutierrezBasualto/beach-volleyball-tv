@@ -1,0 +1,14 @@
+---
+import { instagramStats } from '../data/instagram-stats';
+---
+
+<div class="stats-row" data-reveal>
+  {instagramStats.items.map((s) => (
+    <div class="stat-tile">
+      <b>{s.value}</b>
+      <span>{s.label}</span>
+      {s.change && <small>{s.change}</small>}
+    </div>
+  ))}
+</div>
+<p class="stats-note">Instagram statistics, {instagramStats.period}.</p>

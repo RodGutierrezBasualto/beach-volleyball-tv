@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ContactButton from '../components/ContactButton.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+
+const roles = ['Reporter', 'Presenter', 'Content creator', 'Photographer', 'Videographer', 'Editor', 'Event volunteer', 'Collaborator'];
+---
+
+<BaseLayout
+  title="Get Involved — Become a Reporter, Volunteer, Contributor or Collaborator"
+  description="Be part of something bigger. Become a reporter, presenter, content creator, photographer, videographer, editor or volunteer with Beach Volleyball TV."
+>
+  <PageHeader
+    eyebrow="Get involved"
+    title="Become a reporter, volunteer, <em>contributor or collaborator</em>"
+    lede="Be part of something bigger! At Beach Volleyball TV, we believe everyone has something valuable to contribute."
+    image="group-training"
+    imageAlt="A group of people training together outdoors"
+  >
+    <Fragment slot="actions">
+      <ContactButton label="Get in touch" href="/contact/?type=community" />
+      <a class="btn btn--ghost" href={site.instagramGroup} target="_blank" rel="noopener"><Icon name="instagram" /> Join the Instagram group</a>
+    </Fragment>
+  </PageHeader>
+
+  <section class="section">
+    <div class="container split">
+      <div data-reveal>
+        <span class="eyebrow">Everyone is welcome</span>
+        <h2 class="display-l" style="margin-top:14px">Your time, talents <em>and creativity</em></h2>
+        <p class="lede" style="margin-top:20px">Whether you’re an aspiring reporter, presenter, content creator, photographer, videographer, editor or simply someone who loves sport and community, we welcome people of all ages, backgrounds and experience levels to get involved.</p>
+        <p class="lede" style="margin-top:14px">From covering local tournaments and interviewing athletes to volunteering at events and sharing inspiring stories, there are many ways to contribute.</p>
+      </div>
+      <div class="info-cards">
+        <article class="info-card" data-reveal style="--d:.06s">
+          <span class="info-card__icon"><Icon name="users" /></span>
+          <h3>Ways to contribute</h3>
+          <ul class="tag-list" role="list">{roles.map((r) => <li>{r}</li>)}</ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container split">
+      <div data-reveal>
+        <span class="eyebrow">Our mission</span>
+        <h2 class="display-l" style="margin-top:14px">Together, we can make a difference <em>through sport</em></h2>
+      </div>
+      <div data-reveal style="--d:.08s">
+        <p class="lede">Our mission is to uplift, serve and support others while creating opportunities for people to learn, grow, connect and develop new skills.</p>
+        <p class="lede" style="margin-top:14px">We welcome collaborations with individuals, athletes, clubs, businesses and organisations who share our values and vision. Whether you want to gain media experience, support your local sporting community or bring a new idea to life, we’d love to hear from you.</p>
+        <p class="lede" style="margin-top:14px">Join us in building a positive, inclusive and supportive sporting community, locally and around the world.</p>
+        <div class="page-head__actions">
+          <ContactButton label="Get in touch" href="/contact/?type=community" />
+          <a class="btn btn--ghost" href={site.whatsappGroup} target="_blank" rel="noopener"><Icon name="whatsapp" /> WhatsApp group</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

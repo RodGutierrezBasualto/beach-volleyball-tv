@@ -6,7 +6,7 @@ export const GET: APIRoute = ({ site }) => {
   const articles = getArticles();
   const base = site?.href.replace(/\/$/, '') ?? 'https://beachvolleyballtv.com.au';
   const paths = [
-    '/', '/events/', '/news/', '/youtube/', '/contact/',
+    '/', '/news/', '/youtube/', '/athletes/', '/events/', '/community/', '/partners/', '/about/', '/get-involved/', '/contact/',
     ...events.map((e) => `/events/${e.slug}/`),
     ...articles.map((a) => `/news/${a.slug}/`),
   ];

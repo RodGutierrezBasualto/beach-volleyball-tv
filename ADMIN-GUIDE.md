@@ -16,8 +16,9 @@ Whatever you save goes live on the website **straight away**.
 2. Fill in the boxes. Each one says what it's for:
    - **Event name** and a **short summary** (shown on the event cards)
    - **Full description**. Leave an empty line between paragraphs.
-   - **When**: date, start and finish times. For something that runs over several weeks, also fill in **Last day** and **Repeats** (e.g. "Thursdays · 6 weeks").
+   - **When**: the date and start time (the finish time is optional). For weekly games, fill in **Repeats** (e.g. "Every Tuesday"). If there's no fixed time, use **Time note** instead, e.g. "10am till late" or "Check Instagram to see if it's on".
    - **Where**, **Price**, **Who it's for**, and **What's included** (one item per line)
+   - **Sign-up button**: choose **Open a web link** and paste a WhatsApp or Instagram group link, or point it at the contact form.
 3. On the right, pick the **Event type** and add an **Event photo** (see "Photos" below).
 4. Click **Publish**.
 
@@ -74,6 +75,8 @@ Finished events disappear from the website's "upcoming" lists automatically the 
 3. Check the title, pick a **Category**, optionally add a short description, and click **Add to library**.
 
 In the library you can edit titles, move videos up or down, tick **Featured** for the video to show first, or remove one with **✕**. Removing a video here doesn't delete it from YouTube. Click **Save changes** when you're done.
+
+To show a video on the **Athletes** page as a profile, type the athlete's name in its **Athlete name** box and save.
 
 ## Handy tips
 

@@ -1,9 +1,9 @@
 ---
 import Icon from './Icon.astro';
-import { nav, site } from '../data/site';
-import { eventTypes } from '../data/events';
+import { allPages, site } from '../data/site';
 
 const year = new Date().getFullYear();
+const half = Math.ceil(allPages.length / 2);
 ---
 
 <footer class="site-footer">
@@ -13,10 +13,11 @@ const year = new Date().getFullYear();
         <a href="/" aria-label="Beach Volleyball TV — home">
           <img src="/images/logo-white.png" alt="Beach Volleyball TV" width="946" height="386" loading="lazy" />
         </a>
-        <p>An Australian beach volleyball community born in Bondi. {site.tagline}</p>
+        <p>{site.strapline}. Born in Bondi — sharing beach volleyball stories from Australia and around the world.</p>
         <div class="footer-social">
           <a href={site.instagram.url} target="_blank" rel="noopener" aria-label={`Instagram ${site.instagram.handle} (opens in a new tab)`}><Icon name="instagram" /></a>
           <a href={site.youtube.url} target="_blank" rel="noopener" aria-label="YouTube (opens in a new tab)"><Icon name="youtube" /></a>
+          <a href={site.tiktok.url} target="_blank" rel="noopener" aria-label={`TikTok ${site.tiktok.handle} (opens in a new tab)`}><Icon name="tiktok" /></a>
           <a href={`mailto:${site.email}`} aria-label={`Email ${site.email}`}><Icon name="mail" /></a>
         </div>
       </div>
@@ -24,25 +25,25 @@ const year = new Date().getFullYear();
       <nav aria-label="Footer">
         <h2>Explore</h2>
         <ul role="list">
-          {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          {allPages.slice(0, half).map((item) => <li><a href={item.href}>{item.label}</a></li>)}
         </ul>
       </nav>
 
       <div>
         <h2>Get involved</h2>
         <ul role="list">
-          {eventTypes.map((t) => <li><a href={`/events/#${t.value.toLowerCase()}`}>{t.label}</a></li>)}
-          <li><a href="/contact/?type=partnership">Partnerships</a></li>
+          {allPages.slice(half).map((item) => <li><a href={item.href}>{item.label}</a></li>)}
         </ul>
       </div>
 
       <div>
-        <h2>Say g’day</h2>
+        <h2>Join the community</h2>
         <ul role="list">
-          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
-          <li><a href={site.instagram.url} target="_blank" rel="noopener">{site.instagram.handle}</a></li>
+          <li><a href={site.instagramGroup} target="_blank" rel="noopener">Instagram group</a></li>
+          <li><a href={site.whatsappGroup} target="_blank" rel="noopener">WhatsApp group</a></li>
+          <li><a href={site.whatsappCommunity} target="_blank" rel="noopener">WhatsApp community</a></li>
           <li><a href={site.youtube.subscribeUrl} target="_blank" rel="noopener">Subscribe on YouTube</a></li>
-          <li>Bondi Beach, Sydney NSW</li>
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
         </ul>
       </div>
     </div>
@@ -55,7 +56,7 @@ const year = new Date().getFullYear();
 
     <div class="site-footer__bottom">
       <span>© {year} Beach Volleyball TV. All rights reserved.</span>
-      <span>Made on the sand in Bondi.</span>
+      <span>Born in Bondi.</span>
     </div>
   </div>
 </footer>

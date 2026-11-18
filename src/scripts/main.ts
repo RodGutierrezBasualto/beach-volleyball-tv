@@ -259,6 +259,7 @@ document.addEventListener('submit', (e) => {
   const form = e.target as HTMLFormElement;
   if (form.matches('[data-contact-form]')) {
     e.preventDefault();
+    if (form.hasAttribute('data-disabled')) return; // contact switched off for now
     submitContact(form);
   }
 });

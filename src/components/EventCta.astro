@@ -1,0 +1,20 @@
+---
+// The main call to action for an event: a web link (e.g. WhatsApp/Instagram
+// group) or the contact form (inactive while site.contactEnabled is false).
+import Icon from './Icon.astro';
+import ContactButton from './ContactButton.astro';
+import type { EventItem } from '../data/events';
+import { contactUrl } from '../lib/utils';
+
+interface Props { event: EventItem; class?: string }
+const { event: e, class: className = 'btn' } = Astro.props;
+const external = e.cta === 'link' && e.ctaUrl && /^https?:/.test(e.ctaUrl);
+---
+
+{e.cta === 'link' && e.ctaUrl ? (
+  <a class={className} href={e.ctaUrl} target={external ? '_blank' : undefined} rel={external ? 'noopener' : undefined}>
+    {e.ctaLabel} <Icon name={external ? 'external' : 'arrow'} class="arrow" />{external && <span class="sr-only"> (opens in a new tab)</span>}
+  </a>
+) : (
+  <ContactButton class={className} label={e.ctaLabel} href={contactUrl(e.cta === 'register' ? 'events' : 'general', `${e.cta === 'register' ? 'Registration' : 'Enquiry'}: ${e.title}`)} />
+)}

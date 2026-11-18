@@ -1,0 +1,15 @@
+---
+// A contact call-to-action. While site.contactEnabled is false it is shown
+// as a normal button but does nothing; set it to true to make it a link.
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+interface Props { href?: string; label: string; class?: string; arrow?: boolean }
+const { href = '/contact/', label, class: className = 'btn', arrow = true } = Astro.props;
+---
+
+{site.contactEnabled ? (
+  <a class={className} href={href}>{label}{arrow && <Icon name="arrow" class="arrow" />}</a>
+) : (
+  <button class={className} type="button" aria-disabled="true">{label}{arrow && <Icon name="arrow" class="arrow" />}</button>
+)}

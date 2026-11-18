@@ -221,7 +221,7 @@ function initEditor(form: HTMLFormElement) {
 /* ===================================================================== */
 /* Video library manager                                                 */
 /* ===================================================================== */
-type VideoState = { youtubeId: string; title: string; category: string; description: string; image?: string; featured?: boolean; thumb: string };
+type VideoState = { youtubeId: string; title: string; category: string; description: string; image?: string; featured?: boolean; athlete?: string; thumb: string };
 
 function initVideos(rowsEl: HTMLElement) {
   const data = JSON.parse($('[data-videos-json]')!.textContent || '{}') as { videos: VideoState[]; categories: string[] };
@@ -237,8 +237,8 @@ function initVideos(rowsEl: HTMLElement) {
     if (count) count.textContent = `(${videos.length} videos)`;
     rowsEl.replaceChildren(
       ...videos.map((v, i) => {
-        const input = (key: 'title' | 'description', attrs: Attrs) => {
-          const el = h('input', { class: 'control', type: 'text', value: v[key], ...attrs }) as HTMLInputElement;
+        const input = (key: 'title' | 'description' | 'athlete', attrs: Attrs) => {
+          const el = h('input', { class: 'control', type: 'text', value: v[key] ?? '', ...attrs }) as HTMLInputElement;
           el.addEventListener('input', () => { v[key] = el.value; setDirty(true); });
           return el;
         };
@@ -251,6 +251,7 @@ function initVideos(rowsEl: HTMLElement) {
           h('div', { class: 'video-row__fields' },
             input('title', { 'aria-label': 'Title', placeholder: 'Title' }),
             input('description', { 'aria-label': 'Short description', placeholder: 'Short description (optional)' }),
+            input('athlete', { 'aria-label': 'Athlete name (shows this video on the Athletes page)', placeholder: 'Athlete name — fill in to show on the Athletes page (optional)' }),
             h('div', { class: 'video-row__meta' }, cat, h('label', { class: 'choice' }, feat, h('span', {}, 'Featured')))),
           h('div', { class: 'video-row__ctrl' },
             h('button', { class: 'block__btn', type: 'button', title: 'Move up', 'aria-label': 'Move up', disabled: i === 0, onclick: () => { [videos[i - 1], videos[i]] = [videos[i], videos[i - 1]]; setDirty(true); render(); } }, '↑'),

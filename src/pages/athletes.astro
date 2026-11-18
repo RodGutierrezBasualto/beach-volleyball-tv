@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import LiteYouTube from '../components/LiteYouTube.astro';
+import ContactButton from '../components/ContactButton.astro';
+import Icon from '../components/Icon.astro';
+import { getVideos } from '../lib/content';
+
+// Profiles are videos tagged with an athlete name (Admin → Videos).
+const athletes = getVideos().filter((v) => v.athlete);
+---
+
+<BaseLayout
+  title="Athletes — Profiles, Journeys & Achievements"
+  description="Go beyond the game with the inspiring stories of beach volleyball athletes, from rising stars to elite competitors and Olympians."
+>
+  <PageHeader
+    eyebrow="Athletes"
+    title="Athlete profiles, journeys <em>& achievements</em>"
+    lede="Go beyond the game and discover the inspiring stories of beach volleyball athletes, from rising stars to elite competitors and Olympians."
+  />
+
+  <section class="section section--tight">
+    <div class="container">
+      <p class="lede" data-reveal style="max-width:75ch">
+        Explore their personal journeys, challenges, triumphs and achievements, celebrating the dedication, resilience and determination it takes to pursue their dreams. Get to know the people behind the athletes and what inspires them both on and off the court.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0" aria-label="Athlete profiles">
+    <div class="container">
+      {athletes.length ? (
+        <div class="athletes">
+          {athletes.map((v, i) => (
+            <article class="athlete" data-reveal style={`--d:${(i % 2) * 0.08}s`}>
+              <LiteYouTube youtubeId={v.youtubeId} title={v.title} image={v.image} label="Watch the interview" />
+              <div class="athlete__body">
+                <span class="eyebrow">Athlete profile</span>
+                <h2>{v.athlete}</h2>
+                <p>{v.description}</p>
+                <a class="link-arrow" href={`https://www.youtube.com/watch?v=${v.youtubeId}`} target="_blank" rel="noopener" data-video-open={v.youtubeId} data-video-title={v.title}>
+                  Watch: {v.title} <Icon name="arrow" />
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="empty"><strong>Athlete profiles coming soon</strong>Watch our interviews on YouTube in the meantime.</div>
+      )}
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container">
+      <div class="cta-band" data-reveal>
+        <div>
+          <span class="eyebrow" style="color: var(--ink)">More stories</span>
+          <h2 style="margin-top:14px">Every athlete has <em>a story.</em></h2>
+          <p>Watch more interviews with Olympians, rising stars and local legends in our video library — or tell us about an athlete whose story deserves telling.</p>
+        </div>
+        <div class="cta-band__actions">
+          <a class="btn" href="/youtube/">Video library <Icon name="arrow" class="arrow" /></a>
+          <ContactButton class="btn btn--light" label="Suggest an athlete" arrow={false} href="/contact/?type=media&subject=Athlete%20story" />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

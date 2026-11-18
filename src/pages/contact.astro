@@ -2,18 +2,19 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { site, enquiryTypes } from '../data/site';
+const enabled = site.contactEnabled;
 ---
 
 <BaseLayout
-  title="Contact Us — Community & Partnership Enquiries"
-  description={`Get in touch with Beach Volleyball TV — community, event, media and partnership enquiries. Email ${site.email} or message us on Instagram ${site.instagram.handle}.`}
+  title="Contact — Media Enquiries, Bookings & General Enquiries"
+  description="Contact Beach Volleyball TV for media interviews, event coverage, podcast appearances, athlete features, speaking engagements, sponsorships and partnerships."
 >
   <header class="page-head">
     <div class="container">
       <div data-reveal style="max-width: 980px">
-        <span class="eyebrow">Contact us</span>
-        <h1 class="display-xl">Let’s talk <em>beach volleyball</em></h1>
-        <p class="lede">Questions about an event, ideas for a story or keen to partner with us? Drop us a line — we usually reply within a couple of days.</p>
+        <span class="eyebrow">Contact</span>
+        <h1 class="display-xl">Media enquiries, bookings <em>& general enquiries</em></h1>
+        <p class="lede"><b>We’d love to hear from you!</b> Whether you’re a media organisation, athlete, sporting club, business or member of the community, Beach Volleyball TV welcomes enquiries and opportunities to connect.</p>
       </div>
     </div>
   </header>
@@ -21,49 +22,49 @@ import { site, enquiryTypes } from '../data/site';
   <section class="section section--tight">
     <div class="container contact-grid">
       <div data-reveal>
-        <h2 class="display-m">Reach us directly</h2>
+        <div class="enquiry-list" style="margin-top:0">
+          <div>
+            <h3>Media & bookings</h3>
+            <p>Contact us for media interviews, press enquiries, event coverage, podcast appearances, athlete features, speaking engagements and general bookings. We are passionate about sharing inspiring stories, celebrating sporting achievements and creating meaningful connections through sport.</p>
+          </div>
+          <div>
+            <h3>Let’s connect, collaborate and create something meaningful</h3>
+            <p>We welcome enquiries about sponsorships, advertising, partnerships, community events, corporate bookings and other opportunities to work together. Whether you have a story worth sharing, an event you’d like us to cover or an idea that aligns with our mission to uplift, serve and support others, our team would love to explore how we can help.</p>
+          </div>
+        </div>
+
         <div class="contact-methods">
-          <a class="contact-method" href={`mailto:${site.email}`}>
+          <a class="contact-method" href={`mailto:${site.partnerships.email}`}>
             <span class="contact-method__icon"><Icon name="mail" /></span>
-            <span><small>Email</small><strong>{site.email}</strong></span>
+            <span><small>Partnerships & sponsorship — {site.partnerships.name}</small><strong>{site.partnerships.email}</strong></span>
           </a>
           <a class="contact-method" href={site.instagram.url} target="_blank" rel="noopener">
             <span class="contact-method__icon"><Icon name="instagram" /></span>
             <span><small>Instagram</small><strong>{site.instagram.handle}</strong><span class="sr-only"> (opens in a new tab)</span></span>
           </a>
+          <a class="contact-method" href={site.whatsappGroup} target="_blank" rel="noopener">
+            <span class="contact-method__icon"><Icon name="whatsapp" /></span>
+            <span><small>WhatsApp</small><strong>Join our WhatsApp group</strong><span class="sr-only"> (opens in a new tab)</span></span>
+          </a>
           <a class="contact-method" href={site.youtube.url} target="_blank" rel="noopener">
             <span class="contact-method__icon"><Icon name="youtube" /></span>
-            <span><small>YouTube</small><strong>Beach Volleyball TV</strong><span class="sr-only"> (opens in a new tab)</span></span>
+            <span><small>YouTube</small><strong>{site.youtube.handle}</strong><span class="sr-only"> (opens in a new tab)</span></span>
           </a>
-        </div>
-
-        <div class="enquiry-list">
-          <div>
-            <h3>Community</h3>
-            <p>New to the beach, looking for a game or want to join a social session? We’ll point you in the right direction.</p>
-          </div>
-          <div>
-            <h3>Partnerships & sponsorship</h3>
-            <p>We work with brands, clubs and associations on events, content series and community programs.</p>
-          </div>
-          <div>
-            <h3>Media & stories</h3>
-            <p>Got a story, a player profile or a tournament you’d like filmed? Pitch it to us.</p>
-          </div>
         </div>
       </div>
 
       <div class="form-card" data-reveal style="--d:.08s">
         <h2 class="display-m">Send a message</h2>
-        <p class="form-note" style="margin-top:8px">Fields marked <span aria-hidden="true">*</span><span class="sr-only">with an asterisk</span> are required.</p>
+        <p class="form-note" style="margin-top:8px">Get in touch and be part of the growing Beach Volleyball TV community.</p>
         <form
           class="form-grid"
           style="margin-top:24px"
-          action={site.formEndpoint || `mailto:${site.email}`}
+          action={enabled ? site.formEndpoint || `mailto:${site.email}` : undefined}
           method="post"
-          enctype={site.formEndpoint ? undefined : 'text/plain'}
+          enctype={enabled && !site.formEndpoint ? 'text/plain' : undefined}
           novalidate
           data-contact-form
+          data-disabled={enabled ? undefined : ''}
           data-endpoint={site.formEndpoint}
           data-email={site.email}
         >
@@ -100,7 +101,11 @@ import { site, enquiryTypes } from '../data/site';
             <input id="cf-website" name="company_website" type="text" tabindex="-1" autocomplete="off" />
           </div>
           <div class="form-status" role="status" tabindex="-1" data-form-status></div>
-          <button class="btn btn--teal" type="submit" style="justify-self:start">Send message <Icon name="arrow" class="arrow" /></button>
+          {enabled ? (
+            <button class="btn btn--teal" type="submit" style="justify-self:start">Send message <Icon name="arrow" class="arrow" /></button>
+          ) : (
+            <button class="btn btn--teal" type="button" aria-disabled="true" style="justify-self:start">Send message <Icon name="arrow" class="arrow" /></button>
+          )}
         </form>
       </div>
     </div>

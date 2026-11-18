@@ -1,9 +1,10 @@
 ---
 import Icon from './Icon.astro';
-import { nav, site } from '../data/site';
+import { nav, allPages, site } from '../data/site';
 
 const path = Astro.url.pathname;
-const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href) || (href === '/news/' && path.startsWith('/youtube/'));
 ---
 
 <a class="skip-link" href="#main">Skip to content</a>
@@ -23,12 +24,9 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
     </nav>
 
     <div class="header-actions">
-      <a class="icon-btn header-social" href={site.instagram.url} target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)">
-        <Icon name="instagram" />
-      </a>
-      <a class="icon-btn header-social" href={site.youtube.url} target="_blank" rel="noopener" aria-label="YouTube (opens in a new tab)">
-        <Icon name="youtube" />
-      </a>
+      <a class="icon-btn header-social" href={site.instagram.url} target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)"><Icon name="instagram" /></a>
+      <a class="icon-btn header-social" href={site.youtube.url} target="_blank" rel="noopener" aria-label="YouTube (opens in a new tab)"><Icon name="youtube" /></a>
+      <a class="btn btn--sm header-cta" href="/partners/">Partner with us</a>
       <button class="icon-btn menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-open>
         <Icon name="menu" />
         <span class="sr-only">Open menu</span>
@@ -47,14 +45,15 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
   </div>
   <nav aria-label="Mobile">
     <ul role="list">
-      {nav.map((item) => (
-        <li><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+      {allPages.map((item) => (
+        <li><a href={item.href} aria-current={path === item.href || (item.href !== '/' && path.startsWith(item.href)) ? 'page' : undefined}>{item.label}</a></li>
       ))}
     </ul>
   </nav>
   <div class="mobile-menu__foot">
-    <a href={site.instagram.url} target="_blank" rel="noopener"><Icon name="instagram" /> {site.instagram.handle}</a>
+    <a href={site.instagram.url} target="_blank" rel="noopener"><Icon name="instagram" /> Instagram</a>
     <a href={site.youtube.url} target="_blank" rel="noopener"><Icon name="youtube" /> YouTube</a>
-    <a href={`mailto:${site.email}`}><Icon name="mail" /> {site.email}</a>
+    <a href={site.tiktok.url} target="_blank" rel="noopener"><Icon name="tiktok" /> TikTok</a>
+    <a href={site.whatsappGroup} target="_blank" rel="noopener"><Icon name="whatsapp" /> WhatsApp group</a>
   </div>
 </div>

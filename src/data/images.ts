@@ -41,4 +41,5 @@ export const images: Record<string, { widths: number[]; ratio: number }> = {
   'yt-A4DnSIOhFiw': { widths: [640, 1280], ratio: 1.7778 },
   'yt-VtHxH3hSfgk': { widths: [640, 1280], ratio: 1.7778 },
   'yt-QRRhghMc23Q': { widths: [640, 1280], ratio: 1.7778 },
+  'christie': { widths: [600, 1200], ratio: 0.75 },
 };

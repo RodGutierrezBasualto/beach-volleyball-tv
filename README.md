@@ -112,6 +112,9 @@ render.yaml         Render Blueprint (free web service)
 
 ### Other settings
 
+- **Contact buttons:** `contactEnabled` in `src/data/site.ts`. While it's `false`, "Contact us", "Enquire", mailing-list and contact-form buttons are shown but do nothing. Set it to `true` to switch them on.
+- **Social links, groups and emails** (YouTube, Instagram, TikTok, Instagram group, WhatsApp group/community, partnerships email): `src/data/site.ts`.
+- **Instagram stats** (About and Partners pages): `src/data/instagram-stats.ts`.
 - **Contact form:** set `formEndpoint` in `src/data/site.ts` to a Formspree, Web3Forms or Basin URL to receive submissions. While it's empty, the form opens the visitor's email app pre-filled to the site's email address.
 - **Hero ball:** its colours are the constants at the top of `src/scripts/hero-ball.ts`. The seam shapes come from the MIT-licensed Tabler icon set.
 

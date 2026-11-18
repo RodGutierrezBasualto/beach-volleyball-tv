@@ -9,7 +9,7 @@ import { newsCategories } from '../data/news';
 import type { Video, VideoCategory } from '../data/videos';
 import { videoCategories } from '../data/videos';
 import { imageRegistry } from './content';
-import { cleanDoc, docHasContent } from './rich';
+import { cleanDoc, docHasContent, safeHref } from './rich';
 
 type Input = Record<string, unknown>;
 
@@ -49,8 +49,9 @@ export function cleanEvent(input: Input): { item: EventItem; errors: string[] } 
     type: eventTypes.some((t) => t.value === type) ? type : 'Community',
     date: str(input.date, 10),
     endDate: str(input.endDate, 10) || undefined,
-    startTime: str(input.startTime, 5),
-    endTime: str(input.endTime, 5),
+    startTime: str(input.startTime, 5) || undefined,
+    endTime: str(input.endTime, 5) || undefined,
+    timeNote: str(input.timeNote, 120) || undefined,
     recurring: str(input.recurring, 60) || undefined,
     venue: str(input.venue, 120),
     suburb: str(input.suburb, 80),
@@ -62,8 +63,9 @@ export function cleanEvent(input: Input): { item: EventItem; errors: string[] } 
     level: str(input.level, 120),
     format: str(input.format, 120) || undefined,
     includes: lines(input.includes),
-    ctaLabel: str(input.ctaLabel, 40) || (str(input.cta) === 'enquire' ? 'Enquire now' : 'Register now'),
-    cta: str(input.cta) === 'enquire' ? 'enquire' : 'register',
+    ctaLabel: str(input.ctaLabel, 40) || (str(input.cta) === 'enquire' ? 'Enquire now' : str(input.cta) === 'link' ? 'Find out more' : 'Register now'),
+    cta: str(input.cta) === 'enquire' ? 'enquire' : str(input.cta) === 'link' ? 'link' : 'register',
+    ctaUrl: safeHref(str(input.ctaUrl, 600)) ?? undefined,
     featured: bool(input.featured) || undefined,
     draft: bool(input.draft) || undefined,
   };
@@ -71,7 +73,10 @@ export function cleanEvent(input: Input): { item: EventItem; errors: string[] } 
   if (!item.title) errors.push('Please add a title.');
   if (!isDate(item.date)) errors.push('Please choose the event date.');
   if (item.endDate && (!isDate(item.endDate) || item.endDate < item.date)) errors.push('The end date must be on or after the start date.');
-  if (!isTime(item.startTime) || !isTime(item.endTime)) errors.push('Please set a start and finish time.');
+  if ((item.startTime && !isTime(item.startTime)) || (item.endTime && !isTime(item.endTime))) errors.push('Please check the start and finish times.');
+  if (!item.startTime && !item.timeNote) errors.push('Please set a start time, or add a time note (e.g. “Check Instagram to see if it’s on”).');
+  if (item.cta === 'link' && !item.ctaUrl) errors.push('The sign-up button is set to open a web link — please paste the link (e.g. https://chat.whatsapp.com/…).');
+  if (item.cta !== 'link') delete item.ctaUrl;
   if (!item.venue) errors.push('Please add the venue (e.g. “Bondi Beach, south end courts”).');
   if (!item.suburb) item.suburb = 'Bondi Beach, NSW';
   if (!item.excerpt) errors.push('Please add a short summary — it appears on the event cards.');
@@ -127,6 +132,7 @@ export function cleanVideos(input: unknown): { videos: Video[]; errors: string[]
     };
     if (str(v.image) && imageRegistry()[str(v.image)]) video.image = str(v.image);
     if (bool(v.featured) && !videos.some((x) => x.featured)) video.featured = true;
+    if (str(v.athlete, 80)) video.athlete = str(v.athlete, 80);
     videos.push(video);
   }
   if (!videos.length) errors.push('The video library can’t be empty.');

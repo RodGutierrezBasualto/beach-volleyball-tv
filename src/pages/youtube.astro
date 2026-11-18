@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import VideoCard from '../components/VideoCard.astro';
 import LiteYouTube from '../components/LiteYouTube.astro';
 import Icon from '../components/Icon.astro';
+import ContactButton from '../components/ContactButton.astro';
 import { videoCategories, channel } from '../data/videos';
 import { getVideos, featuredVideo as getFeaturedVideo } from '../lib/content';
 
@@ -86,7 +87,7 @@ const jsonLd = {
         </div>
         <div class="cta-band__actions">
           <a class="btn" href={channel.subscribeUrl} target="_blank" rel="noopener"><Icon name="youtube" /> Subscribe<span class="sr-only"> (opens in a new tab)</span></a>
-          <a class="btn btn--light" href="/contact/?type=media">Pitch a video</a>
+          <ContactButton class="btn btn--light" label="Pitch a video" arrow={false} href="/contact/?type=media" />
         </div>
       </div>
     </div>

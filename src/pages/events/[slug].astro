@@ -3,6 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Photo from '../../components/Photo.astro';
 import Icon from '../../components/Icon.astro';
 import EventCard from '../../components/EventCard.astro';
+import EventCta from '../../components/EventCta.astro';
+import ContactButton from '../../components/ContactButton.astro';
 import { site } from '../../data/site';
 import { img, eventDateLabel, eventTimeLabel, googleCalendarUrl, mapUrl, contactUrl, isoDateTime, upcomingEvents, isPastEvent } from '../../lib/utils';
 import { getEvent } from '../../lib/content';
@@ -11,7 +13,6 @@ const e = getEvent(Astro.params.slug ?? '', Astro.locals.isAdmin);
 if (!e) return Astro.rewrite('/404');
 const isPast = isPastEvent(e);
 const more = upcomingEvents().filter((x) => x.slug !== e.slug).slice(0, 3);
-const registerHref = contactUrl(e.cta === 'register' ? 'events' : 'community', `${e.cta === 'register' ? 'Registration' : 'Enquiry'}: ${e.title}`);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -57,7 +58,7 @@ const jsonLd = {
           {e.description.map((p) => <p>{p}</p>)}
           {e.includes && (
             <>
-              <h2>What’s included</h2>
+              <h2>What’s on</h2>
               <ul>
                 {e.includes.map((item) => <li>{item}</li>)}
               </ul>
@@ -72,7 +73,7 @@ const jsonLd = {
 
         <aside class="facts-card" aria-label="Event details" data-reveal style="--d:.08s">
           <dl>
-            <div><dt><Icon name="calendar" />Date</dt><dd>{e.recurring ? `${e.recurring}, ` : ''}{eventDateLabel(e)}</dd></div>
+            <div><dt><Icon name="calendar" />Date</dt><dd>{eventDateLabel(e)}</dd></div>
             <div><dt><Icon name="clock" />Time</dt><dd>{eventTimeLabel(e)}</dd></div>
             <div><dt><Icon name="pin" />Location</dt><dd>{e.venue}<br /><span class="muted" style="font-weight:500">{e.suburb}</span></dd></div>
             <div><dt><Icon name="level" />Level</dt><dd>{e.level}</dd></div>
@@ -83,9 +84,9 @@ const jsonLd = {
             {isPast ? (
               <a class="btn btn--block" href="/events/">See upcoming events <Icon name="arrow" class="arrow" /></a>
             ) : (
-              <a class="btn btn--teal btn--block" href={registerHref}>{e.ctaLabel} <Icon name="arrow" class="arrow" /></a>
+              <EventCta event={e} class="btn btn--teal btn--block" />
             )}
-            <a class="btn btn--ghost btn--block" href={contactUrl('events', `Question about ${e.title}`)}>Ask a question</a>
+            <ContactButton class="btn btn--ghost btn--block" label="Ask a question" arrow={false} href={contactUrl('events', `Question about ${e.title}`)} />
             <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:6px">
               <a class="link-arrow" href={googleCalendarUrl(e)} target="_blank" rel="noopener">Add to calendar <Icon name="external" /></a>
               <a class="link-arrow" href={mapUrl(e)} target="_blank" rel="noopener">View map <Icon name="external" /></a>
