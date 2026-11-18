@@ -1,11 +1,11 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { getEvents } from '../../../lib/content';
-import { formatDate, img, todaySydney } from '../../../lib/utils';
+import { formatDate, img, todaySydney, isPastEvent } from '../../../lib/utils';
 
 const today = todaySydney();
 const events = getEvents({ includeDrafts: true });
-const status = (e: (typeof events)[number]) => (e.draft ? 'draft' : (e.endDate ?? e.date) < today ? 'past' : 'upcoming');
+const status = (e: (typeof events)[number]) => (e.draft ? 'draft' : isPastEvent(e, today) ? 'past' : 'upcoming');
 const counts = { all: events.length, upcoming: 0, past: 0, draft: 0 } as Record<string, number>;
 events.forEach((e) => counts[status(e)]++);
 const deleted = Astro.url.searchParams.get('deleted');

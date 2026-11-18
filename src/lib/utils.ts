@@ -42,13 +42,15 @@ export function todaySydney() {
   return new Date().toLocaleDateString('en-CA', { timeZone: TZ });
 }
 
+/** Finished = its last day has passed. Weekly events without a last day never finish. */
+export const isPastEvent = (e: EventItem, today = todaySydney()) =>
+  e.recurring && !e.endDate ? false : (e.endDate ?? e.date) < today;
+
 /** Published events that haven't finished yet (Sydney time). */
 export function upcomingEvents() {
   const today = todaySydney();
-  return getEvents().filter((e) => (e.endDate ?? e.date) >= today);
+  return getEvents().filter((e) => !isPastEvent(e, today));
 }
-
-export const isPastEvent = (e: EventItem) => (e.endDate ?? e.date) < todaySydney();
 
 export function eventDateLabel(e: EventItem) {
   if (e.recurring && !e.endDate) return `${e.recurring} · from ${formatDate(e.date, { day: 'numeric', month: 'long' })}`;

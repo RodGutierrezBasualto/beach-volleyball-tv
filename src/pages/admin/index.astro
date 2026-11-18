@@ -4,12 +4,12 @@ import Icon from '../../components/Icon.astro';
 import { getEvents, getArticles, getVideos, sweepUnusedUploads } from '../../lib/content';
 
 await sweepUnusedUploads();
-import { formatDate, todaySydney } from '../../lib/utils';
+import { formatDate, todaySydney, isPastEvent } from '../../lib/utils';
 
 const today = todaySydney();
 const events = getEvents({ includeDrafts: true });
-const upcoming = events.filter((e) => !e.draft && (e.endDate ?? e.date) >= today);
-const past = events.filter((e) => (e.endDate ?? e.date) < today);
+const upcoming = events.filter((e) => !e.draft && !isPastEvent(e, today));
+const past = events.filter((e) => isPastEvent(e, today));
 const articles = getArticles({ includeDrafts: true });
 const drafts = articles.filter((a) => a.draft).length + events.filter((e) => e.draft).length;
 const videos = getVideos();
