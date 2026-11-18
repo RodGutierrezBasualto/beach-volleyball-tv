@@ -7,5 +7,15 @@
     "ratio": 1.6,
     "dir": "/uploads",
     "ext": "webp"
+  },
+  "u-summer-on-the-sand-6e32b1": {
+    "widths": [
+      800,
+      1600
+    ],
+    "ratio": 1.6,
+    "ext": "webp",
+    "dir": "/uploads",
+    "uploadedAt": 1794980795696
   }
 }
