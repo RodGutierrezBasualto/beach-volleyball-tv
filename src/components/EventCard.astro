@@ -1,0 +1,31 @@
+---
+import Icon from './Icon.astro';
+import Photo from './Photo.astro';
+import type { EventItem } from '../data/events';
+import { dateParts, eventTimeLabel, formatDate } from '../lib/utils';
+
+interface Props { event: EventItem; headingLevel?: 'h2' | 'h3'; delay?: number }
+const { event: e, headingLevel = 'h3', delay = 0 } = Astro.props;
+const H = headingLevel;
+const d = dateParts(e.date);
+const when = e.recurring ? `${e.recurring} · from ${formatDate(e.date, { day: 'numeric', month: 'short' })}` : formatDate(e.date, { weekday: 'short', day: 'numeric', month: 'short' });
+---
+
+<article class="event-card" data-category={e.type} data-reveal style={delay ? `--d:${delay}s` : undefined}>
+  <div class="event-card__date" aria-hidden="true"><span class="m">{d.month}</span><span class="d">{d.day}</span></div>
+  <span class={`badge badge--white event-card__type`}>{e.type}</span>
+  <Photo name={e.image} alt={e.imageAlt} sizes="(min-width: 1200px) 400px, (min-width: 700px) 50vw, 100vw" />
+  <div class="event-card__body">
+    <H><a class="stretched" href={`/events/${e.slug}/`}>{e.title}</a></H>
+    <div class="event-card__meta">
+      <span><Icon name="calendar" />{when}</span>
+      <span><Icon name="clock" />{eventTimeLabel(e)}</span>
+      <span><Icon name="pin" />{e.venue}, {e.suburb.replace(', NSW', '')}</span>
+    </div>
+    <p class="event-card__excerpt">{e.excerpt}</p>
+    <div class="event-card__foot">
+      <span class="event-card__price">{e.price.split('·')[0].trim()}</span>
+      <span class="link-arrow" aria-hidden="true">View details <Icon name="arrow" /></span>
+    </div>
+  </div>
+</article>

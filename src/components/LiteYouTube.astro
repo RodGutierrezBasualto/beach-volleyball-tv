@@ -1,0 +1,25 @@
+---
+// Large video thumbnail that opens the pop-up player (VideoDialog) when pressed.
+// Falls back to opening the video on YouTube if JavaScript is unavailable.
+import Icon from './Icon.astro';
+import { videoThumb } from '../lib/utils';
+
+interface Props { youtubeId: string; title: string; image?: string; label?: string; eager?: boolean }
+const { youtubeId, title, image, label, eager = false } = Astro.props;
+const thumb = videoThumb(youtubeId, image);
+---
+
+<div class="lite">
+  <img src={thumb.largest} alt="" width="1280" height="720" loading={eager ? 'eager' : 'lazy'} decoding="async" />
+  <a
+    class="card-link"
+    href={`https://www.youtube.com/watch?v=${youtubeId}`}
+    target="_blank"
+    rel="noopener"
+    data-video-open={youtubeId}
+    data-video-title={title}
+    aria-label={`Play video: ${title}`}
+  ></a>
+  <span class="play" aria-hidden="true"><Icon name="play" /></span>
+  {label && <span class="lite__label"><Icon name="youtube" /> {label}</span>}
+</div>

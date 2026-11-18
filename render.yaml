@@ -1,0 +1,34 @@
+# Render Blueprint — free web service. In Render: New → Blueprint → pick this repo.
+# Render's free plan has no permanent disk, so the admin saves content and
+# photos as commits to this GitHub repository (content/ folder), and the site
+# loads the latest content from GitHub when it starts. See README → "Deploying".
+services:
+  - type: web
+    name: beach-volleyball-tv
+    runtime: node
+    plan: free
+    region: singapore # closest Render region to Sydney
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    buildFilter:
+      ignoredPaths:
+        - content/** # admin edits are committed here — no rebuild needed
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: HOST
+        value: 0.0.0.0
+      - key: GITHUB_REPO
+        sync: false # e.g. your-name/beach-volleyball-tv
+      - key: GITHUB_TOKEN
+        sync: false # fine-grained token: this repo only, Contents read & write
+      - key: GITHUB_BRANCH
+        value: main
+      - key: ADMIN_USER
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true

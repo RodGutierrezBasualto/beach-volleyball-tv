@@ -1,0 +1,60 @@
+---
+import Icon from './Icon.astro';
+import { nav, site } from '../data/site';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <a class="site-logo" href="/" aria-label="Beach Volleyball TV — home">
+      <img src="/images/logo-teal.png" alt="Beach Volleyball TV" width="946" height="386" />
+    </a>
+
+    <nav class="site-nav" aria-label="Main">
+      <ul role="list">
+        {nav.map((item) => (
+          <li><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a class="icon-btn header-social" href={site.instagram.url} target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)">
+        <Icon name="instagram" />
+      </a>
+      <a class="icon-btn header-social" href={site.youtube.url} target="_blank" rel="noopener" aria-label="YouTube (opens in a new tab)">
+        <Icon name="youtube" />
+      </a>
+      <button class="icon-btn menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-open>
+        <Icon name="menu" />
+        <span class="sr-only">Open menu</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" data-menu inert>
+  <div class="mobile-menu__top">
+    <img src="/images/logo-white.png" alt="" width="946" height="386" />
+    <button class="icon-btn" type="button" data-menu-close>
+      <Icon name="close" />
+      <span class="sr-only">Close menu</span>
+    </button>
+  </div>
+  <nav aria-label="Mobile">
+    <ul role="list">
+      {nav.map((item) => (
+        <li><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+      ))}
+    </ul>
+  </nav>
+  <div class="mobile-menu__foot">
+    <a href={site.instagram.url} target="_blank" rel="noopener"><Icon name="instagram" /> {site.instagram.handle}</a>
+    <a href={site.youtube.url} target="_blank" rel="noopener"><Icon name="youtube" /> YouTube</a>
+    <a href={`mailto:${site.email}`}><Icon name="mail" /> {site.email}</a>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+---
+import Icon from '../components/Icon.astro';
+import '../styles/admin.css';
+
+interface Props {
+  title: string;
+  active?: 'dashboard' | 'events' | 'news' | 'videos';
+}
+const { title, active } = Astro.props;
+const nav = [
+  { key: 'dashboard', label: 'Dashboard', href: '/admin/', icon: 'level' },
+  { key: 'events', label: 'Events', href: '/admin/events/', icon: 'calendar' },
+  { key: 'news', label: 'News', href: '/admin/news/', icon: 'megaphone' },
+  { key: 'videos', label: 'Videos', href: '/admin/videos/', icon: 'youtube' },
+] as const;
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} ‹ Beach Volleyball TV Admin</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Instrument+Sans:wght@400..700&display=swap" />
+  </head>
+  <body class="admin">
+    <aside class="adm-side">
+      <a class="adm-brand" href="/admin/"><img src="/images/logo-white.png" alt="Beach Volleyball TV" width="946" height="386" /><span>Admin</span></a>
+      <nav aria-label="Admin">
+        <ul role="list">
+          {nav.map((n) => (
+            <li><a href={n.href} aria-current={active === n.key ? 'page' : undefined}><Icon name={n.icon} /> {n.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <div class="adm-side__foot">
+        <a href="/" target="_blank" rel="noopener"><Icon name="external" /> View website</a>
+        <form method="post" action="/api/admin/logout"><button type="submit"><Icon name="arrow" /> Log out</button></form>
+      </div>
+    </aside>
+
+    <main class="adm-main" id="main">
+      <slot />
+    </main>
+
+    <!-- Shared: confirm dialog -->
+    <dialog class="adm-dialog" data-confirm>
+      <form method="dialog">
+        <h2 data-confirm-title>Are you sure?</h2>
+        <p data-confirm-text></p>
+        <div class="adm-dialog__actions">
+          <button class="button" value="cancel">Cancel</button>
+          <button class="button button-danger" value="ok" data-confirm-ok>Delete</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Shared: image cropper -->
+    <dialog class="adm-dialog adm-cropper" data-cropper aria-labelledby="cropper-title">
+      <div class="adm-cropper__head">
+        <h2 id="cropper-title">Crop your photo</h2>
+        <p>Drag to move the photo, use the slider (or scroll) to zoom. Keep the important part inside the dotted line — that area shows everywhere on the site.</p>
+      </div>
+      <div class="adm-cropper__stage" data-crop-stage>
+        <canvas data-crop-canvas></canvas>
+        <div class="adm-cropper__safe" aria-hidden="true"></div>
+      </div>
+      <div class="adm-cropper__controls">
+        <label>Zoom <input type="range" min="1" max="4" step="0.01" value="1" data-crop-zoom /></label>
+        <span class="adm-cropper__info" data-crop-info></span>
+      </div>
+      <p class="adm-cropper__warn" data-crop-warn hidden></p>
+      <div class="adm-dialog__actions">
+        <button class="button" type="button" data-crop-cancel>Cancel</button>
+        <button class="button button-primary" type="button" data-crop-ok>Use this photo</button>
+      </div>
+    </dialog>
+
+    <div class="adm-toast" role="status" aria-live="polite" data-toast></div>
+
+    <script>
+      import '../scripts/admin';
+    </script>
+  </body>
+</html>

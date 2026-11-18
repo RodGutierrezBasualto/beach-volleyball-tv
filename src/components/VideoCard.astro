@@ -1,0 +1,29 @@
+---
+import Icon from './Icon.astro';
+import type { Video } from '../data/videos';
+import { videoThumb } from '../lib/utils';
+
+interface Props { video: Video; showCategory?: boolean; delay?: number; headingLevel?: 'h2' | 'h3' }
+const { video: v, showCategory = true, delay = 0, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const thumb = videoThumb(v.youtubeId, v.image);
+---
+
+<article class="video-card" data-category={v.category} data-reveal style={delay ? `--d:${delay}s` : undefined}>
+  <a
+    class="card-link"
+    href={`https://www.youtube.com/watch?v=${v.youtubeId}`}
+    target="_blank"
+    rel="noopener"
+    data-video-open={v.youtubeId}
+    data-video-title={v.title}
+    aria-label={`Play video: ${v.title}`}
+  ></a>
+  <div class="media">
+    <img src={thumb.src} srcset={thumb.srcset} sizes="(min-width: 1000px) 400px, 100vw" alt="" width="640" height="360" loading="lazy" decoding="async" />
+    <span class="play" aria-hidden="true"><Icon name="play" /></span>
+    {showCategory && <span class="badge badge--white video-card__cat">{v.category}</span>}
+  </div>
+  <H>{v.title}</H>
+  <p>{v.description}</p>
+</article>

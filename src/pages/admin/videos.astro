@@ -1,0 +1,48 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getVideos } from '../../lib/content';
+import { videoCategories } from '../../data/videos';
+import { videoThumb, jsonForScript } from '../../lib/utils';
+
+const videos = getVideos().map((v) => ({ ...v, thumb: videoThumb(v.youtubeId, v.image).src }));
+---
+
+<AdminLayout title="Videos" active="videos">
+  <div class="adm-head"><h1>Videos</h1></div>
+  <p class="adm-sub">The YouTube library on the website. New videos appear at the top. Reorder with the arrows, and tick “Featured” on the one to show first.</p>
+
+  <section class="postbox" data-video-add>
+    <h2>Add a YouTube video</h2>
+    <div class="postbox__body">
+      <div class="field">
+        <label for="yt-url">Paste the YouTube link</label>
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <input class="control" id="yt-url" type="url" placeholder="https://www.youtube.com/watch?v=…" style="flex:1; min-width:240px" data-yt-url />
+          <button class="button button-primary" type="button" data-yt-lookup>Find video</button>
+        </div>
+        <span class="hint">Copy the address from YouTube (or the Share button) and paste it here.</span>
+      </div>
+      <div data-yt-found hidden>
+        <div class="video-preview"><img alt="" data-yt-thumb /><div style="flex:1" class="field">
+          <label for="yt-title">Title</label><input class="control" id="yt-title" type="text" data-yt-title />
+        </div></div>
+        <div class="field-row field-row--2" style="margin-top:12px">
+          <div class="field"><label for="yt-cat">Category</label>
+            <select class="control" id="yt-cat" data-yt-cat>{videoCategories.map((c) => <option>{c}</option>)}</select>
+          </div>
+          <div class="field"><label for="yt-desc">Short description <small>(optional)</small></label><input class="control" id="yt-desc" type="text" maxlength="300" data-yt-desc /></div>
+        </div>
+        <button class="button button-primary" type="button" style="margin-top:14px" data-yt-add>Add to library</button>
+      </div>
+    </div>
+  </section>
+
+  <h2 style="margin:26px 0 12px; font-size:1.15rem">Library <span class="hint" style="font-weight:500" data-video-count>({videos.length} videos)</span></h2>
+  <div class="video-rows" data-video-rows></div>
+  <script type="application/json" data-videos-json set:html={jsonForScript({ videos, categories: videoCategories })} />
+
+  <div class="savebar">
+    <span data-dirty-note hidden>You have unsaved changes</span><span data-clean-note>All changes saved</span>
+    <button class="button button-primary button-large" type="button" data-videos-save>Save changes</button>
+  </div>
+</AdminLayout>

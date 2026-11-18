@@ -1,0 +1,30 @@
+---
+import { img } from '../lib/utils';
+
+interface Props {
+  name: string;
+  alt: string;
+  sizes?: string;
+  eager?: boolean;
+  class?: string;
+}
+
+const { name, alt, sizes = '(min-width: 1000px) 33vw, 100vw', eager = false, class: className } = Astro.props;
+const { src, srcset, ratio } = img(name);
+const width = 1600;
+const height = ratio ? Math.round(width / ratio) : undefined;
+---
+
+<div class:list={['media', className]}>
+  <img
+    src={src}
+    srcset={srcset}
+    sizes={srcset ? sizes : undefined}
+    alt={alt}
+    width={ratio ? width : undefined}
+    height={height}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding="async"
+    fetchpriority={eager ? 'high' : undefined}
+  />
+</div>

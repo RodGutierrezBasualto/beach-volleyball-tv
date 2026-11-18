@@ -1,0 +1,24 @@
+---
+import Photo from './Photo.astro';
+import type { Article } from '../data/news';
+import { formatDate } from '../lib/utils';
+import { readingTime } from '../data/news';
+
+interface Props { article: Article; variant?: 'default' | 'lead' | 'compact'; headingLevel?: 'h2' | 'h3'; delay?: number; eager?: boolean }
+const { article: a, variant = 'default', headingLevel = 'h3', delay = 0, eager = false } = Astro.props;
+const H = headingLevel;
+const sizes = variant === 'lead' ? '(min-width: 960px) 60vw, 100vw' : variant === 'compact' ? '200px' : '(min-width: 1000px) 33vw, (min-width: 700px) 50vw, 100vw';
+---
+
+<article class:list={['article-card', variant !== 'default' && `article-card--${variant}`]} data-category={a.category} data-reveal style={delay ? `--d:${delay}s` : undefined}>
+  <Photo name={a.image} alt={a.imageAlt} sizes={sizes} eager={eager} />
+  <div class="stack" style="--stack: 10px">
+    <div class="article-card__meta">
+      <span class="badge">{a.category}</span>
+      <time datetime={a.date}>{formatDate(a.date, { day: 'numeric', month: 'short', year: 'numeric' })}</time>
+      {variant !== 'compact' && <><span class="dot" aria-hidden="true" /><span>{readingTime(a)} min read</span></>}
+    </div>
+    <H><a class="stretched" href={`/news/${a.slug}/`}>{a.title}</a></H>
+    {variant !== 'compact' && <p class="article-card__excerpt">{a.excerpt}</p>}
+  </div>
+</article>

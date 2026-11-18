@@ -1,0 +1,29 @@
+---
+import Icon from '../Icon.astro';
+import { img } from '../../lib/utils';
+
+interface Props { name: string; value?: string; alt?: string; altName?: string; label?: string }
+const { name, value = '', alt = '', altName, label = 'Photo' } = Astro.props;
+const preview = value ? img(value).largest : '';
+---
+
+<div class="picker" data-image-picker>
+  <input type="hidden" name={name} value={value} data-picker-value />
+  <input type="file" accept="image/*" hidden data-picker-file />
+  <div class:list={['picker__preview', preview && 'has-image']} data-picker-drop role="button" tabindex="0" aria-label={`${label}: choose a photo`}>
+    {preview ? <img src={preview} alt="" data-picker-img /> : (
+      <div class="picker__empty" data-picker-empty><Icon name="external" /><b>Choose a photo</b><br /><small>or drag one here</small></div>
+    )}
+  </div>
+  <div class="picker__actions">
+    <button class="button" type="button" data-picker-choose>{preview ? 'Replace photo' : 'Choose photo'}</button>
+  </div>
+  <p class="picker__note" data-picker-note hidden></p>
+  {altName && (
+    <div class="field">
+      <label for={`${name}-alt`}>Describe the photo</label>
+      <input id={`${name}-alt`} type="text" name={altName} value={alt} maxlength="200" placeholder="e.g. Players diving for the ball at Bondi" />
+      <span class="hint">Helps people using screen readers, and Google.</span>
+    </div>
+  )}
+</div>

@@ -1,0 +1,14 @@
+---
+import Icon from './Icon.astro';
+---
+
+<dialog class="video-dialog" data-video-dialog aria-labelledby="video-dialog-title">
+  <div class="video-dialog__bar">
+    <h2 id="video-dialog-title" data-video-heading>Video</h2>
+    <div style="display:flex; gap:8px; align-items:center">
+      <a class="btn btn--ghost-light btn--sm" href="#" target="_blank" rel="noopener" data-video-youtube>Open on YouTube<span class="sr-only"> (opens in a new tab)</span></a>
+      <button class="icon-btn video-dialog__close" type="button" data-video-close><Icon name="close" /><span class="sr-only">Close video</span></button>
+    </div>
+  </div>
+  <div class="video-dialog__frame" data-video-frame></div>
+</dialog>

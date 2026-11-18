@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { site, enquiryTypes } from '../data/site';
+---
+
+<BaseLayout
+  title="Contact Us — Community & Partnership Enquiries"
+  description={`Get in touch with Beach Volleyball TV — community, event, media and partnership enquiries. Email ${site.email} or message us on Instagram ${site.instagram.handle}.`}
+>
+  <header class="page-head">
+    <div class="container">
+      <div data-reveal style="max-width: 980px">
+        <span class="eyebrow">Contact us</span>
+        <h1 class="display-xl">Let’s talk <em>beach volleyball</em></h1>
+        <p class="lede">Questions about an event, ideas for a story or keen to partner with us? Drop us a line — we usually reply within a couple of days.</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="section section--tight">
+    <div class="container contact-grid">
+      <div data-reveal>
+        <h2 class="display-m">Reach us directly</h2>
+        <div class="contact-methods">
+          <a class="contact-method" href={`mailto:${site.email}`}>
+            <span class="contact-method__icon"><Icon name="mail" /></span>
+            <span><small>Email</small><strong>{site.email}</strong></span>
+          </a>
+          <a class="contact-method" href={site.instagram.url} target="_blank" rel="noopener">
+            <span class="contact-method__icon"><Icon name="instagram" /></span>
+            <span><small>Instagram</small><strong>{site.instagram.handle}</strong><span class="sr-only"> (opens in a new tab)</span></span>
+          </a>
+          <a class="contact-method" href={site.youtube.url} target="_blank" rel="noopener">
+            <span class="contact-method__icon"><Icon name="youtube" /></span>
+            <span><small>YouTube</small><strong>Beach Volleyball TV</strong><span class="sr-only"> (opens in a new tab)</span></span>
+          </a>
+        </div>
+
+        <div class="enquiry-list">
+          <div>
+            <h3>Community</h3>
+            <p>New to the beach, looking for a game or want to join a social session? We’ll point you in the right direction.</p>
+          </div>
+          <div>
+            <h3>Partnerships & sponsorship</h3>
+            <p>We work with brands, clubs and associations on events, content series and community programs.</p>
+          </div>
+          <div>
+            <h3>Media & stories</h3>
+            <p>Got a story, a player profile or a tournament you’d like filmed? Pitch it to us.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card" data-reveal style="--d:.08s">
+        <h2 class="display-m">Send a message</h2>
+        <p class="form-note" style="margin-top:8px">Fields marked <span aria-hidden="true">*</span><span class="sr-only">with an asterisk</span> are required.</p>
+        <form
+          class="form-grid"
+          style="margin-top:24px"
+          action={site.formEndpoint || `mailto:${site.email}`}
+          method="post"
+          enctype={site.formEndpoint ? undefined : 'text/plain'}
+          novalidate
+          data-contact-form
+          data-endpoint={site.formEndpoint}
+          data-email={site.email}
+        >
+          <div class="form-grid form-grid--2">
+            <div class="field">
+              <label for="cf-name">Name <span class="req" aria-hidden="true">*</span></label>
+              <input id="cf-name" name="name" type="text" autocomplete="name" required aria-describedby="cf-name-error" />
+              <p class="field__error" id="cf-name-error" aria-live="polite"></p>
+            </div>
+            <div class="field">
+              <label for="cf-email">Email <span class="req" aria-hidden="true">*</span></label>
+              <input id="cf-email" name="email" type="email" autocomplete="email" required aria-describedby="cf-email-error" />
+              <p class="field__error" id="cf-email-error" aria-live="polite"></p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="cf-type">What’s it about?</label>
+            <select id="cf-type" name="type">
+              {enquiryTypes.map((t) => <option value={t.value}>{t.label}</option>)}
+            </select>
+          </div>
+          <div class="field">
+            <label for="cf-subject">Subject <span class="req" aria-hidden="true">*</span></label>
+            <input id="cf-subject" name="subject" type="text" required maxlength="140" aria-describedby="cf-subject-error" />
+            <p class="field__error" id="cf-subject-error" aria-live="polite"></p>
+          </div>
+          <div class="field">
+            <label for="cf-message">Message <span class="req" aria-hidden="true">*</span></label>
+            <textarea id="cf-message" name="message" required minlength="10" aria-describedby="cf-message-error"></textarea>
+            <p class="field__error" id="cf-message-error" aria-live="polite"></p>
+          </div>
+          <div class="hp" aria-hidden="true">
+            <label for="cf-website">Leave this field empty</label>
+            <input id="cf-website" name="company_website" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+          <div class="form-status" role="status" tabindex="-1" data-form-status></div>
+          <button class="btn btn--teal" type="submit" style="justify-self:start">Send message <Icon name="arrow" class="arrow" /></button>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

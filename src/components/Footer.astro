@@ -1,0 +1,61 @@
+---
+import Icon from './Icon.astro';
+import { nav, site } from '../data/site';
+import { eventTypes } from '../data/events';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <a href="/" aria-label="Beach Volleyball TV — home">
+          <img src="/images/logo-white.png" alt="Beach Volleyball TV" width="946" height="386" loading="lazy" />
+        </a>
+        <p>An Australian beach volleyball community born in Bondi. {site.tagline}</p>
+        <div class="footer-social">
+          <a href={site.instagram.url} target="_blank" rel="noopener" aria-label={`Instagram ${site.instagram.handle} (opens in a new tab)`}><Icon name="instagram" /></a>
+          <a href={site.youtube.url} target="_blank" rel="noopener" aria-label="YouTube (opens in a new tab)"><Icon name="youtube" /></a>
+          <a href={`mailto:${site.email}`} aria-label={`Email ${site.email}`}><Icon name="mail" /></a>
+        </div>
+      </div>
+
+      <nav aria-label="Footer">
+        <h2>Explore</h2>
+        <ul role="list">
+          {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+
+      <div>
+        <h2>Get involved</h2>
+        <ul role="list">
+          {eventTypes.map((t) => <li><a href={`/events/#${t.value.toLowerCase()}`}>{t.label}</a></li>)}
+          <li><a href="/contact/?type=partnership">Partnerships</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2>Say g’day</h2>
+        <ul role="list">
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+          <li><a href={site.instagram.url} target="_blank" rel="noopener">{site.instagram.handle}</a></li>
+          <li><a href={site.youtube.subscribeUrl} target="_blank" rel="noopener">Subscribe on YouTube</a></li>
+          <li>Bondi Beach, Sydney NSW</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="site-footer__ack">
+      We acknowledge the Traditional Custodians of the land and sea on which we play, and pay our respects to Elders past and present.
+    </p>
+
+    <span class="footer-wordmark" aria-hidden="true">Beach Volleyball TV</span>
+
+    <div class="site-footer__bottom">
+      <span>© {year} Beach Volleyball TV. All rights reserved.</span>
+      <span>Made on the sand in Bondi.</span>
+    </div>
+  </div>
+</footer>

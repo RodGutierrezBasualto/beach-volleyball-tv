@@ -1,0 +1,75 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { getEvents } from '../../../lib/content';
+import { formatDate, img, todaySydney } from '../../../lib/utils';
+
+const today = todaySydney();
+const events = getEvents({ includeDrafts: true });
+const status = (e: (typeof events)[number]) => (e.draft ? 'draft' : (e.endDate ?? e.date) < today ? 'past' : 'upcoming');
+const counts = { all: events.length, upcoming: 0, past: 0, draft: 0 } as Record<string, number>;
+events.forEach((e) => counts[status(e)]++);
+const deleted = Astro.url.searchParams.get('deleted');
+---
+
+<AdminLayout title="Events" active="events">
+  <div class="adm-head">
+    <h1>Events</h1>
+    <a class="button button-primary" href="/admin/events/new/">+ Add new event</a>
+  </div>
+  {deleted && <div class="notice notice-success" role="status">{deleted === '1' ? 'Event deleted.' : `${deleted} events deleted.`}</div>}
+
+  <div data-list="events">
+    <div class="list-tools">
+      <div class="subsubsub" role="group" aria-label="Show">
+        {(['all', 'upcoming', 'past', 'draft'] as const).map((k) => (
+          <button type="button" data-list-filter={k} aria-pressed={k === 'all' ? 'true' : 'false'}>
+            {k === 'all' ? 'All' : k === 'draft' ? 'Drafts' : k[0].toUpperCase() + k.slice(1)} <span class="count">({counts[k]})</span>
+          </button>
+        ))}
+      </div>
+      <input class="search" type="search" placeholder="Search events…" aria-label="Search events" data-list-search />
+    </div>
+
+    <div class="bulkbar">
+      <button class="button button-danger" type="button" data-bulk-delete disabled>Delete selected</button>
+      <button class="link-button" type="button" data-select-past>Select all past events</button>
+      <small data-bulk-count></small>
+    </div>
+
+    <table class="list-table">
+      <thead>
+        <tr>
+          <th class="check"><input type="checkbox" aria-label="Select all" data-select-all /></th>
+          <th class="thumb"><span class="sr-only">Photo</span></th>
+          <th>Event</th>
+          <th class="hide-sm">Type</th>
+          <th>Date</th>
+          <th class="hide-sm">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {events.map((e) => (
+          <tr data-row data-slug={e.slug} data-status={status(e)} data-search={`${e.title} ${e.venue} ${e.type}`.toLowerCase()}>
+            <td class="check"><input type="checkbox" aria-label={`Select ${e.title}`} data-row-check /></td>
+            <td class="thumb"><img src={img(e.image).src} alt="" loading="lazy" /></td>
+            <td>
+              <a class="row-title" href={`/admin/events/${e.slug}/`}>{e.title}</a>
+              <div class="row-actions">
+                <a href={`/admin/events/${e.slug}/`}>Edit</a>
+                <a href={`/events/${e.slug}/`} target="_blank" rel="noopener">View</a>
+                <button class="link-danger" type="button" data-row-delete data-title={e.title}>Delete</button>
+              </div>
+            </td>
+            <td class="hide-sm">{e.type}</td>
+            <td>{formatDate(e.date, { day: 'numeric', month: 'short', year: 'numeric' })}{e.recurring && <><br /><small class="hint">{e.recurring}</small></>}</td>
+            <td class="hide-sm">
+              <span class={`status status--${status(e)}`}>{status(e) === 'draft' ? 'Draft' : status(e) === 'past' ? 'Finished' : 'Upcoming'}</span>
+              {e.featured && <span class="status status--featured">Featured</span>}
+            </td>
+          </tr>
+        ))}
+        <tr class="empty-row" data-empty hidden><td colspan="6">No events match.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

@@ -1,0 +1,86 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { getEvents, getArticles, getVideos, sweepUnusedUploads } from '../../lib/content';
+
+await sweepUnusedUploads();
+import { formatDate, todaySydney } from '../../lib/utils';
+
+const today = todaySydney();
+const events = getEvents({ includeDrafts: true });
+const upcoming = events.filter((e) => !e.draft && (e.endDate ?? e.date) >= today);
+const past = events.filter((e) => (e.endDate ?? e.date) < today);
+const articles = getArticles({ includeDrafts: true });
+const drafts = articles.filter((a) => a.draft).length + events.filter((e) => e.draft).length;
+const videos = getVideos();
+---
+
+<AdminLayout title="Dashboard" active="dashboard">
+  <div class="adm-head"><h1>G’day! 👋</h1></div>
+  <p class="adm-sub">Here’s what’s on the Beach Volleyball TV website right now.</p>
+
+  <div class="dash-grid">
+    <section class="postbox">
+      <h2>At a glance</h2>
+      <div class="postbox__body">
+        <div class="stats">
+          <a class="stat" href="/admin/events/#upcoming"><b>{upcoming.length}</b><span>Upcoming events</span></a>
+          <a class="stat" href="/admin/events/#past"><b>{past.length}</b><span>Past events</span></a>
+          <a class="stat" href="/admin/news/"><b>{articles.filter((a) => !a.draft).length}</b><span>Published stories</span></a>
+          <a class="stat" href="/admin/videos/"><b>{videos.length}</b><span>Videos</span></a>
+        </div>
+        {drafts > 0 && <p class="hint">You have {drafts} draft{drafts > 1 ? 's' : ''} that {drafts > 1 ? 'aren’t' : 'isn’t'} visible on the website yet.</p>}
+        {past.length > 0 && (
+          <div class="notice notice-warn" style="margin:14px 0 0">
+            {past.length} event{past.length > 1 ? 's have' : ' has'} already happened. <a href="/admin/events/#past">Review and tidy up past events →</a>
+          </div>
+        )}
+      </div>
+    </section>
+
+    <section class="postbox">
+      <h2>Quick actions</h2>
+      <div class="postbox__body quick">
+        <a class="button button-primary button-large" href="/admin/events/new/"><Icon name="calendar" /> Add a new event</a>
+        <a class="button button-primary button-large" href="/admin/news/new/"><Icon name="megaphone" /> Write a news story</a>
+        <a class="button button-large" href="/admin/videos/"><Icon name="youtube" /> Add a YouTube video</a>
+      </div>
+    </section>
+
+    <section class="postbox">
+      <h2>Coming up <a href="/admin/events/">All events</a></h2>
+      <div class="postbox__body">
+        {upcoming.length ? (
+          <ul class="mini-list" role="list">
+            {upcoming.slice(0, 5).map((e) => (
+              <li><a href={`/admin/events/${e.slug}/`}>{e.title}</a><small>{formatDate(e.date, { day: 'numeric', month: 'short' })}</small></li>
+            ))}
+          </ul>
+        ) : <p class="hint">No upcoming events. <a href="/admin/events/new/">Add one</a>.</p>}
+      </div>
+    </section>
+
+    <section class="postbox">
+      <h2>Latest stories <a href="/admin/news/">All stories</a></h2>
+      <div class="postbox__body">
+        <ul class="mini-list" role="list">
+          {articles.slice(0, 5).map((a) => (
+            <li><a href={`/admin/news/${a.slug}/`}>{a.title}</a><small>{a.draft ? 'Draft' : formatDate(a.date, { day: 'numeric', month: 'short' })}</small></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="postbox">
+      <h2>Tips</h2>
+      <div class="postbox__body">
+        <ul class="help" role="list">
+          <li>Changes go live on the website as soon as you press <b>Save</b>.</li>
+          <li>Not ready yet? Choose <b>Draft</b> — only you can see it while logged in.</li>
+          <li>Photos are cropped and compressed for you automatically. Any size works.</li>
+          <li>Events disappear from “upcoming” the day after they finish. Delete them whenever you like.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</AdminLayout>

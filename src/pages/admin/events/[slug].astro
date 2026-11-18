@@ -1,0 +1,139 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import ImagePicker from '../../../components/admin/ImagePicker.astro';
+import { getEvent } from '../../../lib/content';
+import { eventTypes, type EventItem } from '../../../data/events';
+import { todaySydney } from '../../../lib/utils';
+
+const slug = Astro.params.slug ?? 'new';
+const isNew = slug === 'new';
+const found = isNew ? undefined : getEvent(slug, true);
+if (!isNew && !found) return Astro.redirect('/admin/events/');
+const e: Partial<EventItem> = found ?? { type: 'Community', date: todaySydney(), startTime: '08:00', endTime: '10:00', suburb: 'Bondi Beach, NSW', cta: 'register', ctaLabel: 'Register now' };
+const saved = Astro.url.searchParams.has('saved');
+---
+
+<AdminLayout title={isNew ? 'Add new event' : `Edit: ${e.title}`} active="events">
+  <div class="adm-head">
+    <h1>{isNew ? 'Add new event' : 'Edit event'}</h1>
+    <span class="spacer"></span>
+    <a class="button" href="/admin/events/">← All events</a>
+  </div>
+
+  {saved && (
+    <div class="notice notice-success" role="status">
+      Event saved{e.draft ? ' as a draft' : ' and live on the website'}. <a href={`/events/${e.slug}/`} target="_blank" rel="noopener">View event →</a>
+    </div>
+  )}
+  <div class="notice notice-error" role="alert" data-errors hidden></div>
+
+  <form class="editor" data-editor="events" data-original-slug={isNew ? '' : e.slug} novalidate>
+    <div class="editor__main">
+      <label class="sr-only" for="title">Event name</label>
+      <input class="title-input" id="title" name="title" type="text" value={e.title} placeholder="Event name, e.g. Bondi Summer Open" maxlength="120" required />
+
+      <section class="postbox" style="margin-top:18px">
+        <h2>About the event</h2>
+        <div class="postbox__body">
+          <div class="field">
+            <label for="excerpt">Short summary</label>
+            <textarea id="excerpt" name="excerpt" maxlength="300" rows="3" data-counter placeholder="One or two sentences. Shown on event cards.">{e.excerpt}</textarea>
+          </div>
+          <div class="field">
+            <label for="description">Full description</label>
+            <textarea id="description" name="description" rows="8" placeholder="Tell people what to expect. Leave an empty line between paragraphs.">{e.description?.join('\n\n')}</textarea>
+            <span class="hint">Leave an empty line to start a new paragraph.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="postbox">
+        <h2>When</h2>
+        <div class="postbox__body">
+          <div class="field-row field-row--4">
+            <div class="field"><label for="date">Date</label><input id="date" name="date" type="date" value={e.date} required /></div>
+            <div class="field"><label for="startTime">Starts</label><input id="startTime" name="startTime" type="time" value={e.startTime} required /></div>
+            <div class="field"><label for="endTime">Finishes</label><input id="endTime" name="endTime" type="time" value={e.endTime} required /></div>
+            <div class="field"><label for="endDate">Last day <small>(optional)</small></label><input id="endDate" name="endDate" type="date" value={e.endDate} /></div>
+          </div>
+          <div class="field">
+            <label for="recurring">Repeats <small>(optional)</small></label>
+            <input id="recurring" name="recurring" type="text" value={e.recurring} placeholder="e.g. Every Wednesday, or Thursdays · 6 weeks" />
+            <span class="hint">For multi-week events, also set the last day so it stays “upcoming” until then.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="postbox">
+        <h2>Where</h2>
+        <div class="postbox__body field-row field-row--2">
+          <div class="field"><label for="venue">Venue</label><input id="venue" name="venue" type="text" value={e.venue} placeholder="e.g. Bondi Beach, south end courts" required /></div>
+          <div class="field"><label for="suburb">Suburb</label><input id="suburb" name="suburb" type="text" value={e.suburb} placeholder="e.g. Bondi Beach, NSW" /></div>
+        </div>
+      </section>
+
+      <section class="postbox">
+        <h2>Details</h2>
+        <div class="postbox__body">
+          <div class="field-row field-row--2">
+            <div class="field"><label for="price">Price</label><input id="price" name="price" type="text" value={e.price} placeholder="e.g. $90 per team, or Free" /></div>
+            <div class="field"><label for="level">Who it’s for</label><input id="level" name="level" type="text" value={e.level} placeholder="e.g. All levels, or Beginner" /></div>
+          </div>
+          <div class="field"><label for="format">Format <small>(optional)</small></label><input id="format" name="format" type="text" value={e.format} placeholder="e.g. Pairs — pool play then knockout" /></div>
+          <div class="field">
+            <label for="includes">What’s included <small>(optional)</small></label>
+            <textarea id="includes" name="includes" rows="4" placeholder={'One item per line, e.g.\nNets and balls provided\nPrizes for each division'}>{e.includes?.join('\n')}</textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="postbox">
+        <h2>Sign-up button</h2>
+        <div class="postbox__body">
+          <div class="field-row field-row--2">
+            <div class="field"><label for="ctaLabel">Button text</label><input id="ctaLabel" name="ctaLabel" type="text" value={e.ctaLabel} maxlength="40" placeholder="e.g. Register your team" /></div>
+            <div class="field">
+              <label for="cta">When clicked</label>
+              <select id="cta" name="cta">
+                <option value="register" selected={e.cta !== 'enquire'}>Open the contact form for registration</option>
+                <option value="enquire" selected={e.cta === 'enquire'}>Open the contact form for a general enquiry</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="editor__side">
+      <section class="postbox">
+        <h2>Publish</h2>
+        <div class="postbox__body">
+          <label class="choice"><input type="radio" name="draft" value="false" checked={!e.draft} /> <span><b>Published</b><small>Visible on the website</small></span></label>
+          <label class="choice"><input type="radio" name="draft" value="true" checked={!!e.draft} /> <span><b>Draft</b><small>Only you can see it</small></span></label>
+          <label class="choice"><input type="checkbox" name="featured" checked={!!e.featured} /> <span><b>Feature this event</b><small>Shown large at the top of the Events page</small></span></label>
+          {!isNew && <a href={`/events/${e.slug}/`} target="_blank" rel="noopener">{e.draft ? 'Preview draft' : 'View on website'} ↗</a>}
+        </div>
+        <div class="publish-actions">
+          {isNew ? <span></span> : <button class="link-danger" type="button" data-editor-delete data-title={e.title}>Delete</button>}
+          <button class="button button-primary button-large" type="submit">{isNew ? 'Publish' : 'Save changes'}</button>
+        </div>
+      </section>
+
+      <section class="postbox">
+        <h2>Event type</h2>
+        <div class="postbox__body">
+          <select class="control" name="type" aria-label="Event type">
+            {eventTypes.map((t) => <option value={t.value} selected={e.type === t.value}>{t.value}</option>)}
+          </select>
+        </div>
+      </section>
+
+      <section class="postbox">
+        <h2>Event photo</h2>
+        <div class="postbox__body">
+          <ImagePicker name="image" value={isNew ? '' : e.image} alt={e.imageAlt} altName="imageAlt" label="Event photo" />
+        </div>
+      </section>
+    </div>
+  </form>
+</AdminLayout>

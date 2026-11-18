@@ -1,0 +1,71 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { getArticles } from '../../../lib/content';
+import { formatDate, img } from '../../../lib/utils';
+
+const articles = getArticles({ includeDrafts: true });
+const counts = { all: articles.length, published: articles.filter((a) => !a.draft).length, draft: articles.filter((a) => a.draft).length } as Record<string, number>;
+const deleted = Astro.url.searchParams.get('deleted');
+---
+
+<AdminLayout title="News" active="news">
+  <div class="adm-head">
+    <h1>News</h1>
+    <a class="button button-primary" href="/admin/news/new/">+ Write new story</a>
+  </div>
+  {deleted && <div class="notice notice-success" role="status">{deleted === '1' ? 'Story deleted.' : `${deleted} stories deleted.`}</div>}
+
+  <div data-list="news">
+    <div class="list-tools">
+      <div class="subsubsub" role="group" aria-label="Show">
+        {(['all', 'published', 'draft'] as const).map((k) => (
+          <button type="button" data-list-filter={k} aria-pressed={k === 'all' ? 'true' : 'false'}>
+            {k === 'all' ? 'All' : k === 'draft' ? 'Drafts' : 'Published'} <span class="count">({counts[k]})</span>
+          </button>
+        ))}
+      </div>
+      <input class="search" type="search" placeholder="Search stories…" aria-label="Search stories" data-list-search />
+    </div>
+
+    <div class="bulkbar">
+      <button class="button button-danger" type="button" data-bulk-delete disabled>Delete selected</button>
+      <small data-bulk-count></small>
+    </div>
+
+    <table class="list-table">
+      <thead>
+        <tr>
+          <th class="check"><input type="checkbox" aria-label="Select all" data-select-all /></th>
+          <th class="thumb"><span class="sr-only">Photo</span></th>
+          <th>Story</th>
+          <th class="hide-sm">Category</th>
+          <th>Date</th>
+          <th class="hide-sm">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {articles.map((a) => (
+          <tr data-row data-slug={a.slug} data-status={a.draft ? 'draft' : 'published'} data-search={`${a.title} ${a.category}`.toLowerCase()}>
+            <td class="check"><input type="checkbox" aria-label={`Select ${a.title}`} data-row-check /></td>
+            <td class="thumb"><img src={img(a.image).src} alt="" loading="lazy" /></td>
+            <td>
+              <a class="row-title" href={`/admin/news/${a.slug}/`}>{a.title}</a>
+              <div class="row-actions">
+                <a href={`/admin/news/${a.slug}/`}>Edit</a>
+                <a href={`/news/${a.slug}/`} target="_blank" rel="noopener">View</a>
+                <button class="link-danger" type="button" data-row-delete data-title={a.title}>Delete</button>
+              </div>
+            </td>
+            <td class="hide-sm">{a.category}</td>
+            <td>{formatDate(a.date, { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+            <td class="hide-sm">
+              <span class={`status status--${a.draft ? 'draft' : 'published'}`}>{a.draft ? 'Draft' : 'Published'}</span>
+              {a.featured && <span class="status status--featured">Featured</span>}
+            </td>
+          </tr>
+        ))}
+        <tr class="empty-row" data-empty hidden><td colspan="6">No stories match.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>

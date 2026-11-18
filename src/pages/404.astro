@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<BaseLayout title="Page not found" description="This page has washed out to sea." noindex>
+  <section class="container not-found">
+    <div>
+      <p class="not-found__code" aria-hidden="true">404</p>
+      <h1 class="display-l" style="margin-top:16px">Out of bounds.</h1>
+      <p class="lede" style="margin: 16px auto 0">That page has washed out to sea. Let’s get you back on the court.</p>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:32px">
+        <a class="btn" href="/">Back to home <Icon name="arrow" class="arrow" /></a>
+        <a class="btn btn--ghost" href="/events/">See events</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
