@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "beach-volleyball-tv",
+  "main": "dist/_worker.js/index.js",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "binding": "ASSETS", "directory": "./dist" },
+  "observability": { "enabled": true },
+  "vars": {
+    "GITHUB_REPO": "RodGutierrezBasualto/beach-volleyball-tv",
+    "GITHUB_BRANCH": "main",
+    "ADMIN_USER": "admin"
+  }
+}

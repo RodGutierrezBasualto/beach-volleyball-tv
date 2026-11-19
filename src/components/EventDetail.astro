@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Photo from './Photo.astro';
+import Icon from './Icon.astro';
+import EventCard from './EventCard.astro';
+import EventCta from './EventCta.astro';
+import ContactButton from './ContactButton.astro';
+import { site } from '../data/site';
+import { img, eventDateLabel, eventTimeLabel, googleCalendarUrl, mapUrl, contactUrl, isoDateTime, upcomingEvents, isPastEvent } from '../lib/utils';
+import type { EventItem } from '../data/events';
+
+interface Props { e: EventItem }
+const { e } = Astro.props;
+const isPast = isPastEvent(e);
+const more = upcomingEvents().filter((x) => x.slug !== e.slug).slice(0, 3);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsEvent',
+  name: e.title,
+  description: e.excerpt,
+  startDate: isoDateTime(e.date, e.startTime),
+  endDate: isoDateTime(e.endDate ?? e.date, e.endTime),
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  sport: 'Beach volleyball',
+  image: [new URL(img(e.image).largest, site.url).href],
+  location: { '@type': 'Place', name: e.venue, address: { '@type': 'PostalAddress', addressLocality: e.suburb.replace(', NSW', ''), addressRegion: 'NSW', addressCountry: 'AU' } },
+  organizer: { '@type': 'Organization', name: site.name, url: site.url },
+  url: `${site.url}/events/${e.slug}/`,
+};
+---
+
+<BaseLayout title={`${e.title} — ${e.type}`} description={`${e.excerpt} ${eventDateLabel(e)}, ${e.venue}.`} image={img(e.image).largest} jsonLd={jsonLd}>
+  {e.draft && <div class="draft-banner">Draft preview — this event is only visible to you while logged in. <a href={`/admin/events/${e.slug}/`}>Edit</a></div>}
+  <article>
+    <div class="container" style="padding-top: clamp(28px, 4vw, 48px)">
+      <a class="back-link" href="/events/"><Icon name="arrow" /> All events</a>
+
+      <header style="margin-top: 28px; max-width: 900px" data-reveal>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+          <span class={`badge badge--${e.type}`}>{e.type}</span>
+          {e.recurring && <span class="badge">{e.recurring}</span>}
+          {isPast && <span class="badge badge--ink">This event has finished</span>}
+        </div>
+        <h1 class="display-xl" style="margin-top: 18px">{e.title}</h1>
+        <p class="lede" style="margin-top: 18px">{e.excerpt}</p>
+      </header>
+
+      <div style="margin-top: clamp(28px, 4vw, 48px)" data-reveal>
+        <Photo name={e.image} alt={e.imageAlt} class="detail-hero" sizes="(min-width: 1300px) 1240px, 100vw" eager />
+      </div>
+    </div>
+
+    <div class="container section--tight">
+      <div class="detail-layout">
+        <div class="prose" data-reveal>
+          {e.description.map((p) => <p>{p}</p>)}
+          {e.includes && (
+            <>
+              <h2>What’s on</h2>
+              <ul>
+                {e.includes.map((item) => <li>{item}</li>)}
+              </ul>
+            </>
+          )}
+          <h2>Good to know</h2>
+          <p>
+            Bring water, a hat and plenty of sunscreen — shade on the beach is limited. Sessions run in most weather; if conditions are unsafe we’ll post updates on
+            Instagram at <a href={site.instagram.url} target="_blank" rel="noopener">{site.instagram.handle}</a> and email registered players.
+          </p>
+        </div>
+
+        <aside class="facts-card" aria-label="Event details" data-reveal style="--d:.08s">
+          <dl>
+            <div><dt><Icon name="calendar" />Date</dt><dd>{eventDateLabel(e)}</dd></div>
+            <div><dt><Icon name="clock" />Time</dt><dd>{eventTimeLabel(e)}</dd></div>
+            <div><dt><Icon name="pin" />Location</dt><dd>{e.venue}<br /><span class="muted" style="font-weight:500">{e.suburb}</span></dd></div>
+            <div><dt><Icon name="level" />Level</dt><dd>{e.level}</dd></div>
+            {e.format && <div><dt><Icon name="users" />Format</dt><dd>{e.format}</dd></div>}
+            <div><dt><Icon name="ticket" />Entry</dt><dd>{e.price}</dd></div>
+          </dl>
+          <div class="facts-card__actions">
+            {isPast ? (
+              <a class="btn btn--block" href="/events/">See upcoming events <Icon name="arrow" class="arrow" /></a>
+            ) : (
+              <EventCta event={e} class="btn btn--teal btn--block" />
+            )}
+            <ContactButton class="btn btn--ghost btn--block" label="Ask a question" arrow={false} href={contactUrl('events', `Question about ${e.title}`)} />
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-top:6px">
+              <a class="link-arrow" href={googleCalendarUrl(e)} target="_blank" rel="noopener">Add to calendar <Icon name="external" /></a>
+              <a class="link-arrow" href={mapUrl(e)} target="_blank" rel="noopener">View map <Icon name="external" /></a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </article>
+
+  {more.length > 0 && (
+    <section class="section section--soft" aria-labelledby="more-events">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div class="section-head__text">
+            <span class="eyebrow">Keep playing</span>
+            <h2 id="more-events" class="display-l">More upcoming events</h2>
+          </div>
+          <a class="link-arrow" href="/events/">All events <Icon name="arrow" /></a>
+        </div>
+        <div class="grid-cards">
+          {more.map((x, i) => <EventCard event={x} delay={i * 0.06} />)}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>

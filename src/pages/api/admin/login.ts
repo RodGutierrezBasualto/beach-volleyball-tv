@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { checkCredentials, createSession, rateLimited, clearAttempts } from '../../../lib/auth';
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request, cookies, redirect, clientAddress, url }) => {
   const form = await request.formData();
   const next = String(form.get('next') || '/admin/');

@@ -8,7 +8,7 @@ A quick guide for whoever looks after the website. No technical knowledge needed
 2. Enter the username and password you were given.
 3. You'll land on the **Dashboard**, which shows what's on the site and has quick buttons for common jobs.
 
-Whatever you save goes live on the website **straight away**.
+Whatever you save goes live on the website after **about a minute**, while the site rebuilds itself. A brand-new page may show "not found" until then, so give it a minute and refresh.
 
 ## Add an event
 
@@ -56,7 +56,7 @@ iPhone photos in HEIC format can't be opened on some computers. If you see an er
 ## Drafts
 
 Not ready to publish? Choose **Draft** under **Publish** and save.
-- Only you can see a draft (use **Preview draft** to check it).
+- Only you can see a draft (use **Preview draft** to check it; you need to be logged in).
 - Switch it to **Published** when it's ready.
 
 ## Delete old events and stories
@@ -66,7 +66,7 @@ Not ready to publish? Choose **Draft** under **Publish** and save.
 
 You'll always be asked to confirm. Deleting can't be undone.
 
-Finished events disappear from the website's "upcoming" lists automatically the day after they end, so deleting them is just tidying up.
+Finished events disappear from the website's "upcoming" lists automatically soon after midnight (Sydney time) the day after they end, so deleting them is just tidying up.
 
 ## Videos
 

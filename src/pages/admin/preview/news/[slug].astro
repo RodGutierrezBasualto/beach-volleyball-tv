@@ -1,0 +1,11 @@
+---
+import ArticleDetail from '../../../../components/ArticleDetail.astro';
+import { getArticle } from '../../../../lib/content';
+
+export const prerender = false;
+
+const a = getArticle(Astro.params.slug ?? '', true);
+if (!a) return Astro.redirect('/admin/news/');
+---
+
+<ArticleDetail a={a} />

@@ -1,6 +1,10 @@
 node_modules/
 dist/
 .astro/
+.wrangler/
 .DS_Store
 .env
+.dev.vars
 *.tmp
+# generated from content/uploads at build time
+public/uploads/

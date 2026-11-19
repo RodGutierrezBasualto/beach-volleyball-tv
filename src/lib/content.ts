@@ -2,20 +2,18 @@
  * Content store: events, news, videos and the uploaded-photo registry.
  *
  * Content is held in memory for fast page rendering and persisted through
- * the storage backend (local files or a GitHub repository — see storage.ts). Every
- * request calls ensureContent() (via middleware) before reading. Saves go to
- * storage first, then memory, one at a time.
+ * the storage backend (local files, or the GitHub repository on Cloudflare —
+ * see storage.ts). The middleware calls ensureContent() before pages read.
+ * Public pages are built ahead of time from the local files; the admin runs on
+ * Cloudflare, where every request reloads the latest content from GitHub and
+ * every save is one commit. Saves run one at a time.
  */
-import fs from 'node:fs';
-import path from 'node:path';
 import type { EventItem } from '../data/events';
 import type { Article } from '../data/news';
 import type { Video } from '../data/videos';
 import { images as builtInImages } from '../data/images';
 import { blocksToDoc, docImages } from './rich';
-import { backend, BUNDLED_DIR } from './storage';
-
-export { UPLOAD_DIR } from './storage';
+import { getBackend } from './storage';
 
 export interface ImageEntry {
   widths: number[];
@@ -42,47 +40,27 @@ const mem: Partial<Collections> = {};
 const memMtime: Partial<Record<File, number>> = {};
 let loading: Promise<void> | null = null;
 
-async function seedFromBundle(missing: File[]) {
-  // Remote storage without content yet: copy in the starter content (and its photos).
-  for (const file of missing) {
-    let data: unknown = EMPTY[file];
-    try { data = JSON.parse(fs.readFileSync(path.join(BUNDLED_DIR, file), 'utf8')); } catch {}
-    if (file === 'images.json') {
-      for (const [name, entry] of Object.entries(data as Record<string, ImageEntry>)) {
-        for (const w of entry.widths) {
-          const filename = `${name}-${w}.${entry.ext ?? 'webp'}`;
-          const p = path.join(BUNDLED_DIR, 'uploads', filename);
-          if (fs.existsSync(p)) await backend.putUpload(filename, fs.readFileSync(p));
-        }
+async function load(force = false) {
+  const backend = getBackend();
+  await Promise.all(
+    FILES.map(async (file) => {
+      if (backend.mtime) {
+        // Local files: reload only when changed on disk.
+        const m = backend.mtime(file);
+        if (!force && m && m === memMtime[file] && mem[file]) return;
+        memMtime[file] = m;
       }
-    }
-    await backend.write(file, data);
-    (mem as Record<File, unknown>)[file] = data;
-  }
-  if (missing.length) console.log(`[content] Seeded ${missing.join(', ')} from the starter content.`);
+      const data = await backend.read(file);
+      (mem as Record<File, unknown>)[file] = data === undefined ? EMPTY[file] : data;
+    }),
+  );
 }
 
-async function load() {
-  const missing: File[] = [];
-  for (const file of FILES) {
-    if (backend.mtime) {
-      // Local files: reload only when changed on disk.
-      const m = backend.mtime(file);
-      if (m && m === memMtime[file] && mem[file]) continue;
-      memMtime[file] = m;
-    } else if (mem[file]) continue; // Remote storage: load once; this server is the only writer.
-    const data = await backend.read(file);
-    if (data === undefined) {
-      if (backend.kind !== 'local') missing.push(file);
-      else (mem as Record<File, unknown>)[file] = EMPTY[file];
-    } else (mem as Record<File, unknown>)[file] = data;
-  }
-  if (missing.length) await seedFromBundle(missing);
-}
-
-/** Makes sure content is loaded. Called by the middleware on every request. */
+/**
+ * Makes sure content is loaded. Called by the middleware. On Cloudflare the
+ * server can run in several places at once, so it always reads the latest copy.
+ */
 export async function ensureContent() {
-  if (backend.kind !== 'local' && FILES.every((f) => mem[f])) return;
   loading ??= load().finally(() => (loading = null));
   await loading;
 }
@@ -93,12 +71,25 @@ function read<F extends File>(file: F): Collections[F] {
 
 /* ---------- Writing (serialised) ---------- */
 let queue: Promise<unknown> = Promise.resolve();
-function serial<T>(fn: () => Promise<T>): Promise<T> {
-  const run = queue.then(fn, fn);
+/** Runs a change on the freshest content, then saves everything it touched as one commit. */
+function serial<T>(label: string, fn: () => Promise<T>): Promise<T> {
+  const run = queue.then(async () => {
+    const backend = getBackend();
+    try {
+      if (backend.kind === 'github') await load(true);
+      const result = await fn();
+      await backend.commit(`Website admin: ${label}`);
+      return result;
+    } catch (err) {
+      backend.discard();
+      throw err;
+    }
+  });
   queue = run.catch(() => {});
   return run;
 }
 async function write<F extends File>(file: F, data: Collections[F]) {
+  const backend = getBackend();
   await backend.write(file, data);
   (mem as Record<File, unknown>)[file] = data;
   if (backend.mtime) memMtime[file] = backend.mtime(file);
@@ -135,6 +126,7 @@ let photoCacheBytes = 0;
 export async function getUpload(filename: string): Promise<Buffer | null> {
   const hit = photoCache.get(filename);
   if (hit) return hit;
+  const backend = getBackend();
   const body = await backend.getUpload(filename);
   if (body && backend.kind !== 'local') {
     photoCache.set(filename, body);
@@ -183,7 +175,7 @@ function uniqueSlug(base: string, taken: Set<string>) {
 
 /* ---------- Writes ---------- */
 export const saveEvent = (item: EventItem, originalSlug?: string) =>
-  serial(async () => {
+  serial('update events', async () => {
     const list = clone(read('events.json'));
     const idx = originalSlug ? list.findIndex((e) => e.slug === originalSlug) : -1;
     const taken = new Set(list.filter((_, i) => i !== idx).map((e) => e.slug));
@@ -198,7 +190,7 @@ export const saveEvent = (item: EventItem, originalSlug?: string) =>
   });
 
 export const deleteEvents = (slugs: string[]) =>
-  serial(async () => {
+  serial('delete events', async () => {
     const list = read('events.json');
     const removed = list.filter((e) => slugs.includes(e.slug));
     await write('events.json', list.filter((e) => !slugs.includes(e.slug)));
@@ -207,7 +199,7 @@ export const deleteEvents = (slugs: string[]) =>
   });
 
 export const saveArticle = (item: Article, originalSlug?: string) =>
-  serial(async () => {
+  serial('update news', async () => {
     const list = clone(read('news.json'));
     const idx = originalSlug ? list.findIndex((a) => a.slug === originalSlug) : -1;
     const taken = new Set(list.filter((_, i) => i !== idx).map((a) => a.slug));
@@ -223,7 +215,7 @@ export const saveArticle = (item: Article, originalSlug?: string) =>
   });
 
 export const deleteArticles = (slugs: string[]) =>
-  serial(async () => {
+  serial('delete news', async () => {
     const list = read('news.json');
     const removed = list.filter((a) => slugs.includes(a.slug));
     await write('news.json', list.filter((a) => !slugs.includes(a.slug)));
@@ -231,7 +223,7 @@ export const deleteArticles = (slugs: string[]) =>
     return removed.length;
   });
 
-export const saveVideos = (list: Video[]) => serial(() => write('videos.json', list));
+export const saveVideos = (list: Video[]) => serial('update videos', () => write('videos.json', list));
 
 /* ---------- Uploaded images ---------- */
 function articleImages(a: Article) {
@@ -240,7 +232,8 @@ function articleImages(a: Article) {
 
 /** Stores an uploaded photo's files and registers it. */
 export const storeUpload = (name: string, files: { width: number; body: Buffer }[], entry: Omit<ImageEntry, 'uploadedAt' | 'dir'>) =>
-  serial(async () => {
+  serial('add photo', async () => {
+    const backend = getBackend();
     const ext = entry.ext ?? 'webp';
     for (const f of files) await backend.putUpload(`${name}-${f.width}.${ext}`, f.body);
     const reg = clone(read('images.json'));
@@ -248,32 +241,36 @@ export const storeUpload = (name: string, files: { width: number; body: Buffer }
     await write('images.json', reg);
   });
 
+const isUnused = (name: string) =>
+  !(
+    read('events.json').some((e) => e.image === name) ||
+    read('news.json').some((a) => articleImages(a).includes(name)) ||
+    read('videos.json').some((v) => v.image === name)
+  );
+
 /** Deletes an uploaded photo once nothing references it any more. */
 async function removeIfUnused(name: string) {
   const entry = read('images.json')[name];
   if (!entry) return; // built-in images are never deleted
-  const used =
-    read('events.json').some((e) => e.image === name) ||
-    read('news.json').some((a) => articleImages(a).includes(name)) ||
-    read('videos.json').some((v) => v.image === name);
-  if (used) return;
-  await backend.deleteUploads(entry.widths.map((w) => `${name}-${w}.${entry.ext ?? 'webp'}`));
+  if (!isUnused(name)) return;
+  await getBackend().deleteUploads(entry.widths.map((w) => `${name}-${w}.${entry.ext ?? 'webp'}`));
   const next = clone(read('images.json'));
   delete next[name];
   await write('images.json', next);
 }
 
-export const removeImageIfUnused = (name: string) => serial(() => removeIfUnused(name));
+export const removeImageIfUnused = (name: string) => serial('remove unused photo', () => removeIfUnused(name));
 
 /**
  * Removes uploaded photos that were never saved into any event/story/video
  * (e.g. uploaded, then the editor was closed). Only touches photos older than
  * a day, so photos in an editor that's still open are safe.
  */
-export const sweepUnusedUploads = () =>
-  serial(async () => {
-    const cutoff = Date.now() - 24 * 3600e3;
-    for (const [name, entry] of Object.entries(read('images.json'))) {
-      if ((entry.uploadedAt ?? 0) < cutoff) await removeIfUnused(name);
-    }
+export const sweepUnusedUploads = async () => {
+  const cutoff = Date.now() - 24 * 3600e3;
+  const stale = () => Object.entries(read('images.json')).filter(([name, entry]) => (entry.uploadedAt ?? 0) < cutoff && isUnused(name));
+  if (!stale().length) return; // nothing to do — skip the save
+  await serial('remove unused photos', async () => {
+    for (const [name] of stale()) await removeIfUnused(name);
   });
+};
