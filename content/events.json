@@ -78,5 +78,26 @@
     "ctaLabel": "Check the Instagram group",
     "cta": "link",
     "ctaUrl": "https://ig.me/j/YmY7KdVv6y4uCYsf/"
+  },
+  {
+    "slug": "zz-save-test-delete-me",
+    "title": "ZZ Save Test (delete me)",
+    "type": "Community",
+    "date": "2027-03-01",
+    "startTime": "09:00",
+    "venue": "Bondi",
+    "suburb": "Bondi Beach, NSW",
+    "image": "bv-ball-sand",
+    "imageAlt": "x",
+    "excerpt": "Temporary test",
+    "description": [
+      "Temporary test"
+    ],
+    "price": "Free",
+    "level": "All levels",
+    "ctaLabel": "Join",
+    "cta": "link",
+    "ctaUrl": "https://example.com",
+    "draft": true
   }
 ]
