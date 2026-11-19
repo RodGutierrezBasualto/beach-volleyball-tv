@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 import { saveVideos } from '../../../lib/content';
 import { cleanVideos } from '../../../lib/validate';
 
+export const prerender = false;
+
 export const PUT: APIRoute = async ({ request }) => {
   const { videos: input } = await request.json();
   const { videos, errors } = cleanVideos(input);

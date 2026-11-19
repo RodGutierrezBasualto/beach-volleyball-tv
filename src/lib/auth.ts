@@ -4,11 +4,23 @@ import { adminConfig, loginDisabled } from '../admin.config';
 import { env } from './env';
 
 export const SESSION_COOKIE = 'bvtv_admin';
-// Without SESSION_SECRET, a random secret is generated per server start
-// (everyone is simply logged out after a restart).
-const SECRET = env('SESSION_SECRET') || crypto.randomBytes(32).toString('hex');
 
-const sign = (payload: string) => crypto.createHmac('sha256', SECRET).update(payload).digest('base64url');
+let randomSecret: string | undefined;
+/**
+ * Signs login cookies. Uses SESSION_SECRET if set; otherwise a key derived from
+ * the admin password (so every Cloudflare server instance agrees on it, and
+ * changing the password logs everyone out). Local testing without either gets
+ * a random secret per start.
+ */
+function secret() {
+  const explicit = env('SESSION_SECRET');
+  if (explicit) return explicit;
+  const { password, passwordFromEnv } = adminConfig();
+  if (passwordFromEnv) return crypto.createHash('sha256').update(`bvtv-session|${password}`).digest('hex');
+  return (randomSecret ??= crypto.randomBytes(32).toString('hex'));
+}
+
+const sign = (payload: string) => crypto.createHmac('sha256', secret()).update(payload).digest('base64url');
 
 function safeEqual(a: string, b: string) {
   const ha = crypto.createHash('sha256').update(a).digest();
@@ -17,15 +29,17 @@ function safeEqual(a: string, b: string) {
 }
 
 export function checkCredentials(username: string, password: string) {
-  if (loginDisabled) return false;
-  const userOk = safeEqual(username.trim().toLowerCase(), adminConfig.username.toLowerCase());
-  const passOk = safeEqual(password, adminConfig.password);
+  if (loginDisabled()) return false;
+  const config = adminConfig();
+  const userOk = safeEqual(username.trim().toLowerCase(), config.username.toLowerCase());
+  const passOk = safeEqual(password, config.password);
   return userOk && passOk;
 }
 
 export function createSession(cookies: AstroCookies, secure: boolean) {
-  const expires = Date.now() + adminConfig.sessionDays * 864e5;
-  const payload = `${adminConfig.username}.${expires}`;
+  const config = adminConfig();
+  const expires = Date.now() + config.sessionDays * 864e5;
+  const payload = `${config.username}.${expires}`;
   cookies.set(SESSION_COOKIE, `${payload}.${sign(payload)}`, {
     path: '/',
     httpOnly: true,

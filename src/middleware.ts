@@ -17,7 +17,14 @@ function sameOrigin(request: Request) {
 
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const { pathname } = ctx.url;
-  await ensureContent();
+  // Public pages are built ahead of time (no cookies, no admin). Only the admin
+  // and the photo fallback run on the server at request time.
+  if (ctx.isPrerendered) {
+    ctx.locals.isAdmin = false;
+    await ensureContent();
+    return next();
+  }
+  if (!pathname.startsWith('/uploads/') && !PUBLIC_ADMIN.some((p) => pathname.startsWith(p))) await ensureContent();
   ctx.locals.isAdmin = isValidSession(ctx.cookies.get(SESSION_COOKIE)?.value);
 
   const isAdminArea = pathname.startsWith('/admin') || pathname.startsWith('/api/admin');

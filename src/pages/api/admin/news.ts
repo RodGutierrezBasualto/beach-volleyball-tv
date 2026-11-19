@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 import { saveArticle, deleteArticles } from '../../../lib/content';
 import { cleanArticle } from '../../../lib/validate';
 
+export const prerender = false;
+
 export const POST: APIRoute = async ({ request }) => {
   const { item: input, originalSlug } = await request.json();
   const { item, errors } = cleanArticle(input ?? {});

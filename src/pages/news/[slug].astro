@@ -1,83 +1,11 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Photo from '../../components/Photo.astro';
-import Icon from '../../components/Icon.astro';
-import ArticleCard from '../../components/ArticleCard.astro';
-import { readingTime } from '../../data/news';
-import { getArticle, getArticles, getVideo } from '../../lib/content';
-import { renderDoc } from '../../lib/rich';
-import { site } from '../../data/site';
-import { formatDate, img, videoThumb } from '../../lib/utils';
+import ArticleDetail from '../../components/ArticleDetail.astro';
+import { getArticles } from '../../lib/content';
 
-const a = getArticle(Astro.params.slug ?? '', Astro.locals.isAdmin);
-if (!a) return Astro.rewrite('/404');
-const sortedArticles = getArticles();
-const storyHtml = renderDoc(a.content, {
-  image: img,
-  videoThumb: (id) => videoThumb(id, getVideo(id)?.image).largest,
-});
-const url = `${site.url}/news/${a.slug}/`;
-const sameCategory = sortedArticles.filter((x) => x.slug !== a.slug && x.category === a.category);
-const related = [...sameCategory, ...sortedArticles.filter((x) => x.slug !== a.slug && x.category !== a.category)].slice(0, 3);
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'NewsArticle',
-  headline: a.title,
-  description: a.excerpt,
-  image: [new URL(img(a.image).largest, site.url).href],
-  datePublished: a.date,
-  author: { '@type': 'Organization', name: a.author, url: site.url },
-  publisher: { '@type': 'Organization', name: site.name, logo: { '@type': 'ImageObject', url: `${site.url}/images/logo-square-512.jpg` } },
-  mainEntityOfPage: url,
-};
-const shareMail = `mailto:?subject=${encodeURIComponent(a.title)}&body=${encodeURIComponent(`${a.excerpt}\n\n${url}`)}`;
+export function getStaticPaths() {
+  return getArticles().map((a) => ({ params: { slug: a.slug }, props: { a } }));
+}
+const { a } = Astro.props;
 ---
 
-<BaseLayout title={a.title} description={a.excerpt} image={img(a.image).largest} type="article" jsonLd={jsonLd}>
-  {a.draft && <div class="draft-banner">Draft preview — this story is only visible to you while logged in. <a href={`/admin/news/${a.slug}/`}>Edit</a></div>}
-  <article>
-    <div class="container" style="padding-top: clamp(28px, 4vw, 48px)">
-      <a class="back-link" href="/news/"><Icon name="arrow" /> All stories</a>
-      <header class="article-head" data-reveal>
-        <span class="badge">{a.category}</span>
-        <h1>{a.title}</h1>
-        <p class="lede">{a.excerpt}</p>
-        <div class="article-meta">
-          <span><Icon name="calendar" /><time datetime={a.date}>{formatDate(a.date)}</time></span>
-          <span><Icon name="clock" />{readingTime(a)} min read</span>
-          <span>By {a.author}</span>
-        </div>
-      </header>
-      <div data-reveal style="--d:.08s">
-        <Photo name={a.image} alt={a.imageAlt} class="article-figure" sizes="(min-width: 1300px) 1240px, 100vw" eager />
-      </div>
-
-      <div class="article-body">
-        <div class="share" aria-label="Share this story" role="group">
-          <span class="share__label">Share</span>
-          <button class="icon-btn" type="button" data-copy-link><Icon name="link" /><span class="sr-only">Copy link</span></button>
-          <a class="icon-btn" href={shareMail}><Icon name="mail" /><span class="sr-only">Share by email</span></a>
-          <a class="icon-btn" href={site.instagram.url} target="_blank" rel="noopener"><Icon name="instagram" /><span class="sr-only">Follow on Instagram (opens in a new tab)</span></a>
-        </div>
-        <div class="prose" data-reveal set:html={storyHtml} />
-        <div aria-hidden="true"></div>
-      </div>
-    </div>
-  </article>
-
-  <section class="section section--soft" aria-labelledby="related-title" style="margin-top: var(--section)">
-    <div class="container">
-      <div class="section-head" data-reveal>
-        <div class="section-head__text">
-          <span class="eyebrow">Keep reading</span>
-          <h2 id="related-title" class="display-l">More stories</h2>
-        </div>
-        <a class="link-arrow" href="/news/">All stories <Icon name="arrow" /></a>
-      </div>
-      <div class="grid-cards">
-        {related.map((r, i) => <ArticleCard article={r} delay={i * 0.06} />)}
-      </div>
-    </div>
-  </section>
-</BaseLayout>
+<ArticleDetail a={a} />

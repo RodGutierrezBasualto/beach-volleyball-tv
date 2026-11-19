@@ -1,0 +1,11 @@
+---
+import EventDetail from '../../../../components/EventDetail.astro';
+import { getEvent } from '../../../../lib/content';
+
+export const prerender = false;
+
+const e = getEvent(Astro.params.slug ?? '', true);
+if (!e) return Astro.redirect('/admin/events/');
+---
+
+<EventDetail e={e} />

@@ -1,15 +1,16 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import node from '@astrojs/node';
+import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
   site: 'https://beachvolleyballtv.com.au',
-  // Server mode: pages read content/*.json on each request, so edits made in
-  // the admin go live instantly without a rebuild.
-  output: 'server',
-  adapter: node({ mode: 'standalone' }),
+  // Public pages are built ahead of time from content/*.json (fast, and they
+  // never "sleep"). Only the admin, its API and the photo fallback run as a
+  // Cloudflare Worker. Admin saves commit to GitHub, which rebuilds the site.
+  output: 'static',
+  adapter: cloudflare({ imageService: 'passthrough', platformProxy: { enabled: false } }),
   // Cross-site request checks are done in src/middleware.ts (compares Origin
-  // with the Host the server is reached on, which also works behind proxies).
+  // with the Host the server is reached on).
   security: { checkOrigin: false },
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   build: { format: 'directory' },

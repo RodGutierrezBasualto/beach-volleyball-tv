@@ -1,0 +1,20 @@
+# The site is built ahead of time, so "upcoming events" is worked out at build
+# time. This makes a tiny empty commit every night just after midnight in Sydney,
+# which makes Cloudflare rebuild the site so finished events drop off the lists.
+name: Daily refresh
+on:
+  schedule:
+    - cron: '20 14 * * *' # 00:20 Sydney in daylight saving, 01:20 otherwise
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git commit --allow-empty -m "Daily refresh (finished events drop off the lists)"
+          git push

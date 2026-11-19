@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { parseYouTubeId } from '../../../lib/validate';
 
+export const prerender = false;
+
 /** Looks up a YouTube video's title from a pasted link (via YouTube oEmbed). */
 export const GET: APIRoute = async ({ url }) => {
   const youtubeId = parseYouTubeId(url.searchParams.get('url') ?? '');

@@ -1,4 +1,5 @@
 ---
+export const prerender = false;
 import '../../styles/admin.css';
 import { loginDisabled } from '../../admin.config';
 
@@ -26,7 +27,7 @@ const loggedOut = Astro.url.searchParams.has('loggedout');
         {error === 'invalid' && <div class="notice notice-error" role="alert">That username or password isn’t right. Please try again.</div>}
         {error === 'locked' && <div class="notice notice-error" role="alert">Too many attempts. Please wait 10 minutes and try again.</div>}
         {loggedOut && <div class="notice notice-success" role="status">You’ve been logged out.</div>}
-        {loginDisabled && <div class="notice notice-error" role="alert">Login is switched off until an admin password is set. In Render, add <b>ADMIN_PASSWORD</b> under Environment, then redeploy.</div>}
+        {loginDisabled() && <div class="notice notice-error" role="alert">Login is switched off until an admin password is set. In Cloudflare, add <b>ADMIN_PASSWORD</b> as a secret under the Worker’s Settings → Variables and Secrets, then redeploy.</div>}
         <form method="post" action="/api/admin/login">
           <input type="hidden" name="next" value={next} />
           <div class="field">

@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { getUpload } from '../../lib/content';
 
+export const prerender = false;
+
 const TYPES = { webp: 'image/webp', jpg: 'image/jpeg' } as const;
 
 /** Serves photos uploaded through the admin (from disk, or from the GitHub repo). */

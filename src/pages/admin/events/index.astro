@@ -1,4 +1,5 @@
 ---
+export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { getEvents } from '../../../lib/content';
 import { formatDate, img, todaySydney, isPastEvent } from '../../../lib/utils';
@@ -56,7 +57,7 @@ const deleted = Astro.url.searchParams.get('deleted');
               <a class="row-title" href={`/admin/events/${e.slug}/`}>{e.title}</a>
               <div class="row-actions">
                 <a href={`/admin/events/${e.slug}/`}>Edit</a>
-                <a href={`/events/${e.slug}/`} target="_blank" rel="noopener">View</a>
+                <a href={e.draft ? `/admin/preview/events/${e.slug}/` : `/events/${e.slug}/`} target="_blank" rel="noopener">{e.draft ? 'Preview' : 'View'}</a>
                 <button class="link-danger" type="button" data-row-delete data-title={e.title}>Delete</button>
               </div>
             </td>

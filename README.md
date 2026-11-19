@@ -2,8 +2,10 @@
 
 Website and content admin for Beach Volleyball TV, an Australian beach volleyball community born in Bondi.
 
-Built with [Astro 5](https://astro.build) running as a small Node.js server.
-- The public site reads content on every request, so anything saved in the admin is live immediately, with no rebuild.
+Built with [Astro 5](https://astro.build) and hosted free on [Cloudflare](https://cloudflare.com).
+- The public pages are built ahead of time into static files, so they're fast and never "sleep".
+- Only the admin (`/admin`), its API and a photo fallback run as a Cloudflare Worker.
+- Saving in the admin commits to this GitHub repository, which makes Cloudflare rebuild the site. **Changes go live about a minute after saving.**
 - The site ships almost no JavaScript, apart from the hero's volleyball and the admin itself.
 
 > Updating the website? See **[ADMIN-GUIDE.md](ADMIN-GUIDE.md)**. It's written for non-technical editors.
@@ -14,11 +16,12 @@ Built with [Astro 5](https://astro.build) running as a small Node.js server.
 npm install
 npm run dev       # http://localhost:4321  (admin: http://localhost:4321/admin/)
 npm run build     # production build in ./dist
-npm start         # run the production server (reads .env if present)
+npm run preview   # run the built site in Cloudflare's local runtime (wrangler)
+npm run deploy    # build and deploy straight from your computer (needs `npx wrangler login`)
 npm run check     # type-check
 ```
 
-Needs Node 22+.
+Needs Node 22+. Locally, `npm run dev` reads and writes the files in `content/` directly (admin login: the default in `src/admin.config.ts`, or set `ADMIN_PASSWORD` in `.env`).
 
 ## Admin
 
@@ -30,20 +33,18 @@ Needs Node 22+.
 - **Photos:** cropped in the browser to the site's 16:10 format, with a "safe area" guide. They're exported at 1600 px and 800 px, compressed to WebP (JPEG on Safari) and uploaded. Uploads that nothing uses any more are cleaned up automatically.
 - **Drafts:** hidden from the public, but previewable by a logged-in admin.
 
-### Settings (environment variables)
+### Settings
 
-Set these on your host (Render: the service's **Environment** tab). For local testing, copy `.env.example` to `.env`.
+Set these on Cloudflare (Worker → **Settings → Variables and Secrets**). `GITHUB_REPO`, `GITHUB_BRANCH` and `ADMIN_USER` already have values in `wrangler.jsonc`. For local `npm run preview`, put secrets in a `.dev.vars` file (git-ignored).
 
-| Variable | Purpose |
-| --- | --- |
-| `GITHUB_REPO` | The site's repository, e.g. `your-name/beach-volleyball-tv`. With `GITHUB_TOKEN`, it switches on GitHub storage |
-| `GITHUB_TOKEN` | Fine-grained token: access to **this repo only**, permission **Contents: Read and write**. Server-only |
-| `GITHUB_BRANCH` | Branch to save to (default `main`) |
-| `ADMIN_USER` | Admin username (default `admin`) |
-| `ADMIN_PASSWORD` | Admin password. **Required once deployed:** with `GITHUB_TOKEN` set, logins are refused until this exists, because the default in `src/admin.config.ts` is in Git |
-| `SESSION_SECRET` | Long random string that signs login cookies, so logins survive restarts (Render generates one automatically) |
-| `DATA_DIR` | Local-files mode only: where content is stored (default `./content`) |
-| `PORT`, `HOST` | Server port and interface (Render sets `PORT`; use `HOST=0.0.0.0`) |
+| Name | Type | Purpose |
+| --- | --- | --- |
+| `GITHUB_TOKEN` | **Secret** | Fine-grained token: access to **this repo only**, permission **Contents: Read and write**. Server-only |
+| `ADMIN_PASSWORD` | **Secret** | Admin password. **Required once deployed:** logins are refused until it exists, because the default in `src/admin.config.ts` is in Git |
+| `SESSION_SECRET` | Secret, optional | Signs login cookies. If unset, a key derived from `ADMIN_PASSWORD` is used (changing the password logs everyone out) |
+| `GITHUB_REPO` | Variable | `owner/repo`, set in `wrangler.jsonc` |
+| `GITHUB_BRANCH` | Variable | Branch to save to (default `main`) |
+| `ADMIN_USER` | Variable | Admin username (default `admin`) |
 
 ## Where content lives
 
@@ -55,45 +56,55 @@ content/
   news.json       news stories
   videos.json     YouTube library
   images.json     registry of uploaded photos
-  uploads/        uploaded photos (served by the site at /uploads/…)
+  uploads/        uploaded photos
 ```
 
-`src/lib/storage.ts` picks one of two modes automatically:
+- **Build time:** the build reads `content/*.json` and writes every public page as a static file. `scripts/copy-uploads.mjs` (the `prebuild` step) copies `content/uploads/` into the site as `/uploads/…`.
+- **Admin (Cloudflare Worker):** every admin request reads the latest files from GitHub, and every save is **one commit** (e.g. "Website admin: update events") made through GitHub's Git Data API. That commit makes Cloudflare rebuild the site. The full edit history is in Git, so any change can be undone.
+- **Photos** you upload show up in the admin instantly (served from GitHub by `/uploads/[file]`), and become ordinary static files once the rebuild finishes.
+- **Locally** (`npm run dev`), the admin reads and writes `content/` on disk. Commit and push those changes yourself.
+- **Daily refresh:** "upcoming events" is worked out at build time, so `.github/workflows/daily-refresh.yml` makes an empty commit just after midnight Sydney time to trigger a rebuild and drop finished events.
 
-- **GitHub** (when `GITHUB_TOKEN` and `GITHUB_REPO` are set). Every save in the admin is committed to `content/` in the repo, e.g. "Website admin: update events". On start-up the site loads the latest content from GitHub, so nothing is lost when the free server sleeps or restarts. Photos are committed too and served through the site, so the repo can stay private. The full edit history is in Git, so any change can be undone.
-- **Local files** (otherwise, e.g. `npm run dev`). The site reads and writes `content/` on disk.
-
-The deployed server keeps content in memory and is the only writer. If you edit `content/` directly on GitHub, restart the Render service afterwards to load it. Any admin save made before that restart overwrites the direct edit.
 Built-in stock photos live in `public/images/` and are listed in `src/data/images.ts`.
 
-## Deploying for free (GitHub + Render)
+## Deploying (free, on Cloudflare)
 
-1. **GitHub:** push this project to a repository (private is fine). `.env` is git-ignored, so no secrets are committed.
-2. **Token:** on GitHub, go to Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate. Give it access to **only this repository**, with **Contents: Read and write**. Choose a long expiry and note the date, because the admin can't save after the token expires.
-3. **Render:** choose New → **Blueprint**, then pick the repo. `render.yaml` sets up a free web service. Fill in `GITHUB_REPO`, `GITHUB_TOKEN`, `ADMIN_USER` and `ADMIN_PASSWORD` when asked.
-   - Code pushes redeploy automatically.
-   - Admin edits (commits to `content/`) **don't** trigger a rebuild, because they're excluded by `buildFilter`.
-4. **Domain:** in Render, add `beachvolleyballtv.com.au` under Settings → Custom Domains and follow its DNS instructions. HTTPS is automatic.
+One-time setup:
 
-**Working on the code after launch:** the live admin commits to the repo, so always run `git pull` before changing code locally, and before pushing.
+1. **GitHub:** push this project to a repository (private is fine). `.env` and `.dev.vars` are git-ignored.
+2. **Token:** GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate. Access to **only this repository**, **Contents: Read and write**. Choose a long expiry and note the date, because the admin can't save after it expires.
+3. **Cloudflare:** dashboard → **Workers & Pages → Create → Import a repository** (Workers Builds) and pick the repo.
+   - Project name: `beach-volleyball-tv` (must match `name` in `wrangler.jsonc`)
+   - Production branch: `main`
+   - Build command: `npm run build`
+   - Deploy command: `npx wrangler deploy`
+4. **Secrets:** open the Worker → **Settings → Variables and Secrets** → add `GITHUB_TOKEN` and `ADMIN_PASSWORD` as **Secrets**. (If you need to change the repo name, edit `GITHUB_REPO` in `wrangler.jsonc`.)
+5. **Domain:** Worker → **Settings → Domains & Routes** → add `beachvolleyballtv.com.au` and follow the DNS steps. HTTPS is automatic.
+6. **Daily refresh:** in GitHub → Actions, run **Daily refresh** once (Run workflow) and check that Cloudflare starts a build.
 
-**Free-tier trade-offs:**
-- Render puts the site to sleep after 15 minutes without visitors, so the next visit takes about a minute to load (it reloads content from GitHub).
-- Render's free plan includes 750 hours a month, enough for one site running all the time.
+After that:
+- Code pushes to `main` redeploy automatically.
+- Admin saves commit to `content/` and also redeploy, which is what publishes them.
+- **Working on the code after launch:** the live admin commits to the repo, so always `git pull` before changing code locally, and before pushing.
+
+**Free-plan notes:**
+- Static pages and photos are free and unlimited. Only admin and photo-fallback requests count against Workers Free (100,000 requests/day, 10 ms CPU each), far beyond what an admin needs.
+- Workers Builds free plan: 3,000 build minutes a month. A build takes about a minute, so a nightly rebuild plus edits is well within it.
 - Each photo adds about 100–300 KB to the repo, which is fine for years of use.
+- Login attempts are rate-limited only per server instance. Use a long password (and optionally a Cloudflare rate-limiting rule on `/api/admin/login`).
 
 ## Code structure
 
 ```
 src/
-  admin.config.ts   admin login defaults
+  admin.config.ts   admin login settings
   middleware.ts     admin auth guard + cross-site request protection
-  pages/            public pages, /admin pages, /api/admin endpoints, /uploads route, sitemap
+  pages/            public pages (static), /admin pages and /api/admin endpoints (server), /uploads photo fallback, sitemap
   layouts/          BaseLayout (public), AdminLayout (admin)
-  components/       public components (+ admin/ImagePicker)
+  components/       public components (+ EventDetail / ArticleDetail, shared by the live and preview pages; admin/ImagePicker)
   lib/
     content.ts      content store (in memory, saved via storage.ts), slugs, image cleanup
-    storage.ts      storage backends: GitHub repository or local files
+    storage.ts      storage: GitHub repository (on Cloudflare, one commit per save) or local files
     env.ts          reads settings from the environment / .env
     validate.ts     cleans and validates admin input
     rich.ts         story format: clean (whitelist), render to HTML, convert old stories
@@ -107,7 +118,9 @@ src/
     rich-editor.ts  Word-style story editor (Tiptap), loaded only on the story editor page
   data/             site settings (site.ts), content types, built-in image list
 content/            site content (saved by the admin)
-render.yaml         Render Blueprint (free web service)
+wrangler.jsonc      Cloudflare Worker settings
+scripts/            build helper (copies uploads into the site)
+.github/workflows/  nightly rebuild
 ```
 
 ### Other settings
@@ -120,6 +133,6 @@ render.yaml         Render Blueprint (free web service)
 
 ## Before launch
 
-- Set your own `ADMIN_PASSWORD` on the host (required once deployed).
+- Set your own `ADMIN_PASSWORD` secret on Cloudflare (required once deployed).
 - Review the starter event details and article copy, especially anything about real people.
 - Replace the stock Unsplash photos (free under the Unsplash License) with your own Bondi photography, using the admin.

@@ -1,4 +1,5 @@
 ---
+export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import ImagePicker from '../../../components/admin/ImagePicker.astro';
 import { getEvent } from '../../../lib/content';
@@ -23,7 +24,7 @@ const saved = Astro.url.searchParams.has('saved');
 
   {saved && (
     <div class="notice notice-success" role="status">
-      Event saved{e.draft ? ' as a draft' : ' and live on the website'}. <a href={`/events/${e.slug}/`} target="_blank" rel="noopener">View event →</a>
+      Event saved{e.draft ? ' as a draft' : ' and will be live in about a minute'}. <a href={e.draft ? `/admin/preview/events/${e.slug}/` : `/events/${e.slug}/`} target="_blank" rel="noopener">{e.draft ? 'Preview draft' : 'View event'} →</a>
     </div>
   )}
   <div class="notice notice-error" role="alert" data-errors hidden></div>
@@ -122,7 +123,7 @@ const saved = Astro.url.searchParams.has('saved');
           <label class="choice"><input type="radio" name="draft" value="false" checked={!e.draft} /> <span><b>Published</b><small>Visible on the website</small></span></label>
           <label class="choice"><input type="radio" name="draft" value="true" checked={!!e.draft} /> <span><b>Draft</b><small>Only you can see it</small></span></label>
           <label class="choice"><input type="checkbox" name="featured" checked={!!e.featured} /> <span><b>Feature this event</b><small>Shown large at the top of the Events page</small></span></label>
-          {!isNew && <a href={`/events/${e.slug}/`} target="_blank" rel="noopener">{e.draft ? 'Preview draft' : 'View on website'} ↗</a>}
+          {!isNew && <a href={e.draft ? `/admin/preview/events/${e.slug}/` : `/events/${e.slug}/`} target="_blank" rel="noopener">{e.draft ? 'Preview draft' : 'View on website'} ↗</a>}
         </div>
         <div class="publish-actions">
           {isNew ? <span></span> : <button class="link-danger" type="button" data-editor-delete data-title={e.title}>Delete</button>}

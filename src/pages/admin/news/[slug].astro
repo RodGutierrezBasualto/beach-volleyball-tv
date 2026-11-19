@@ -1,4 +1,5 @@
 ---
+export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import ImagePicker from '../../../components/admin/ImagePicker.astro';
 import { getArticle, imageRegistry } from '../../../lib/content';
@@ -31,7 +32,7 @@ const editorDoc = withPreviews(a.content ?? { type: 'doc', content: [{ type: 'pa
 
   {saved && (
     <div class="notice notice-success" role="status">
-      Story saved{a.draft ? ' as a draft' : ' and live on the website'}. <a href={`/news/${a.slug}/`} target="_blank" rel="noopener">View story →</a>
+      Story saved{a.draft ? ' as a draft' : ' and will be live in about a minute'}. <a href={a.draft ? `/admin/preview/news/${a.slug}/` : `/news/${a.slug}/`} target="_blank" rel="noopener">{a.draft ? 'Preview draft' : 'View story'} →</a>
     </div>
   )}
   <div class="notice notice-error" role="alert" data-errors hidden></div>
@@ -105,7 +106,7 @@ const editorDoc = withPreviews(a.content ?? { type: 'doc', content: [{ type: 'pa
           <label class="choice"><input type="checkbox" name="featured" checked={!!a.featured} /> <span><b>Feature this story</b><small>Shown large at the top of the News page</small></span></label>
           <div class="field"><label for="date">Publish date</label><input id="date" name="date" type="date" value={a.date} /></div>
           <div class="field"><label for="author">Author</label><input id="author" name="author" type="text" value={a.author} /></div>
-          {!isNew && <a href={`/news/${a.slug}/`} target="_blank" rel="noopener">{a.draft ? 'Preview draft' : 'View on website'} ↗</a>}
+          {!isNew && <a href={a.draft ? `/admin/preview/news/${a.slug}/` : `/news/${a.slug}/`} target="_blank" rel="noopener">{a.draft ? 'Preview draft' : 'View on website'} ↗</a>}
         </div>
         <div class="publish-actions">
           {isNew ? <span></span> : <button class="link-danger" type="button" data-editor-delete data-title={a.title}>Delete</button>}

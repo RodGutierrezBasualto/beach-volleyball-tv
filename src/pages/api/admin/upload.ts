@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 import crypto from 'node:crypto';
 import { storeUpload, slugify } from '../../../lib/content';
 
+export const prerender = false;
+
 const MAX_BYTES = 6 * 1024 * 1024;
 
 function detect(buf: Buffer): 'webp' | 'jpg' | null {

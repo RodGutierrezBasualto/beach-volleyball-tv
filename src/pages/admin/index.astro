@@ -1,4 +1,5 @@
 ---
+export const prerender = false;
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import Icon from '../../components/Icon.astro';
 import { getEvents, getArticles, getVideos, sweepUnusedUploads } from '../../lib/content';
@@ -75,7 +76,7 @@ const videos = getVideos();
       <h2>Tips</h2>
       <div class="postbox__body">
         <ul class="help" role="list">
-          <li>Changes go live on the website as soon as you press <b>Save</b>.</li>
+          <li>Changes appear on the website about a minute after you press <b>Save</b>, while the site rebuilds itself.</li>
           <li>Not ready yet? Choose <b>Draft</b> — only you can see it while logged in.</li>
           <li>Photos are cropped and compressed for you automatically. Any size works.</li>
           <li>Events disappear from “upcoming” the day after they finish. Delete them whenever you like.</li>
