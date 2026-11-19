@@ -27,10 +27,11 @@ export const site = {
    * Contact buttons ("Contact us", "Enquire", the contact form, mailing list…).
    * While false they are shown but do nothing. Set to true to switch them on.
    */
-  contactEnabled: false,
+  contactEnabled: true,
   /**
    * Contact form endpoint (Formspree / Web3Forms / Basin URL). Left empty, the
-   * form opens the visitor's email app pre-filled to the address above.
+   * form opens the visitor's email app pre-filled and addressed to the right
+   * inbox for the enquiry type (see enquiryTypes below).
    */
   formEndpoint: '',
   ogImage: '/images/og-default.jpg',
@@ -61,10 +62,13 @@ export const allPages = [
   { label: 'Contact', href: '/contact/' },
 ];
 
+/** Which inbox each enquiry goes to: `site.email` unless `to` says otherwise. */
 export const enquiryTypes = [
   { value: 'general', label: 'General enquiry' },
   { value: 'media', label: 'Media & interviews' },
   { value: 'events', label: 'Events & bookings' },
-  { value: 'partnership', label: 'Sponsorship & partnerships' },
+  { value: 'partnership', label: 'Sponsorship & partnerships', to: site.partnerships.email },
   { value: 'community', label: 'Get involved / volunteer' },
 ];
+
+export const recipientFor = (type: string) => enquiryTypes.find((t) => t.value === type)?.to ?? site.email;

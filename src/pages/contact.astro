@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
-import { site, enquiryTypes } from '../data/site';
+import { site, enquiryTypes, recipientFor } from '../data/site';
 const enabled = site.contactEnabled;
 ---
 
@@ -67,6 +67,7 @@ const enabled = site.contactEnabled;
           data-disabled={enabled ? undefined : ''}
           data-endpoint={site.formEndpoint}
           data-email={site.email}
+          data-recipients={JSON.stringify(Object.fromEntries(enquiryTypes.map((t) => [t.value, recipientFor(t.value)])))}
         >
           <div class="form-grid form-grid--2">
             <div class="field">

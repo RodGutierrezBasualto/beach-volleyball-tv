@@ -153,8 +153,10 @@ async function submitContact(form: HTMLFormElement) {
   if (data.get('company_website')) return; // honeypot
 
   const endpoint = form.dataset.endpoint;
-  const email = form.dataset.email!;
-  const typeLabel = (form.elements.namedItem('type') as HTMLSelectElement).selectedOptions[0]?.text ?? '';
+  const typeSelect = form.elements.namedItem('type') as HTMLSelectElement;
+  const typeLabel = typeSelect.selectedOptions[0]?.text ?? '';
+  const recipients: Record<string, string> = JSON.parse(form.dataset.recipients || '{}');
+  const email = recipients[typeSelect.value] ?? form.dataset.email!;
 
   if (!endpoint) {
     const body = `Name: ${data.get('name')}\nEmail: ${data.get('email')}\nEnquiry: ${typeLabel}\n\n${data.get('message')}`;
