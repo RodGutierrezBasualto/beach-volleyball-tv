@@ -1,0 +1,61 @@
+# Publishes the public website to GitHub Pages (beachvolleyballtv.com.au).
+# Runs on every push to main (including admin saves, which are commits), every
+# night just after midnight in Sydney (so finished events drop off the lists,
+# because "upcoming" is worked out at build time), and on demand.
+# The admin itself runs separately on Cloudflare (see README).
+name: Publish website
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '20 14 * * *' # 00:20 Sydney in daylight saving, 01:20 otherwise
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Prepare static files
+        run: |
+          # Server code stays on Cloudflare; it must not be published here.
+          rm -rf dist/_worker.js dist/_routes.json dist/_headers dist/.assetsignore
+          echo "beachvolleyballtv.com.au" > dist/CNAME
+          # The admin lives on Cloudflare: send anyone who types /admin there.
+          mkdir -p dist/admin
+          printf '%s\n' \
+            '<!doctype html>' \
+            '<meta charset="utf-8">' \
+            '<meta name="robots" content="noindex">' \
+            '<meta http-equiv="refresh" content="0; url=https://beach-volleyball-tv.coopercine.workers.dev/admin/">' \
+            '<title>Admin</title>' \
+            '<p>Going to the <a href="https://beach-volleyball-tv.coopercine.workers.dev/admin/">website admin</a>…</p>' \
+            > dist/admin/index.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

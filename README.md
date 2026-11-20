@@ -2,10 +2,10 @@
 
 Website and content admin for Beach Volleyball TV, an Australian beach volleyball community born in Bondi.
 
-Built with [Astro 5](https://astro.build) and hosted free on [Cloudflare](https://cloudflare.com).
-- The public pages are built ahead of time into static files, so they're fast and never "sleep".
-- Only the admin (`/admin`), its API and a photo fallback run as a Cloudflare Worker.
-- Saving in the admin commits to this GitHub repository, which makes Cloudflare rebuild the site. **Changes go live about a minute after saving.**
+Built with [Astro 5](https://astro.build) and hosted free in two places:
+- **Public website** (`beachvolleyballtv.com.au`): built into static files and published by GitHub Pages (`.github/workflows/pages.yml`). Fast, never "sleeps". The domain stays registered and managed at GoDaddy.
+- **Admin** (`/admin`), its API and a photo fallback: run as a [Cloudflare](https://cloudflare.com) Worker at `beach-volleyball-tv.coopercine.workers.dev`. (Typing `beachvolleyballtv.com.au/admin` redirects there.)
+- Saving in the admin commits to this GitHub repository, which republishes the site. **Changes go live about a minute after saving.**
 - The site ships almost no JavaScript, apart from the hero's volleyball and the admin itself.
 
 > Updating the website? See **[ADMIN-GUIDE.md](ADMIN-GUIDE.md)**. It's written for non-technical editors.
@@ -21,7 +21,7 @@ npm run deploy    # build and deploy straight from your computer (needs `npx wra
 npm run check     # type-check
 ```
 
-Needs Node 22+. Locally, `npm run dev` reads and writes the files in `content/` directly (admin login: the default in `src/admin.config.ts`, or set `ADMIN_PASSWORD` in `.env`).
+Needs Node 22+. Locally, `npm run dev` reads and writes the files in `content/` directly (admin login: set `ADMIN_PASSWORD` in `.env`, there is no default password).
 
 ## Admin
 
@@ -40,7 +40,7 @@ Set these on Cloudflare (Worker → **Settings → Variables and Secrets**). `GI
 | Name | Type | Purpose |
 | --- | --- | --- |
 | `GITHUB_TOKEN` | **Secret** | Fine-grained token: access to **this repo only**, permission **Contents: Read and write**. Server-only |
-| `ADMIN_PASSWORD` | **Secret** | Admin password. **Required once deployed:** logins are refused until it exists, because the default in `src/admin.config.ts` is in Git |
+| `ADMIN_PASSWORD` | **Secret** | Admin password. **Required:** logins are refused until it exists (there is no built-in password) |
 | `SESSION_SECRET` | Secret, optional | Signs login cookies. If unset, a key derived from `ADMIN_PASSWORD` is used (changing the password logs everyone out) |
 | `GITHUB_REPO` | Variable | `owner/repo`, set in `wrangler.jsonc` |
 | `GITHUB_BRANCH` | Variable | Branch to save to (default `main`) |
@@ -63,33 +63,36 @@ content/
 - **Admin (Cloudflare Worker):** every admin request reads the latest files from GitHub, and every save is **one commit** (e.g. "Website admin: update events") made through GitHub's Git Data API. That commit makes Cloudflare rebuild the site. The full edit history is in Git, so any change can be undone.
 - **Photos** you upload show up in the admin instantly (served from GitHub by `/uploads/[file]`), and become ordinary static files once the rebuild finishes.
 - **Locally** (`npm run dev`), the admin reads and writes `content/` on disk. Commit and push those changes yourself.
-- **Daily refresh:** "upcoming events" is worked out at build time, so `.github/workflows/daily-refresh.yml` makes an empty commit just after midnight Sydney time to trigger a rebuild and drop finished events.
+- **Daily refresh:** "upcoming events" is worked out at build time, so `.github/workflows/pages.yml` also runs every night just after midnight Sydney time to republish the site and drop finished events.
 
 Built-in stock photos live in `public/images/` and are listed in `src/data/images.ts`.
 
-## Deploying (free, on Cloudflare)
+## Deploying (free: GitHub Pages + Cloudflare)
 
-One-time setup:
+The repository must be **public** (GitHub Pages is free only for public repos). It holds no secrets: the GitHub token and admin password live only in Cloudflare.
 
-1. **GitHub:** push this project to a repository (private is fine). `.env` and `.dev.vars` are git-ignored.
-2. **Token:** GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate. Access to **only this repository**, **Contents: Read and write**. Choose a long expiry and note the date, because the admin can't save after it expires.
-3. **Cloudflare:** dashboard → **Workers & Pages → Create → Import a repository** (Workers Builds) and pick the repo.
-   - Project name: `beach-volleyball-tv` (must match `name` in `wrangler.jsonc`)
-   - Production branch: `main`
-   - Build command: `npm run build`
-   - Deploy command: `npx wrangler deploy`
-4. **Secrets:** open the Worker → **Settings → Variables and Secrets** → add `GITHUB_TOKEN` and `ADMIN_PASSWORD` as **Secrets**. (If you need to change the repo name, edit `GITHUB_REPO` in `wrangler.jsonc`.)
-5. **Domain:** Worker → **Settings → Domains & Routes** → add `beachvolleyballtv.com.au` and follow the DNS steps. HTTPS is automatic.
-6. **Daily refresh:** in GitHub → Actions, run **Daily refresh** once (Run workflow) and check that Cloudflare starts a build.
+### Public website: GitHub Pages
+1. Repo → Settings → Pages → Source: **GitHub Actions**. Custom domain: `beachvolleyballtv.com.au`, then tick **Enforce HTTPS** once the certificate is ready.
+2. At the domain registrar (GoDaddy), the web records are:
+   - four **A** records on `@`: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
+   - one **CNAME** on `www`: `rodgutierrezbasualto.github.io`
+   - (optional) four **AAAA** records on `@`: `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153`
+   Leave all email records (MX, SPF, DKIM and so on) alone.
+3. The **Publish website** workflow runs on every push to `main`, every night just after midnight Sydney time (so finished events drop off the lists), and on demand (Actions → Publish website → Run workflow).
+
+### Admin: Cloudflare Worker
+1. **Token:** GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens**. Access to **only this repository**, **Contents: Read and write**. Choose a long expiry and note the date, because the admin can't save after it expires.
+2. **Cloudflare:** Workers & Pages → Create → Import a repository, pick the repo. Build command `npm run build`, deploy command `npx wrangler deploy`. The Worker is named `beach-volleyball-tv` (see `wrangler.jsonc`).
+3. **Secrets:** Worker → Settings → Variables and Secrets → add `GITHUB_TOKEN` and `ADMIN_PASSWORD` as **Secrets**. (Or `npx wrangler secret put GITHUB_TOKEN`.)
+4. Quick manual deploy from your computer: `npm run deploy` (after `npx wrangler login`).
 
 After that:
-- Code pushes to `main` redeploy automatically.
-- Admin saves commit to `content/` and also redeploy, which is what publishes them.
+- Code pushes to `main` redeploy both the public site and the admin.
+- Admin saves commit to `content/` (one commit per save), which republishes the public site.
 - **Working on the code after launch:** the live admin commits to the repo, so always `git pull` before changing code locally, and before pushing.
 
 **Free-plan notes:**
-- Static pages and photos are free and unlimited. Only admin and photo-fallback requests count against Workers Free (100,000 requests/day, 10 ms CPU each), far beyond what an admin needs.
-- Workers Builds free plan: 3,000 build minutes a month. A build takes about a minute, so a nightly rebuild plus edits is well within it.
+- Public pages are served by GitHub Pages: no request limits for a site this size (GitHub's soft limits are 100 GB/month bandwidth, 1 GB site size). Only admin and photo-fallback requests count against Cloudflare Workers Free (100,000 requests/day, 10 ms CPU each).
 - Each photo adds about 100–300 KB to the repo, which is fine for years of use.
 - Login attempts are rate-limited only per server instance. Use a long password (and optionally a Cloudflare rate-limiting rule on `/api/admin/login`).
 
@@ -120,7 +123,7 @@ src/
 content/            site content (saved by the admin)
 wrangler.jsonc      Cloudflare Worker settings
 scripts/            build helper (copies uploads into the site)
-.github/workflows/  nightly rebuild
+.github/workflows/  publishes the public site to GitHub Pages (on every push and nightly)
 ```
 
 ### Other settings

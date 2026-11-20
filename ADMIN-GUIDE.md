@@ -24,7 +24,7 @@ The admin has four sections, in the menu on the left:
 
 ## Logging in
 
-1. Go to your website address followed by **/admin** (for example `beachvolleyballtv.com.au/admin`).
+1. Go to your website address followed by **/admin** (for example `beachvolleyballtv.com.au/admin`). It sends you to the admin page, which lives at `beach-volleyball-tv.coopercine.workers.dev/admin/`. Bookmark that address.
 2. Type your **username** and **password**, then press **Log in**. Ask the site owner if you don't have them.
 3. You land on the **Dashboard**. You stay logged in for 7 days.
 
@@ -179,7 +179,7 @@ This part is for a separate Claude Code session that will record and edit a narr
 
 ## Before recording: setup and safety
 
-- **Site address:** `https://beach-volleyball-tv.coopercine.workers.dev` (the final domain may differ). Admin is at `/admin/`. Ask the site owner for the username and password.
+- **Site address:** the public site is `https://beachvolleyballtv.com.au` once the domain is connected (until then `https://beach-volleyball-tv.coopercine.workers.dev`). The **admin is always** at `https://beach-volleyball-tv.coopercine.workers.dev/admin/`. Ask the site owner for the username and password.
 - **Never show the password** on screen or in the narration. Pre-fill it, cut the typing, or mask the field in editing. Don't write it into any file in this repository.
 - **This is the live site.** Saving creates real changes. To keep it safe:
   - Build every demo item as a **Draft** until the chapters about publishing. Use names that make it obvious it's a demo (e.g. "Demo: Sunset Social").
