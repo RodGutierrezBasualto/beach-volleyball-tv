@@ -8,5 +8,15 @@
     "ext": "webp",
     "dir": "/uploads",
     "uploadedAt": 1794980795696
+  },
+  "u-budgy-tuesdays-5f20fa": {
+    "widths": [
+      800,
+      1121
+    ],
+    "ratio": 1.6,
+    "ext": "jpg",
+    "dir": "/uploads",
+    "uploadedAt": 1795401089641
   }
 }
