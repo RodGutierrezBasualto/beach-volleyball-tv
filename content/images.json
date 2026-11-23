@@ -28,5 +28,15 @@
     "ext": "jpg",
     "dir": "/uploads",
     "uploadedAt": 1795401249354
+  },
+  "u-bondi-beach-volleyball-community-day-7beaf9": {
+    "widths": [
+      800,
+      1600
+    ],
+    "ratio": 1.6,
+    "ext": "jpg",
+    "dir": "/uploads",
+    "uploadedAt": 1795401299468
   }
 }
