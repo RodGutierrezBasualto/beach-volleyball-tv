@@ -4,11 +4,12 @@ import '../styles/admin.css';
 
 interface Props {
   title: string;
-  active?: 'dashboard' | 'events' | 'news' | 'videos';
+  active?: 'dashboard' | 'home' | 'events' | 'news' | 'videos';
 }
 const { title, active } = Astro.props;
 const nav = [
   { key: 'dashboard', label: 'Dashboard', href: '/admin/', icon: 'level' },
+  { key: 'home', label: 'Home page', href: '/admin/home/', icon: 'star' },
   { key: 'events', label: 'Events', href: '/admin/events/', icon: 'calendar' },
   { key: 'news', label: 'News', href: '/admin/news/', icon: 'megaphone' },
   { key: 'videos', label: 'Videos', href: '/admin/videos/', icon: 'youtube' },
@@ -63,7 +64,7 @@ const nav = [
     <dialog class="adm-dialog adm-cropper" data-cropper aria-labelledby="cropper-title">
       <div class="adm-cropper__head">
         <h2 id="cropper-title">Crop your photo</h2>
-        <p>Drag to move the photo, use the slider (or scroll) to zoom. Keep the important part inside the dotted line — that area shows everywhere on the site.</p>
+        <p>Drag to move the photo, use the slider (or scroll) to zoom.<span data-crop-safe-note> Keep the important part inside the dotted line — that area shows everywhere on the site.</span></p>
       </div>
       <div class="adm-cropper__stage" data-crop-stage>
         <canvas data-crop-canvas></canvas>

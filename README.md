@@ -29,8 +29,9 @@ Needs Node 22+. Locally, `npm run dev` reads and writes the files in `content/` 
 - **Login:** a signed, httpOnly, SameSite=Strict session cookie (7 days), with login attempts rate-limited.
 - **Events:** list, search, filter (upcoming / past / drafts), bulk delete (including "select all past events"), and create/edit/delete.
 - **News:** the same list tools, plus a Word-style editor built on [Tiptap](https://tiptap.dev) (MIT). It handles headings, bold/italic/underline, lists, quotes, links, inline photos and YouTube videos, and pastes cleanly from Word and Google Docs. Stories are stored as JSON, cleaned against a whitelist on the server (`src/lib/rich.ts`) and rendered to HTML there; raw HTML is never stored.
+- **Home page:** edit the home page's wording, headlines, button text and collage photos, and show or hide sections. Saved in `content/home.json`. The defaults (and the list of editable fields) are in `src/data/home.ts`, and anything missing from the JSON falls back to them. Events, stories and videos on the home page still come from their own sections.
 - **Videos:** paste a YouTube link to add a video (the title is fetched automatically). Reorder, recategorise, choose the featured video, remove.
-- **Photos:** cropped in the browser to the site's 16:10 format, with a "safe area" guide. They're exported at 1600 px and 800 px, compressed to WebP (JPEG on Safari) and uploaded. Uploads that nothing uses any more are cleaned up automatically.
+- **Photos:** cropped in the browser to the site's 16:10 format, with a "safe area" guide (the home page collage photos are cropped square). They're exported at 1600 px and 800 px, compressed to WebP (JPEG on Safari) and uploaded. Uploads that nothing uses any more are cleaned up automatically.
 - **Drafts:** hidden from the public, but previewable by a logged-in admin.
 
 ### Settings
@@ -55,6 +56,7 @@ content/
   events.json     events
   news.json       news stories
   videos.json     YouTube library
+  home.json       home page wording and photos (created on the first save)
   images.json     registry of uploaded photos
   uploads/        uploaded photos
 ```

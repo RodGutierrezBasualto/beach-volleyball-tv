@@ -1,0 +1,219 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import ImagePicker from '../../components/admin/ImagePicker.astro';
+import { getHome } from '../../lib/content';
+import { HOME_PHOTO_RATIO, type HomeContent } from '../../data/home';
+
+const home = getHome();
+const saved = Astro.url.searchParams.has('saved');
+
+type Field =
+  | { type: 'text' | 'textarea'; key: string; label: string; hint?: string; placeholder?: string; max?: number; width?: 'half' | 'third' }
+  | { type: 'headline'; hint?: string }
+  | { type: 'paragraphs'; label: string }
+  | { type: 'sub'; label: string }
+  | { type: 'platforms' }
+  | { type: 'photos' };
+interface Section { key: keyof HomeContent; title: string; intro: string; toggle?: boolean; fields: Field[] }
+
+const sections: Section[] = [
+  {
+    key: 'hero', title: 'Top banner',
+    intro: 'The big opening section with the bouncing ball. The “Beach Volleyball TV” title itself stays as it is.',
+    fields: [
+      { type: 'text', key: 'kicker', label: 'Small line above the title', max: 140 },
+      { type: 'text', key: 'tagline', label: 'Line under the title', max: 140 },
+      { type: 'text', key: 'primaryLabel', label: 'First button', hint: 'Scrolls down to the welcome section.', max: 40, width: 'half' },
+      { type: 'text', key: 'youtubeLabel', label: 'YouTube button', hint: 'Opens the YouTube channel.', max: 40, width: 'half' },
+      { type: 'text', key: 'barLeft', label: 'Bottom line, left', max: 60, width: 'third' },
+      { type: 'text', key: 'hint', label: 'Bottom line, middle', hint: 'Invites people to play with the ball.', max: 60, width: 'third' },
+      { type: 'text', key: 'barRight', label: 'Bottom line, right', max: 60, width: 'third' },
+    ],
+  },
+  {
+    key: 'welcome', title: 'Welcome',
+    intro: 'The first section under the banner, with the two photos.',
+    fields: [
+      { type: 'text', key: 'eyebrow', label: 'Small label above the headline', max: 140 },
+      { type: 'headline' },
+      { type: 'paragraphs', label: 'Introduction' },
+      { type: 'platforms' },
+      { type: 'photos' },
+    ],
+  },
+  {
+    key: 'spotlight', title: 'Featured event', toggle: true,
+    intro: 'Shows the event you ticked “Feature this event” on (in Events). The event’s own name, photo and details come from the event itself.',
+    fields: [{ type: 'text', key: 'eyebrow', label: 'Small label above the event name', max: 140 }],
+  },
+  {
+    key: 'videos', title: 'Videos', toggle: true,
+    intro: 'Shows the featured video and the next two from Videos.',
+    fields: [
+      { type: 'text', key: 'eyebrow', label: 'Small label above the headline', max: 140 },
+      { type: 'headline' },
+      { type: 'textarea', key: 'text', label: 'Text under the headline', max: 600 },
+    ],
+  },
+  {
+    key: 'news', title: 'Stories', toggle: true,
+    intro: 'Shows the four latest news stories.',
+    fields: [
+      { type: 'text', key: 'eyebrow', label: 'Small label above the headline', max: 140 },
+      { type: 'headline' },
+    ],
+  },
+  {
+    key: 'events', title: 'Upcoming events', toggle: true,
+    intro: 'Shows the next three upcoming events (not counting the featured one).',
+    fields: [
+      { type: 'text', key: 'eyebrow', label: 'Small label above the headline', max: 140 },
+      { type: 'headline' },
+      { type: 'textarea', key: 'text', label: 'Text under the headline', max: 600 },
+    ],
+  },
+  {
+    key: 'purpose', title: 'Our purpose', toggle: true,
+    intro: 'The “More than just sport” section, with the two cards beside it.',
+    fields: [
+      { type: 'text', key: 'eyebrow', label: 'Small label above the headline', max: 140 },
+      { type: 'headline' },
+      { type: 'paragraphs', label: 'Text' },
+      { type: 'text', key: 'linkLabel', label: 'Link to the About page', max: 60 },
+      { type: 'sub', label: 'Card: Get involved' },
+      { type: 'text', key: 'involvedTitle', label: 'Card title', max: 60, width: 'half' },
+      { type: 'text', key: 'involvedLink', label: 'Link text', hint: 'Opens the Get involved page.', max: 60, width: 'half' },
+      { type: 'textarea', key: 'involvedText', label: 'Card text', max: 600 },
+      { type: 'sub', label: 'Card: Join our community' },
+      { type: 'text', key: 'joinTitle', label: 'Card title', max: 60 },
+      { type: 'textarea', key: 'joinText', label: 'Card text', max: 600 },
+      { type: 'text', key: 'instagramLabel', label: 'Instagram button', max: 40, width: 'half' },
+      { type: 'text', key: 'whatsappLabel', label: 'WhatsApp button', max: 40, width: 'half' },
+    ],
+  },
+  {
+    key: 'partner', title: 'Partner with us', toggle: true,
+    intro: 'The highlighted band that invites partners and sponsors.',
+    fields: [
+      { type: 'text', key: 'eyebrow', label: 'Small label above the headline', max: 140 },
+      { type: 'headline' },
+      { type: 'textarea', key: 'text', label: 'Text', max: 600 },
+      { type: 'textarea', key: 'note', label: 'Extra note (optional)', hint: 'Good for news like an upcoming event. Remember to update it when it’s over. Leave it empty to hide it.', max: 600 },
+      { type: 'text', key: 'buttonLabel', label: 'Button', hint: 'Opens the Partners page.', max: 40 },
+    ],
+  },
+  {
+    key: 'connect', title: 'Connect with us', toggle: true,
+    intro: 'The last section, with the contact button.',
+    fields: [
+      { type: 'text', key: 'eyebrow', label: 'Small label', max: 140 },
+      { type: 'textarea', key: 'text', label: 'Text', max: 600 },
+      { type: 'text', key: 'buttonLabel', label: 'Button', hint: 'Opens the Contact page.', max: 40 },
+    ],
+  },
+];
+
+const val = (s: keyof HomeContent, k: string) => String((home[s] as Record<string, unknown>)[k] ?? '');
+const paras = (s: keyof HomeContent) => ((home[s] as { paragraphs?: string[] }).paragraphs ?? []).join('\n\n');
+const platformNames = ['YouTube', 'Instagram', 'TikTok'];
+---
+
+<AdminLayout title="Home page" active="home">
+  <div class="adm-head">
+    <h1>Home page</h1>
+    <span class="spacer"></span>
+    <a class="button" href="/" target="_blank" rel="noopener">View home page ↗</a>
+  </div>
+  <p class="adm-sub">Change the wording and photos on the home page. Events, stories and videos fill in by themselves, from their own sections.</p>
+
+  {saved && <div class="notice notice-success" role="status">Home page saved. The changes will be live in about a minute.</div>}
+  <div class="notice notice-error" role="alert" data-errors hidden></div>
+
+  <form class="editor" data-editor="home" data-nested data-name-hint="home" novalidate>
+    <div class="editor__main">
+      {sections.map((sec) => (
+        <section class="postbox">
+          <h2>{sec.title}</h2>
+          <div class="postbox__body">
+            <p class="hint" style="margin:0 0 4px">{sec.intro}</p>
+            {sec.toggle && (
+              <label class="choice">
+                <input type="checkbox" name={`${sec.key}.show`} checked={(home[sec.key] as { show?: boolean }).show !== false} />
+                <span><b>Show this section</b><small>Untick to hide it from the home page.</small></span>
+              </label>
+            )}
+            <div class="home-fields">
+              {sec.fields.map((f) => {
+                const id = (k: string) => `${sec.key}-${k}`;
+                if (f.type === 'sub') return <h3 class="home-sub">{f.label}</h3>;
+                if (f.type === 'headline') return (
+                  <div class="field-row field-row--2 home-full">
+                    <div class="field"><label for={id('title')}>Headline</label><input id={id('title')} name={`${sec.key}.title`} type="text" value={val(sec.key, 'title')} maxlength="140" /></div>
+                    <div class="field">
+                      <label for={id('em')}>Words in italic <small>(optional)</small></label>
+                      <input id={id('em')} name={`${sec.key}.em`} type="text" value={val(sec.key, 'em')} maxlength="140" />
+                      <span class="hint">Shown in italic at the end of the headline.</span>
+                    </div>
+                  </div>
+                );
+                if (f.type === 'paragraphs') return (
+                  <div class="field home-full">
+                    <label for={id('paragraphs')}>{f.label}</label>
+                    <textarea id={id('paragraphs')} name={`${sec.key}.paragraphs`} rows="6">{paras(sec.key)}</textarea>
+                    <span class="hint">Leave an empty line to start a new paragraph.</span>
+                  </div>
+                );
+                if (f.type === 'platforms') return (
+                  <>
+                    <h3 class="home-sub">The three platform cards</h3>
+                    {home.welcome.platforms.map((p, i) => (
+                      <div class="field-row field-row--2 home-full">
+                        <div class="field"><label for={`plat-${i}-title`}>{platformNames[i]} card: title</label><input id={`plat-${i}-title`} name={`welcome.platforms.${i}.title`} type="text" value={p.title} maxlength="80" /></div>
+                        <div class="field"><label for={`plat-${i}-text`}>{platformNames[i]} card: text</label><input id={`plat-${i}-text`} name={`welcome.platforms.${i}.text`} type="text" value={p.text} maxlength="200" /></div>
+                      </div>
+                    ))}
+                    <p class="hint home-full" style="margin:0">The cards link to the YouTube, Instagram and TikTok accounts.</p>
+                  </>
+                );
+                if (f.type === 'photos') return (
+                  <>
+                    <h3 class="home-sub">Photos</h3>
+                    <div class="field-row field-row--2 home-full">
+                      <div class="field"><span class="label">Large photo</span><ImagePicker name="welcome.photoA" value={home.welcome.photoA} alt={home.welcome.photoAAlt} altName="welcome.photoAAlt" label="Large photo" ratio={HOME_PHOTO_RATIO} /></div>
+                      <div class="field"><span class="label">Small round-cornered photo</span><ImagePicker name="welcome.photoB" value={home.welcome.photoB} alt={home.welcome.photoBAlt} altName="welcome.photoBAlt" label="Small photo" ratio={HOME_PHOTO_RATIO} /></div>
+                    </div>
+                    <p class="hint home-full" style="margin:0">Both photos are cropped square.</p>
+                  </>
+                );
+                return (
+                  <div class:list={['field', f.width ? `home-${f.width}` : 'home-full']}>
+                    <label for={id(f.key)}>{f.label}</label>
+                    {f.type === 'textarea'
+                      ? <textarea id={id(f.key)} name={`${sec.key}.${f.key}`} rows="3" maxlength={f.max}>{val(sec.key, f.key)}</textarea>
+                      : <input id={id(f.key)} name={`${sec.key}.${f.key}`} type="text" value={val(sec.key, f.key)} maxlength={f.max} placeholder={f.placeholder} />}
+                    {f.hint && <span class="hint">{f.hint}</span>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <div class="editor__side">
+      <section class="postbox home-publish">
+        <h2>Publish</h2>
+        <div class="postbox__body">
+          <p class="hint" style="margin:0">Changes go live on the website about a minute after you save.</p>
+          <a href="/" target="_blank" rel="noopener">View home page ↗</a>
+        </div>
+        <div class="publish-actions">
+          <span></span>
+          <button class="button button-primary button-large" type="submit">Save changes</button>
+        </div>
+      </section>
+    </div>
+  </form>
+</AdminLayout>

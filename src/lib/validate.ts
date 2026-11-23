@@ -8,6 +8,7 @@ import type { Article, NewsCategory } from '../data/news';
 import { newsCategories } from '../data/news';
 import type { Video, VideoCategory } from '../data/videos';
 import { videoCategories } from '../data/videos';
+import { defaultHome, type HomeContent } from '../data/home';
 import { imageRegistry } from './content';
 import { cleanDoc, docHasContent, safeHref } from './rich';
 
@@ -137,4 +138,46 @@ export function cleanVideos(input: unknown): { videos: Video[]; errors: string[]
   }
   if (!videos.length) errors.push('The video library can’t be empty.');
   return { videos, errors };
+}
+
+/* ---------- Home page ---------- */
+const HOME_SECTIONS: Record<keyof HomeContent, string> = {
+  hero: 'Top banner',
+  welcome: 'Welcome',
+  spotlight: 'Featured event',
+  videos: 'Videos',
+  news: 'Stories',
+  events: 'Events',
+  purpose: 'Our purpose',
+  partner: 'Partner with us',
+  connect: 'Connect with us',
+};
+/** Fields that can't be left empty (headlines and button text), when the section is shown. */
+const isRequired = (key: string) => key === 'title' || /(Title|Label|Link)$/.test(key);
+const isLong = (key: string) => /text|Text|note/.test(key);
+
+export function cleanHome(input: unknown): { home: HomeContent; errors: string[] } {
+  const errors: string[] = [];
+  const raw = (input && typeof input === 'object' ? input : {}) as Record<string, Input>;
+  const home = structuredClone(defaultHome);
+  for (const section of Object.keys(home) as (keyof HomeContent)[]) {
+    const out = home[section] as Record<string, unknown>;
+    const src = raw[section] ?? {};
+    for (const [key, fallback] of Object.entries(out)) {
+      if (typeof fallback === 'boolean') out[key] = bool(src[key]);
+      else if (key === 'paragraphs') out[key] = paragraphs(src[key]).map((p) => p.slice(0, 1200));
+      else if (key === 'platforms') {
+        const list = Array.isArray(src[key]) ? (src[key] as Input[]) : [];
+        out[key] = (fallback as { title: string; text: string }[]).map((_, i) => ({ title: str(list[i]?.title, 80), text: str(list[i]?.text, 200) }));
+      } else if (key === 'photoA' || key === 'photoB') {
+        out[key] = str(src[key], 120) || fallback;
+        checkImage(out[key] as string, errors, `${HOME_SECTIONS[section]}: a photo`);
+      } else out[key] = str(src[key], isLong(key) ? 600 : key.endsWith('Alt') ? 200 : 140);
+    }
+    if (out.show === false) continue;
+    const name = HOME_SECTIONS[section];
+    for (const [key, v] of Object.entries(out)) if (isRequired(key) && v === '') errors.push(`${name}: please fill in every headline and button text.`);
+    if (section === 'welcome' && home.welcome.platforms.some((p) => !p.title)) errors.push(`${name}: each of the three platform cards needs a title.`);
+  }
+  return { home, errors: [...new Set(errors)] };
 }

@@ -1,5 +1,5 @@
 /**
- * Content store: events, news, videos and the uploaded-photo registry.
+ * Content store: events, news, videos, the home page and the uploaded-photo registry.
  *
  * Content is held in memory for fast page rendering and persisted through
  * the storage backend (local files, or the GitHub repository on Cloudflare —
@@ -11,6 +11,7 @@
 import type { EventItem } from '../data/events';
 import type { Article } from '../data/news';
 import type { Video } from '../data/videos';
+import { defaultHome, type HomeContent } from '../data/home';
 import { images as builtInImages } from '../data/images';
 import { blocksToDoc, docImages } from './rich';
 import { getBackend } from './storage';
@@ -30,10 +31,11 @@ type Collections = {
   'news.json': Article[];
   'videos.json': Video[];
   'images.json': Record<string, ImageEntry>;
+  'home.json': Partial<HomeContent>;
 };
 type File = keyof Collections;
-const FILES: File[] = ['events.json', 'news.json', 'videos.json', 'images.json'];
-const EMPTY: Collections = { 'events.json': [], 'news.json': [], 'videos.json': [], 'images.json': {} };
+const FILES: File[] = ['events.json', 'news.json', 'videos.json', 'images.json', 'home.json'];
+const EMPTY: Collections = { 'events.json': [], 'news.json': [], 'videos.json': [], 'images.json': {}, 'home.json': {} };
 
 /* ---------- Loading ---------- */
 const mem: Partial<Collections> = {};
@@ -115,6 +117,15 @@ export function getArticles({ includeDrafts = false } = {}): Article[] {
 }
 
 export const getVideos = (): Video[] => read('videos.json');
+
+/** Home page content: what was saved in the admin, with defaults for anything missing. */
+export function getHome(): HomeContent {
+  const saved = read('home.json');
+  const home = clone(defaultHome);
+  for (const key of Object.keys(home) as (keyof HomeContent)[]) Object.assign(home[key], saved[key]);
+  return home;
+}
+const homeImages = (h: Partial<HomeContent>) => [h.welcome?.photoA, h.welcome?.photoB].filter((x): x is string => !!x);
 export const getUploadedImages = (): Record<string, ImageEntry> => read('images.json');
 export const imageRegistry = (): Record<string, ImageEntry> => ({ ...builtInImages, ...getUploadedImages() });
 /** URL folder for uploaded photos (always served by this site at /uploads). */
@@ -225,6 +236,14 @@ export const deleteArticles = (slugs: string[]) =>
 
 export const saveVideos = (list: Video[]) => serial('update videos', () => write('videos.json', list));
 
+export const saveHome = (home: HomeContent) =>
+  serial('update home page', async () => {
+    const previous = homeImages(read('home.json'));
+    await write('home.json', home);
+    const now = new Set(homeImages(home));
+    for (const img of previous) if (!now.has(img)) await removeIfUnused(img);
+  });
+
 /* ---------- Uploaded images ---------- */
 function articleImages(a: Article) {
   return [a.image, ...docImages(normalise(a).content)];
@@ -245,7 +264,8 @@ const isUnused = (name: string) =>
   !(
     read('events.json').some((e) => e.image === name) ||
     read('news.json').some((a) => articleImages(a).includes(name)) ||
-    read('videos.json').some((v) => v.image === name)
+    read('videos.json').some((v) => v.image === name) ||
+    homeImages(read('home.json')).includes(name)
   );
 
 /** Deletes an uploaded photo once nothing references it any more. */
@@ -262,7 +282,7 @@ async function removeIfUnused(name: string) {
 export const removeImageIfUnused = (name: string) => serial('remove unused photo', () => removeIfUnused(name));
 
 /**
- * Removes uploaded photos that were never saved into any event/story/video
+ * Removes uploaded photos that were never saved into any event/story/video/home page
  * (e.g. uploaded, then the editor was closed). Only touches photos older than
  * a day, so photos in an editor that's still open are safe.
  */

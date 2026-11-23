@@ -2,15 +2,15 @@
 import Icon from '../Icon.astro';
 import { img } from '../../lib/utils';
 
-interface Props { name: string; value?: string; alt?: string; altName?: string; label?: string }
-const { name, value = '', alt = '', altName, label = 'Photo' } = Astro.props;
+interface Props { name: string; value?: string; alt?: string; altName?: string; label?: string; /** Crop shape (width ÷ height). Default 16:10. */ ratio?: number }
+const { name, value = '', alt = '', altName, label = 'Photo', ratio } = Astro.props;
 const preview = value ? img(value).largest : '';
 ---
 
-<div class="picker" data-image-picker>
+<div class="picker" data-image-picker data-ratio={ratio}>
   <input type="hidden" name={name} value={value} data-picker-value />
   <input type="file" accept="image/*" hidden data-picker-file />
-  <div class:list={['picker__preview', preview && 'has-image']} data-picker-drop role="button" tabindex="0" aria-label={`${label}: choose a photo`}>
+  <div class:list={['picker__preview', preview && 'has-image']} style={ratio ? `aspect-ratio:${ratio}` : undefined} data-picker-drop role="button" tabindex="0" aria-label={`${label}: choose a photo`}>
     {preview ? <img src={preview} alt="" data-picker-img /> : (
       <div class="picker__empty" data-picker-empty><Icon name="external" /><b>Choose a photo</b><br /><small>or drag one here</small></div>
     )}

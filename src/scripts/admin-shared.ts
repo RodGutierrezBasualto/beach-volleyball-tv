@@ -66,7 +66,7 @@ const RATIO = 16 / 10;
 const LARGE_W = 1600;
 const SMALL_W = 800;
 
-export interface Cropped { large: Blob; small: Blob; widthLarge: number; widthSmall: number; originalSize: number }
+export interface Cropped { large: Blob; small: Blob; widthLarge: number; widthSmall: number; originalSize: number; ratio: number }
 
 function loadImage(file: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -82,7 +82,8 @@ function encode(canvas: HTMLCanvasElement, type: string, quality: number): Promi
   return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
 }
 
-export async function cropImage(file: File): Promise<Cropped | null> {
+/** Crops to the site's 16:10 format, or to another shape (e.g. 1 for square). */
+export async function cropImage(file: File, ratio = RATIO): Promise<Cropped | null> {
   if (!file.type.startsWith('image/')) {
     toast('Please choose a photo (JPG, PNG or WebP).', true);
     return null;
@@ -102,6 +103,13 @@ export async function cropImage(file: File): Promise<Cropped | null> {
   const warn = $('[data-crop-warn]', dialog)!;
   const ctx = canvas.getContext('2d')!;
   const iw = im.naturalWidth, ih = im.naturalHeight;
+  // Other shapes than 16:10 show the whole frame (the dotted safe area is for 16:10 photos).
+  const custom = Math.abs(ratio - RATIO) > 0.01;
+  stage.style.aspectRatio = custom ? String(ratio) : '';
+  stage.style.width = custom ? `min(100%, ${Math.round(55 * ratio)}vh)` : '';
+  stage.style.marginInline = custom ? 'auto' : '';
+  $<HTMLElement>('.adm-cropper__safe', dialog)!.hidden = custom;
+  $<HTMLElement>('[data-crop-safe-note]', dialog)!.hidden = custom;
 
   dialog.showModal();
   await new Promise(requestAnimationFrame);
@@ -188,7 +196,7 @@ export async function cropImage(file: File): Promise<Cropped | null> {
   const widthLarge = Math.max(480, Math.min(LARGE_W, Math.round(srcW)));
   const out = document.createElement('canvas');
   out.width = widthLarge;
-  out.height = Math.round(widthLarge / RATIO);
+  out.height = Math.round(widthLarge / ratio);
   const octx = out.getContext('2d')!;
   octx.imageSmoothingQuality = 'high';
   octx.drawImage(im, srcX, srcY, srcW, srcH, 0, 0, out.width, out.height);
@@ -196,7 +204,7 @@ export async function cropImage(file: File): Promise<Cropped | null> {
   const widthSmall = Math.min(SMALL_W, widthLarge);
   const small = document.createElement('canvas');
   small.width = widthSmall;
-  small.height = Math.round(widthSmall / RATIO);
+  small.height = Math.round(widthSmall / ratio);
   const sctx = small.getContext('2d')!;
   sctx.imageSmoothingQuality = 'high';
   sctx.drawImage(out, 0, 0, small.width, small.height);
@@ -212,7 +220,7 @@ export async function cropImage(file: File): Promise<Cropped | null> {
     toast('Sorry, the photo couldn’t be processed. Please try another one.', true);
     return null;
   }
-  return { large, small: smallBlob, widthLarge, widthSmall, originalSize: file.size };
+  return { large, small: smallBlob, widthLarge, widthSmall, originalSize: file.size, ratio };
 }
 
 export async function uploadCropped(c: Cropped, nameHint: string) {
@@ -222,7 +230,7 @@ export async function uploadCropped(c: Cropped, nameHint: string) {
   fd.append('small', c.small, `small.${ext}`);
   fd.append('widthLarge', String(c.widthLarge));
   fd.append('widthSmall', String(c.widthSmall));
-  fd.append('ratio', String(RATIO));
+  fd.append('ratio', String(c.ratio));
   fd.append('name', nameHint || 'photo');
   const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
   const data = await res.json().catch(() => ({}));

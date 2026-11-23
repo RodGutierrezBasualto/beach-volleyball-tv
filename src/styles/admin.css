@@ -294,3 +294,12 @@ ul[role='list'] { list-style: none; padding: 0; }
 .login__back { display: block; text-align: center; margin-top: 18px; font-size: 0.9rem; color: var(--a-muted); }
 
 .picker > * + * { margin-top: 12px; }
+
+/* ---------- Home page editor ---------- */
+.home-fields { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-top: 6px; }
+.home-fields > * { grid-column: 1 / -1; }
+.home-fields .field { align-content: start; }
+@media (min-width: 640px) { .home-fields > .home-half { grid-column: span 3; } .home-fields > .home-third { grid-column: span 2; } }
+.home-sub { margin-top: 8px; padding-top: 14px; border-top: 1px solid var(--a-line); font-size: 0.95rem; }
+.home-fields .picker__preview { max-width: 260px; }
+.postbox__body > p.hint, .home-fields > p.hint { color: var(--a-muted); font-size: 0.85rem; }

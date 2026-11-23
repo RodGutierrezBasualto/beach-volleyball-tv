@@ -10,7 +10,7 @@ import { $, $$, h, toast, confirmDialog, api, fmtBytes, ytThumb, cropImage, uplo
 /* ===================================================================== */
 function nameHint(from: Element) {
   const form = from.closest('form');
-  return (form?.querySelector<HTMLInputElement>('[name="title"]')?.value || 'photo').slice(0, 40);
+  return (form?.querySelector<HTMLInputElement>('[name="title"]')?.value || form?.dataset.nameHint || 'photo').slice(0, 40);
 }
 
 function bindPicker(root: HTMLElement, onChange?: (name: string, url: string) => void) {
@@ -23,7 +23,7 @@ function bindPicker(root: HTMLElement, onChange?: (name: string, url: string) =>
   const open = () => file.click();
   const handle = async (f?: File | null) => {
     if (!f) return;
-    const cropped = await cropImage(f);
+    const cropped = await cropImage(f, Number(root.dataset.ratio) || undefined);
     if (!cropped) return;
     const busy = h('div', { class: 'picker__busy' }, 'Uploading…');
     drop.append(busy);
@@ -136,6 +136,21 @@ function initList(root: HTMLElement) {
 /* ===================================================================== */
 /* Editors (events / news)                                               */
 /* ===================================================================== */
+/** Turns fields named like "hero.title" or "welcome.platforms.0.text" into nested objects/arrays. Tickboxes become true/false. */
+function nestedValues(form: HTMLFormElement) {
+  const out: Record<string, unknown> = {};
+  for (const el of $$<HTMLInputElement>('input[name], textarea[name], select[name]', form)) {
+    if (el.type === 'file' || (el.type === 'radio' && !el.checked)) continue;
+    const keys = el.name.split('.');
+    let node = out as Record<string, unknown>;
+    keys.forEach((k, i) => {
+      if (i === keys.length - 1) node[k] = el.type === 'checkbox' ? el.checked : el.value;
+      else node = (node[k] ??= /^\d+$/.test(keys[i + 1]) ? [] : {}) as Record<string, unknown>;
+    });
+  }
+  return out;
+}
+
 function initEditor(form: HTMLFormElement) {
   const kind = form.dataset.editor!;
   const originalSlug = form.dataset.originalSlug || undefined;
@@ -178,8 +193,8 @@ function initEditor(form: HTMLFormElement) {
     submit.disabled = true;
     submit.textContent = 'Saving…';
     errorsBox.hidden = true;
-    const item: Record<string, unknown> = Object.fromEntries(new FormData(form));
-    item.featured = form.querySelector<HTMLInputElement>('[name="featured"]')?.checked ?? false;
+    const item: Record<string, unknown> = 'nested' in form.dataset ? nestedValues(form) : Object.fromEntries(new FormData(form));
+    if (!('nested' in form.dataset)) item.featured = form.querySelector<HTMLInputElement>('[name="featured"]')?.checked ?? false;
     if (richEl) {
       if (!getContent) {
         toast('The editor is still loading — try again in a moment.');
@@ -190,9 +205,9 @@ function initEditor(form: HTMLFormElement) {
       item.content = getContent();
     }
     try {
-      const { slug } = await api('POST', `/api/admin/${kind}`, { item, originalSlug });
+      const { slug, redirect } = await api('POST', `/api/admin/${kind}`, { item, originalSlug });
       dirty = false;
-      location.href = `/admin/${kind}/${slug}/?saved=1`;
+      location.href = redirect ?? `/admin/${kind}/${slug}/?saved=1`;
     } catch (err) {
       const errs = (err as { errors?: string[] }).errors;
       if (errs) showErrors(errs);

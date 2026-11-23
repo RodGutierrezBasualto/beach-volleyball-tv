@@ -118,13 +118,26 @@ To change a photo inside a story, use the buttons under it: **Caption & descript
 
 To show a video on the **Athletes** page as a profile, type the athlete's name in its **Athlete name** box and save.
 
+## Home page
+
+Click **Home page** in the left menu to change the wording and photos on the home page. Each box on the screen is one section of the page, in the same order as on the website.
+
+- **Headlines** have two parts: the **Headline** and the **Words in italic**, which are shown in italic at the end. For example, “More than” + “just sport”.
+- **Paragraphs:** leave an empty line between them.
+- **Show this section:** untick it to hide a whole section from the home page, and tick it again to bring it back. The words you wrote are kept.
+- **Photos:** the two photos in the Welcome section are cropped **square**.
+- The newest stories, the featured video and the upcoming events fill in by themselves from **News**, **Videos** and **Events**. To change those, edit them in their own sections.
+- The **Partner with us** box has an **Extra note** for time-limited news. Update it or clear it when the news is over.
+
+Click **Save changes**. The home page updates about a minute later. Every headline and button needs some text, and a red box at the top will tell you if one is empty.
+
 ## Photos
 
 Use any photo, from your phone or camera, at any size.
 
 1. Click **Choose photo**, or drag a photo onto the box.
 2. A cropping window opens. **Drag** to move the photo and use the **Zoom** slider (or your mouse wheel) to zoom in.
-3. Keep the important part, such as faces and the ball, **inside the dotted line**. That area shows everywhere on the site.
+3. Keep the important part, such as faces and the ball, **inside the dotted line**. That area shows everywhere on the site. (Square photos on the home page have no dotted line: the whole square is shown.)
 4. Click **Use this photo**. It's resized and compressed for you, and you'll see how much smaller it got (e.g. 4.2 MB → 190 KB).
 5. Fill in **Describe the photo** in a few words. This helps people who use screen readers, and helps Google.
 
