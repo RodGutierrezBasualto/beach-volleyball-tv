@@ -18,5 +18,15 @@
     "ext": "jpg",
     "dir": "/uploads",
     "uploadedAt": 1795401089641
+  },
+  "u-saturday-socials-b0aaeb": {
+    "widths": [
+      800,
+      1152
+    ],
+    "ratio": 1.6,
+    "ext": "jpg",
+    "dir": "/uploads",
+    "uploadedAt": 1795401249354
   }
 }
