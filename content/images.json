@@ -85,5 +85,14 @@
     "ext": "jpg",
     "dir": "/uploads",
     "uploadedAt": 1795476162441
+  },
+  "u-home-6e8504": {
+    "widths": [
+      720
+    ],
+    "ratio": 1,
+    "ext": "jpg",
+    "dir": "/uploads",
+    "uploadedAt": 1795476173529
   }
 }
