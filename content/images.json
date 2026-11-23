@@ -77,5 +77,14 @@
     "ext": "jpg",
     "dir": "/uploads",
     "uploadedAt": 1795475374674
+  },
+  "u-home-1422f1": {
+    "widths": [
+      748
+    ],
+    "ratio": 1,
+    "ext": "jpg",
+    "dir": "/uploads",
+    "uploadedAt": 1795475415514
   }
 }
