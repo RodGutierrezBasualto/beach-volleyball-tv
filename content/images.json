@@ -67,5 +67,15 @@
     "ext": "jpg",
     "dir": "/uploads",
     "uploadedAt": 1795474959145
+  },
+  "u-home-2bccfc": {
+    "widths": [
+      800,
+      1284
+    ],
+    "ratio": 1,
+    "ext": "jpg",
+    "dir": "/uploads",
+    "uploadedAt": 1795475374674
   }
 }
