@@ -4,8 +4,8 @@
     "title": "Bondi Beach Volleyball Community Day",
     "type": "Community",
     "date": "2026-12-12",
-    "startTime": "10:00",
-    "timeNote": "10am till late",
+    "startTime": "09:00",
+    "timeNote": "9am till late",
     "venue": "Bondi Beach, Ramp 2 (near the skate park)",
     "suburb": "Bondi Beach, NSW",
     "image": "u-bondi-beach-volleyball-community-day-f36fcd",
@@ -28,9 +28,8 @@
       "Free snacks and water",
       "Aussie Athlete Fundraising BBQ at 12 noon — supporting Brooke Ronan"
     ],
-    "ctaLabel": "Join the Instagram group",
-    "cta": "link",
-    "ctaUrl": "https://ig.me/j/YmY7KdVv6y4uCYsf/",
+    "ctaLabel": "Register for activities on the day",
+    "cta": "register",
     "featured": true
   },
   {
