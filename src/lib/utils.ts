@@ -119,3 +119,12 @@ export function videoThumb(youtubeId: string, image?: string) {
 export function jsonForScript(value: unknown) {
   return JSON.stringify(value).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
 }
+
+const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/** Headline HTML from an admin-edited headline: the plain words, then the italic words. */
+export const headlineHtml = (h: { title: string; em: string }) => escapeHtml(h.title) + (h.em ? ` <em>${escapeHtml(h.em)}</em>` : '');
+
+/** Admin-edited text with simple formatting: **bold** and *italic*. Everything else is shown as typed. */
+export const formatInline = (text: string) =>
+  escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\*(.+?)\*/g, '<i>$1</i>');

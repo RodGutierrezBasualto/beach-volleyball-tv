@@ -1,0 +1,86 @@
+---
+export const prerender = false;
+import PageEditor from '../../components/admin/PageEditor.astro';
+import type { Section } from '../../components/admin/page-fields';
+import { getPage } from '../../lib/content';
+
+const eyebrow = { type: 'text', key: 'eyebrow', label: 'Small label above the headline', max: 140 } as const;
+
+const sections: Section[] = [
+  {
+    key: 'header', title: 'Top of the page',
+    intro: 'The page title, the introduction and the photo beside them.',
+    fields: [
+      eyebrow,
+      { type: 'headline' },
+      { type: 'textarea', key: 'lede', label: 'Introduction', max: 600 },
+      { type: 'photo', key: 'photo', altKey: 'photoAlt', label: 'Photo', ratio: 4 / 3, width: 'half' },
+    ],
+  },
+  {
+    key: 'story', title: 'Our story',
+    intro: 'The story of Beach Volleyball TV, with the Vision and Mission cards beside it.',
+    fields: [
+      eyebrow,
+      { type: 'headline' },
+      { type: 'paragraphs', label: 'Text' },
+      { type: 'text', key: 'linkLabel', label: 'Link to Instagram', max: 80 },
+      { type: 'sub', label: 'Cards' },
+      { type: 'text', key: 'visionTitle', label: 'First card title', max: 60, width: 'half' },
+      { type: 'text', key: 'missionTitle', label: 'Second card title', max: 60, width: 'half' },
+      { type: 'textarea', key: 'visionText', label: 'First card text', max: 600, width: 'half' },
+      { type: 'textarea', key: 'missionText', label: 'Second card text', max: 600, width: 'half' },
+    ],
+  },
+  {
+    key: 'growth', title: 'Instagram statistics', toggle: true,
+    intro: 'The Instagram figures. They’re also shown on the Partners & Sponsors page, so update them here when you have new numbers.',
+    fields: [
+      eyebrow,
+      { type: 'headline' },
+      { type: 'textarea', key: 'text', label: 'Text under the headline', max: 600 },
+      {
+        type: 'list', key: 'stats', label: 'Figures',
+        fields: [
+          { key: 'value', label: 'Figure', placeholder: 'e.g. 294,008', max: 20 },
+          { key: 'label', label: 'What it is', placeholder: 'e.g. followers', max: 80 },
+          { key: 'change', label: 'Change (optional)', placeholder: 'e.g. +31.4%', max: 20 },
+        ],
+      },
+      { type: 'text', key: 'period', label: 'Dates the figures cover', hint: 'Shown under the figures as “Instagram statistics, …”.', max: 80 },
+    ],
+  },
+  {
+    key: 'values', title: 'Our values', toggle: true,
+    intro: 'The numbered list of values. They’re numbered automatically, in this order.',
+    fields: [
+      eyebrow,
+      { type: 'headline' },
+      { type: 'list', key: 'items', label: 'Values', fields: [{ key: 'title', label: 'Value', max: 80 }, { key: 'text', label: 'Description', max: 400, long: true }] },
+    ],
+  },
+  {
+    key: 'team', title: 'Team', toggle: true,
+    intro: 'The profile at the bottom of the page.',
+    fields: [
+      eyebrow,
+      { type: 'headline' },
+      { type: 'text', key: 'name', label: 'Name', max: 80, width: 'half' },
+      { type: 'text', key: 'role', label: 'Role', max: 140, width: 'half' },
+      { type: 'photo', key: 'photo', altKey: 'photoAlt', label: 'Photo', ratio: 3 / 4, width: 'half', hint: 'Cropped portrait (taller than wide).' },
+      { type: 'text', key: 'photoCredit', label: 'Photo credit (optional)', hint: 'Shown under the photo, e.g. Photo: @photographer.', max: 140, width: 'half' },
+      { type: 'paragraphs', label: 'Profile', formatted: true },
+      { type: 'textarea', key: 'quote', label: 'Closing quote (optional)', hint: 'Shown large in italic at the end.', max: 600 },
+    ],
+  },
+];
+---
+
+<PageEditor
+  name="about"
+  title="About page"
+  intro="Change the wording and photos on the About page."
+  sections={sections}
+  data={getPage('about')}
+  viewHref="/about/"
+/>

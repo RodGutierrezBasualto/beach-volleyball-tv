@@ -1,9 +1,12 @@
 ---
-import { instagramStats } from '../data/instagram-stats';
+// Instagram figures, edited in the admin (About page → Instagram statistics).
+import { getPage } from '../lib/content';
+
+const { stats, period } = getPage('about').growth;
 ---
 
 <div class="stats-row" data-reveal>
-  {instagramStats.items.map((s) => (
+  {stats.map((s) => (
     <div class="stat-tile">
       <b>{s.value}</b>
       <span>{s.label}</span>
@@ -11,4 +14,4 @@ import { instagramStats } from '../data/instagram-stats';
     </div>
   ))}
 </div>
-<p class="stats-note">Instagram statistics, {instagramStats.period}.</p>
+{period && <p class="stats-note">Instagram statistics, {period}.</p>}

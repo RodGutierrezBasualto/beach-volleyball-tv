@@ -1,0 +1,133 @@
+---
+// The admin "edit page" screen: one box per section of the page, built from a
+// list of fields. Saves to /api/admin/page/<name>.
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import ImagePicker from './ImagePicker.astro';
+import type { PageName } from '../../data/pages';
+import type { Section } from './page-fields';
+
+interface Props { name: PageName; title: string; intro: string; sections: Section[]; data: object; viewHref: string }
+const { name, title, intro, sections, data, viewHref } = Astro.props;
+const saved = Astro.url.searchParams.has('saved');
+
+const sectionData = (s: string) => (data as Record<string, Record<string, unknown>>)[s] ?? {};
+const val = (s: string, k: string) => String(sectionData(s)[k] ?? '');
+const listItems = (s: string, k: string) => (sectionData(s)[k] ?? []) as Record<string, string>[];
+const FORMAT_HINT = 'Put *stars* around words for italic, and **two stars** for bold.';
+const EXTRA_ROWS = 2;
+const MAX_ROWS = 12;
+---
+
+<AdminLayout title={title} active={name}>
+  <div class="adm-head">
+    <h1>{title}</h1>
+    <span class="spacer"></span>
+    <a class="button" href={viewHref} target="_blank" rel="noopener">View page ↗</a>
+  </div>
+  <p class="adm-sub">{intro}</p>
+
+  {saved && <div class="notice notice-success" role="status">{title} saved. The changes will be live in about a minute.</div>}
+  <div class="notice notice-error" role="alert" data-errors hidden></div>
+
+  <form class="editor" data-editor={`page/${name}`} data-nested data-name-hint={name} novalidate>
+    <div class="editor__main">
+      {sections.map((sec) => (
+        <section class="postbox">
+          <h2>{sec.title}</h2>
+          <div class="postbox__body">
+            <p class="hint" style="margin:0 0 4px">{sec.intro}</p>
+            {sec.toggle && (
+              <label class="choice">
+                <input type="checkbox" name={`${sec.key}.show`} checked={sectionData(sec.key).show !== false} />
+                <span><b>Show this section</b><small>Untick to hide it from the page.</small></span>
+              </label>
+            )}
+            <div class="home-fields">
+              {sec.fields.map((f) => {
+                const id = (k: string) => `${sec.key}-${k}`;
+                const field = (k: string) => `${sec.key}.${k}`;
+                if (f.type === 'sub') return <h3 class="home-sub">{f.label}</h3>;
+                if (f.type === 'note') return <p class="hint">{f.text}</p>;
+                if (f.type === 'headline') return (
+                  <div class="field-row field-row--2">
+                    <div class="field"><label for={id('title')}>Headline</label><input id={id('title')} name={field('title')} type="text" value={val(sec.key, 'title')} maxlength="140" /></div>
+                    <div class="field">
+                      <label for={id('em')}>Words in italic <small>(optional)</small></label>
+                      <input id={id('em')} name={field('em')} type="text" value={val(sec.key, 'em')} maxlength="140" />
+                      <span class="hint">Shown in italic at the end of the headline.</span>
+                    </div>
+                  </div>
+                );
+                if (f.type === 'paragraphs') return (
+                  <div class="field">
+                    <label for={id('paragraphs')}>{f.label}</label>
+                    <textarea id={id('paragraphs')} name={field('paragraphs')} rows={f.formatted ? 12 : 6}>{((sectionData(sec.key).paragraphs as string[]) ?? []).join('\n\n')}</textarea>
+                    <span class="hint">Leave an empty line to start a new paragraph.{f.formatted && ` ${FORMAT_HINT}`}</span>
+                  </div>
+                );
+                if (f.type === 'photo') return (
+                  <div class:list={['field', f.width === 'half' && 'home-half']}>
+                    <span class="label">{f.label}</span>
+                    <ImagePicker name={field(f.key)} value={val(sec.key, f.key)} alt={val(sec.key, f.altKey)} altName={field(f.altKey)} label={f.label} ratio={f.ratio} />
+                    {f.hint && <span class="hint">{f.hint}</span>}
+                  </div>
+                );
+                if (f.type === 'list') {
+                  const items = listItems(sec.key, f.key);
+                  const rows = f.itemNames ? f.itemNames.length : Math.min(MAX_ROWS, items.length + EXTRA_ROWS);
+                  const cols = f.fields.length > 1 ? `field-row field-row--${f.fields.length >= 3 ? 3 : 2}` : '';
+                  return (
+                    <div class="field">
+                      <span class="label">{f.label}</span>
+                      <div class="list-rows">
+                        {Array.from({ length: rows }, (_, i) => (
+                          <fieldset class="list-row">
+                            <legend>{f.itemNames?.[i] ?? `${i + 1}${i >= items.length ? ' (new)' : ''}`}</legend>
+                            <div class={cols}>
+                              {f.fields.map((lf) => (
+                                <div class="field">
+                                  <label for={id(`${f.key}-${i}-${lf.key}`)}>{lf.label}</label>
+                                  {lf.long
+                                    ? <textarea id={id(`${f.key}-${i}-${lf.key}`)} name={field(`${f.key}.${i}.${lf.key}`)} rows="2" maxlength={lf.max}>{items[i]?.[lf.key] ?? ''}</textarea>
+                                    : <input id={id(`${f.key}-${i}-${lf.key}`)} name={field(`${f.key}.${i}.${lf.key}`)} type="text" value={items[i]?.[lf.key] ?? ''} maxlength={lf.max} placeholder={lf.placeholder} />}
+                                </div>
+                              ))}
+                            </div>
+                          </fieldset>
+                        ))}
+                      </div>
+                      <span class="hint">{f.hint ?? (f.itemNames ? '' : 'Empty rows are left out. To remove an item, clear its boxes. Save to get more empty rows.')}</span>
+                    </div>
+                  );
+                }
+                return (
+                  <div class:list={['field', f.width && `home-${f.width}`]}>
+                    <label for={id(f.key)}>{f.label}</label>
+                    {f.type === 'textarea'
+                      ? <textarea id={id(f.key)} name={field(f.key)} rows="3" maxlength={f.max}>{val(sec.key, f.key)}</textarea>
+                      : <input id={id(f.key)} name={field(f.key)} type="text" value={val(sec.key, f.key)} maxlength={f.max} />}
+                    {(f.hint || f.formatted) && <span class="hint">{[f.hint, f.formatted && FORMAT_HINT].filter(Boolean).join(' ')}</span>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <div class="editor__side">
+      <section class="postbox">
+        <h2>Publish</h2>
+        <div class="postbox__body">
+          <p class="hint" style="margin:0">Changes go live on the website about a minute after you save.</p>
+          <a href={viewHref} target="_blank" rel="noopener">View page ↗</a>
+        </div>
+        <div class="publish-actions">
+          <span></span>
+          <button class="button button-primary button-large" type="submit">Save changes</button>
+        </div>
+      </section>
+    </div>
+  </form>
+</AdminLayout>

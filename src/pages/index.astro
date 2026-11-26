@@ -12,14 +12,10 @@ import ContactButton from '../components/ContactButton.astro';
 import { site } from '../data/site';
 import { channel } from '../data/videos';
 import { getArticles, getVideos, getHome, featuredVideo as getFeaturedVideo } from '../lib/content';
-import type { Headline } from '../data/home';
-import { upcomingEvents, eventDateLabel, eventTimeLabel } from '../lib/utils';
+import { upcomingEvents, eventDateLabel, eventTimeLabel, headlineHtml as headline } from '../lib/utils';
 
 const home = getHome();
 const { hero, welcome, purpose, partner, connect } = home;
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-/** Headline HTML for SectionHead: the plain words, then the italic words. */
-const headline = (h: Headline) => esc(h.title) + (h.em ? ` <em>${esc(h.em)}</em>` : '');
 
 const upcoming = upcomingEvents();
 const spotlight = upcoming.find((e) => e.featured);

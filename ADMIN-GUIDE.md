@@ -19,6 +19,8 @@ The admin has four sections, in the menu on the left:
 | **Events** | Tournaments, clinics, weekly games and community days | **Events** page, **Community** page, and the Home page |
 | **News** | Written stories (with photos and videos inside) | **News & Media** page and the Home page |
 | **Videos** | The YouTube library | **Videos** page, **News & Media** page, **Athletes** page and the Home page |
+| **Home page** | The home page's wording and photos | The Home page |
+| **About page** | The About page's wording, photos, values, team profile and Instagram figures | **About** page (Instagram figures also on **Partners & Sponsors**) |
 
 **Saving takes about a minute to appear.** When you press Save, the website rebuilds itself. A brand-new page may say "not found" for a minute. Wait and refresh.
 
@@ -130,6 +132,15 @@ Click **Home page** in the left menu to change the wording and photos on the hom
 - The **Partner with us** box has an **Extra note** for time-limited news. Update it or clear it when the news is over.
 
 Click **Save changes**. The home page updates about a minute later. Every headline and button needs some text, and a red box at the top will tell you if one is empty.
+
+## About page
+
+Click **About page** in the left menu. It works just like the Home page screen: one box per section, headlines with **Words in italic**, and a **Show this section** tickbox.
+
+- **Instagram statistics:** update the figures and the dates they cover whenever you have new numbers. They also appear on the **Partners & Sponsors** page.
+- **Lists** (the Instagram figures and Our values): each row is one item, shown in the same order. To **add** one, fill in an empty row at the end. To **remove** one, clear its boxes. After saving you get new empty rows again. Values are numbered for you.
+- **Team profile:** in the profile text, put \*stars\* around words for *italic* (e.g. a newspaper name) and \*\*two stars\*\* for **bold**.
+- **Photos:** the photo at the top is cropped 4:3 (a little wider than tall), and the profile photo is cropped as a portrait (taller than wide).
 
 ## Photos
 

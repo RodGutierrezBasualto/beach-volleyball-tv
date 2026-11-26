@@ -8,7 +8,7 @@ import type { Article, NewsCategory } from '../data/news';
 import { newsCategories } from '../data/news';
 import type { Video, VideoCategory } from '../data/videos';
 import { videoCategories } from '../data/videos';
-import { defaultHome, type HomeContent } from '../data/home';
+import { pages, type PageContents, type PageName } from '../data/pages';
 import { imageRegistry } from './content';
 import { cleanDoc, docHasContent, safeHref } from './rich';
 
@@ -140,44 +140,48 @@ export function cleanVideos(input: unknown): { videos: Video[]; errors: string[]
   return { videos, errors };
 }
 
-/* ---------- Home page ---------- */
-const HOME_SECTIONS: Record<keyof HomeContent, string> = {
-  hero: 'Top banner',
-  welcome: 'Welcome',
-  spotlight: 'Featured event',
-  videos: 'Videos',
-  news: 'Stories',
-  events: 'Events',
-  purpose: 'Our purpose',
-  partner: 'Partner with us',
-  connect: 'Connect with us',
-};
-/** Fields that can't be left empty (headlines and button text), when the section is shown. */
-const isRequired = (key: string) => key === 'title' || /(Title|Label|Link)$/.test(key);
-const isLong = (key: string) => /text|Text|note/.test(key);
+/* ---------- Editable pages (home, about) ---------- */
+/** Fields that can't be left empty (headlines, names and button text), when the section is shown. */
+const isRequired = (key: string) => key === 'title' || key === 'name' || /(Title|Label|Link)$/.test(key);
+const maxLength = (key: string) => (/text|Text|note|lede|quote/.test(key) ? 600 : key.endsWith('Alt') ? 200 : 140);
+/** Lists that always have the same number of items (e.g. one card per platform). Other lists drop empty items. */
+const FIXED_LISTS = new Set(['platforms']);
+const LIST_MAX = 12;
+const ITEM_NAMES: Record<string, string> = { title: 'a title', value: 'a figure' };
 
-export function cleanHome(input: unknown): { home: HomeContent; errors: string[] } {
+/**
+ * Cleans a page's content against its defaults: every field the defaults have
+ * is kept (and nothing else), with the type and length the defaults imply.
+ */
+export function cleanPage<N extends PageName>(name: N, input: unknown): { content: PageContents[N]; errors: string[] } {
   const errors: string[] = [];
+  const { defaults, sections } = pages[name];
   const raw = (input && typeof input === 'object' ? input : {}) as Record<string, Input>;
-  const home = structuredClone(defaultHome);
-  for (const section of Object.keys(home) as (keyof HomeContent)[]) {
-    const out = home[section] as Record<string, unknown>;
+  const content = structuredClone(defaults);
+  for (const [section, out] of Object.entries(content) as [string, Record<string, unknown>][]) {
+    const label = (sections as Record<string, string>)[section];
     const src = raw[section] ?? {};
+    const missing: string[] = []; // only reported when the section is shown
     for (const [key, fallback] of Object.entries(out)) {
       if (typeof fallback === 'boolean') out[key] = bool(src[key]);
       else if (key === 'paragraphs') out[key] = paragraphs(src[key]).map((p) => p.slice(0, 1200));
-      else if (key === 'platforms') {
-        const list = Array.isArray(src[key]) ? (src[key] as Input[]) : [];
-        out[key] = (fallback as { title: string; text: string }[]).map((_, i) => ({ title: str(list[i]?.title, 80), text: str(list[i]?.text, 200) }));
-      } else if (key === 'photoA' || key === 'photoB') {
+      else if (Array.isArray(fallback)) {
+        const fields = Object.keys(fallback[0] ?? {});
+        const list = (Array.isArray(src[key]) ? src[key] : []) as Input[];
+        const fixed = FIXED_LISTS.has(key);
+        const items = Array.from({ length: fixed ? fallback.length : Math.min(list.length, LIST_MAX) }, (_, i) =>
+          Object.fromEntries(fields.map((f) => [f, str(list[i]?.[f], maxLength(f))])),
+        ).filter((item) => fixed || fields.some((f) => item[f]));
+        if (items.some((item) => !item[fields[0]])) missing.push(`${label}: every item in the list needs ${ITEM_NAMES[fields[0]] ?? 'its first box filled in'}.`);
+        out[key] = items;
+      } else if (/^photo[A-Z]?$/.test(key)) {
         out[key] = str(src[key], 120) || fallback;
-        checkImage(out[key] as string, errors, `${HOME_SECTIONS[section]}: a photo`);
-      } else out[key] = str(src[key], isLong(key) ? 600 : key.endsWith('Alt') ? 200 : 140);
+        checkImage(out[key] as string, errors, `${label}: a photo`);
+      } else out[key] = str(src[key], maxLength(key));
     }
     if (out.show === false) continue;
-    const name = HOME_SECTIONS[section];
-    for (const [key, v] of Object.entries(out)) if (isRequired(key) && v === '') errors.push(`${name}: please fill in every headline and button text.`);
-    if (section === 'welcome' && home.welcome.platforms.some((p) => !p.title)) errors.push(`${name}: each of the three platform cards needs a title.`);
+    if (Object.entries(out).some(([key, v]) => isRequired(key) && v === '')) errors.push(`${label}: please fill in every headline, name and button text.`);
+    errors.push(...missing);
   }
-  return { home, errors: [...new Set(errors)] };
+  return { content, errors: [...new Set(errors)] };
 }
