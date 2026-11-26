@@ -29,10 +29,11 @@ Needs Node 22+. Locally, `npm run dev` reads and writes the files in `content/` 
 - **Login:** a signed, httpOnly, SameSite=Strict session cookie (7 days), with login attempts rate-limited.
 - **Events:** list, search, filter (upcoming / past / drafts), bulk delete (including "select all past events"), and create/edit/delete.
 - **News:** the same list tools, plus a Word-style editor built on [Tiptap](https://tiptap.dev) (MIT). It handles headings, bold/italic/underline, lists, quotes, links, inline photos and YouTube videos, and pastes cleanly from Word and Google Docs. Stories are stored as JSON, cleaned against a whitelist on the server (`src/lib/rich.ts`) and rendered to HTML there; raw HTML is never stored.
-- **Home page** and **About page:** edit each page's wording, headlines, button text, lists and photos, and show or hide sections. Events, stories and videos on the home page still come from their own sections.
+- **Home, About and Partners pages:** edit each page's wording, headlines, button text, lists and photos, and show or hide sections. Events, stories and videos on the home page still come from their own sections.
   - Each page is saved in `content/<page>.json`. Its defaults (which also define the fields) are in `src/data/<page>.ts`, and anything missing from the JSON falls back to them. Pages are registered in `src/data/pages.ts`.
-  - The admin screens (`src/pages/admin/home.astro`, `about.astro`) list the boxes to show; `src/components/admin/PageEditor.astro` draws them and saves to `/api/admin/page/<page>`. Saved content is checked against the defaults in `cleanPage` (`src/lib/validate.ts`).
+  - The admin screens (`src/pages/admin/home.astro`, `about.astro`, `partners.astro`, `settings.astro`) list the boxes to show; `src/components/admin/PageEditor.astro` draws them and saves to `/api/admin/page/<page>`. Saved content is checked against the defaults in `cleanPage` (`src/lib/validate.ts`).
   - To make another page editable: add its defaults file, register it in `pages.ts`, add an admin screen and a menu item, and read it in the page with `getPage('<page>')`.
+- **Settings:** emails, social media links, community group invite links, the footer text and the search engine description. Uses the same editor; every page reads them through `site`.
 - **Videos:** paste a YouTube link to add a video (the title is fetched automatically). Reorder, recategorise, choose the featured video, remove.
 - **Photos:** cropped in the browser to the site's 16:10 format, with a "safe area" guide (editable pages can use other shapes: square home collage photos, a 3:4 profile portrait). They're exported at 1600 px and 800 px, compressed to WebP (JPEG on Safari) and uploaded. Uploads that nothing uses any more are cleaned up automatically.
 - **Drafts:** hidden from the public, but previewable by a logged-in admin.
@@ -61,6 +62,8 @@ content/
   videos.json     YouTube library
   home.json       home page wording and photos (created on the first save)
   about.json      About page wording, photos and Instagram stats (created on the first save)
+  partners.json   Partners & Sponsors page wording and photo (created on the first save)
+  settings.json   emails, social and group links, footer text, search description (created on the first save)
   images.json     registry of uploaded photos
   uploads/        uploaded photos
 ```
@@ -135,7 +138,7 @@ scripts/            build helper (copies uploads into the site)
 ### Other settings
 
 - **Contact buttons:** `contactEnabled` in `src/data/site.ts`. While it's `false`, "Contact us", "Enquire", mailing-list and contact-form buttons are shown but do nothing. Set it to `true` to switch them on.
-- **Social links, groups and emails** (YouTube, Instagram, TikTok, Instagram group, WhatsApp group/community, partnerships email): `src/data/site.ts`.
+- **Social links, groups and emails** (YouTube, Instagram, TikTok, Instagram group, WhatsApp group/community, main and partnerships email), the **footer text** and the **search engine description**: edited in the admin (Settings), saved in `content/settings.json`, defaults in `src/data/settings.ts`. Code reads them through `site` in `src/data/site.ts` as before (`site.email`, `site.instagram.url`, …).
 - **Instagram stats** (About and Partners pages): edited in the admin (About page → Instagram statistics), saved in `content/about.json`.
 - **Contact form:** set `formEndpoint` in `src/data/site.ts` to a Formspree, Web3Forms or Basin URL to receive submissions. While it's empty, the form opens the visitor's email app pre-filled to the site's email address.
 - **Hero ball:** its colours are the constants at the top of `src/scripts/hero-ball.ts`. The seam shapes come from the MIT-licensed Tabler icon set.

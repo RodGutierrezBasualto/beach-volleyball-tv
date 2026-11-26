@@ -1,28 +1,31 @@
-// Central site settings. Edit contact details, social links and navigation here.
+// Central site settings and navigation.
+// Contact details, social links, community group links, the footer text and the
+// search engine description are edited in the admin (Settings) and saved to
+// content/settings.json; their defaults are in src/data/settings.ts. The getters
+// below read the saved values, so they're always current.
+import { getPage } from '../lib/content';
+
+const settings = () => getPage('settings');
+const subscribeUrl = (url: string) => `${url}${url.includes('?') ? '&' : '?'}sub_confirmation=1`;
 
 export const site = {
   name: 'Beach Volleyball TV',
   shortName: 'BVTV',
   tagline: 'Community. Sport. Stories.',
-  strapline: 'A world of entertainment, inspiration, sport and business',
-  description:
-    'Your home for beach volleyball news, weekly broadcasts, athlete interviews, tournament highlights and inspiring stories from Australia and around the world.',
+  get footerText() { return settings().site.footerText; },
+  get description() { return settings().site.description; },
   url: 'https://beachvolleyballtv.com.au',
   locale: 'en_AU',
-  email: 'info@beachvolleyballtv.com.au',
+  get email() { return settings().contact.email; },
   /** Partnerships & sponsorship contact. */
-  partnerships: { name: 'Christie', email: 'beachvolleyballtv@proton.me' },
-  youtube: {
-    handle: '@beachvolleyballtv',
-    url: 'https://www.youtube.com/@beachvolleyballtv',
-    subscribeUrl: 'https://www.youtube.com/@beachvolleyballtv?sub_confirmation=1',
-  },
-  instagram: { handle: '@beachvolleyballtv', url: 'https://www.instagram.com/beachvolleyballtv/' },
-  tiktok: { handle: '@gepbeachvolleyball', url: 'https://www.tiktok.com/@gepbeachvolleyball' },
+  get partnerships() { const c = settings().contact; return { name: c.partnershipsName, email: c.partnershipsEmail }; },
+  get youtube() { const s = settings().social; return { handle: s.youtubeHandle, url: s.youtubeUrl, subscribeUrl: subscribeUrl(s.youtubeUrl) }; },
+  get instagram() { const s = settings().social; return { handle: s.instagramHandle, url: s.instagramUrl }; },
+  get tiktok() { const s = settings().social; return { handle: s.tiktokHandle, url: s.tiktokUrl }; },
   /** Community groups. */
-  instagramGroup: 'https://ig.me/j/YmY7KdVv6y4uCYsf/',
-  whatsappGroup: 'https://chat.whatsapp.com/GFYWqurPR2ODjwgTqa6paM',
-  whatsappCommunity: 'https://chat.whatsapp.com/K04yS88qpQx6QrFAeZanCJ?s=cl&p=i&iam=2',
+  get instagramGroup() { return settings().community.instagramGroupUrl; },
+  get whatsappGroup() { return settings().community.whatsappGroupUrl; },
+  get whatsappCommunity() { return settings().community.whatsappCommunityUrl; },
   /**
    * Contact buttons ("Contact us", "Enquire", the contact form, mailing list…).
    * While false they are shown but do nothing. Set to true to switch them on.
@@ -67,7 +70,7 @@ export const enquiryTypes = [
   { value: 'general', label: 'General enquiry' },
   { value: 'media', label: 'Media & interviews' },
   { value: 'events', label: 'Events & bookings' },
-  { value: 'partnership', label: 'Sponsorship & partnerships', to: site.partnerships.email },
+  { value: 'partnership', label: 'Sponsorship & partnerships', get to() { return site.partnerships.email; } },
   { value: 'community', label: 'Get involved / volunteer' },
 ];
 

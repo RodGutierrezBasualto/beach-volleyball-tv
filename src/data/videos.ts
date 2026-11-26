@@ -21,6 +21,6 @@ export interface Video {
 export const videoCategories: VideoCategory[] = ['Interviews', 'Tournaments', 'Highlights', 'Podcasts'];
 
 export const channel = {
-  url: site.youtube.url,
-  subscribeUrl: site.youtube.subscribeUrl,
+  get url() { return site.youtube.url; },
+  get subscribeUrl() { return site.youtube.subscribeUrl; },
 };

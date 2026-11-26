@@ -140,10 +140,13 @@ export function cleanVideos(input: unknown): { videos: Video[]; errors: string[]
   return { videos, errors };
 }
 
-/* ---------- Editable pages (home, about) ---------- */
+/* ---------- Editable pages (home, about, partners) and Settings ---------- */
 /** Fields that can't be left empty (headlines, names and button text), when the section is shown. */
-const isRequired = (key: string) => key === 'title' || key === 'name' || /(Title|Label|Link)$/.test(key);
-const maxLength = (key: string) => (/text|Text|note|lede|quote/.test(key) ? 600 : key.endsWith('Alt') ? 200 : 140);
+const isRequired = (key: string) => key === 'title' || key === 'name' || key === 'email' || /(Title|Label|Link|Url|Email|Handle|Name)$/.test(key);
+const maxLength = (key: string) => (/text|Text|note|lede|quote|description/.test(key) ? 600 : /Url$/.test(key) ? 400 : key.endsWith('Alt') ? 200 : 140);
+const isEmailKey = (key: string) => key === 'email' || key.endsWith('Email');
+const isWebAddress = (v: string) => /^https:\/\/[^\s/]+\.[^\s]+$/.test(v);
+const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 /** Lists that always have the same number of items (e.g. one card per platform). Other lists drop empty items. */
 const FIXED_LISTS = new Set(['platforms']);
 const LIST_MAX = 12;
@@ -177,7 +180,12 @@ export function cleanPage<N extends PageName>(name: N, input: unknown): { conten
       } else if (/^photo[A-Z]?$/.test(key)) {
         out[key] = str(src[key], 120) || fallback;
         checkImage(out[key] as string, errors, `${label}: a photo`);
-      } else out[key] = str(src[key], maxLength(key));
+      } else {
+        const v = str(src[key], maxLength(key));
+        out[key] = v;
+        if (v && key.endsWith('Url') && !isWebAddress(v)) errors.push(`${label}: links must be full web addresses starting with https:// (copy them from the address bar or the app’s Share button).`);
+        if (v && isEmailKey(key) && !isEmail(v)) errors.push(`${label}: “${v}” doesn’t look like an email address.`);
+      }
     }
     if (out.show === false) continue;
     if (Object.entries(out).some(([key, v]) => isRequired(key) && v === '')) errors.push(`${label}: please fill in every headline, name and button text.`);

@@ -80,7 +80,15 @@ const MAX_ROWS = 12;
                     <div class="field">
                       <span class="label">{f.label}</span>
                       <div class="list-rows">
-                        {Array.from({ length: rows }, (_, i) => (
+                        {f.fields.length === 1 ? Array.from({ length: rows }, (_, i) => {
+                          const lf = f.fields[0];
+                          return (
+                            <div class="list-row--compact">
+                              <span aria-hidden="true">{i + 1}</span>
+                              <input type="text" name={field(`${f.key}.${i}.${lf.key}`)} value={items[i]?.[lf.key] ?? ''} maxlength={lf.max} placeholder={i >= items.length ? 'Add another…' : lf.placeholder} aria-label={`${lf.label} ${i + 1}`} />
+                            </div>
+                          );
+                        }) : Array.from({ length: rows }, (_, i) => (
                           <fieldset class="list-row">
                             <legend>{f.itemNames?.[i] ?? `${i + 1}${i >= items.length ? ' (new)' : ''}`}</legend>
                             <div class={cols}>

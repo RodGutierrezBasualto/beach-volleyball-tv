@@ -1,6 +1,6 @@
 /** Describes the boxes on an admin "edit page" screen (see PageEditor.astro). */
 export type Field =
-  | { type: 'text' | 'textarea'; key: string; label: string; hint?: string; max?: number; width?: 'half' | 'third'; formatted?: boolean }
+  | { type: 'text' | 'textarea'; key: string; label: string; hint?: string; max?: number; width?: 'half' | 'third' | 'wide'; formatted?: boolean }
   /** Headline + "Words in italic" (keys title / em). */
   | { type: 'headline' }
   | { type: 'paragraphs'; label: string; formatted?: boolean }

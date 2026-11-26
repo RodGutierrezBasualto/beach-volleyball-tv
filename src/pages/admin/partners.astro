@@ -1,0 +1,65 @@
+---
+export const prerender = false;
+import PageEditor from '../../components/admin/PageEditor.astro';
+import type { Section } from '../../components/admin/page-fields';
+import { getPage } from '../../lib/content';
+
+const eyebrow = { type: 'text', key: 'eyebrow', label: 'Small label above the headline', max: 140 } as const;
+
+const sections: Section[] = [
+  {
+    key: 'header', title: 'Top of the page',
+    intro: 'The page title, the introduction, the buttons and the photo beside them.',
+    fields: [
+      eyebrow,
+      { type: 'headline' },
+      { type: 'textarea', key: 'lede', label: 'Introduction', max: 600 },
+      { type: 'text', key: 'buttonLabel', label: 'Main button', hint: 'Opens the contact form for partnership enquiries. The second button (“Email …”) uses the partnerships contact from Settings.', max: 40 },
+      { type: 'photo', key: 'photo', altKey: 'photoAlt', label: 'Photo', ratio: 4 / 3, width: 'half' },
+    ],
+  },
+  {
+    key: 'intro', title: 'Introduction',
+    intro: 'The pitch to partners, with the “Ways to partner” card beside it.',
+    fields: [
+      eyebrow,
+      { type: 'headline' },
+      { type: 'paragraphs', label: 'Text' },
+      { type: 'sub', label: 'Card: Ways to partner' },
+      { type: 'text', key: 'waysTitle', label: 'Card title', max: 60 },
+      { type: 'list', key: 'ways', label: 'Ways to partner', fields: [{ key: 'title', label: 'Way to partner', max: 80 }] },
+    ],
+  },
+  {
+    key: 'now', title: 'Happening now', toggle: true,
+    intro: 'The highlighted card for current news, such as an upcoming event. Remember to update it, or hide it, when it’s over.',
+    fields: [
+      { type: 'text', key: 'title', label: 'Card title', max: 60 },
+      { type: 'textarea', key: 'text', label: 'Text', hint: 'Shown in bold.', max: 600 },
+      { type: 'text', key: 'linkText', label: 'Link text (optional)', hint: 'Opens the Events page. Leave it empty for no link.', max: 60 },
+    ],
+  },
+  {
+    key: 'reach', title: 'Our reach', toggle: true,
+    intro: 'The Instagram figures. To change the figures themselves, go to About page → Instagram statistics.',
+    fields: [eyebrow, { type: 'headline' }],
+  },
+  {
+    key: 'talk', title: 'Talk to us', toggle: true,
+    intro: 'The last section. Its heading shows the partnerships contact name and email from Settings.',
+    fields: [
+      { type: 'text', key: 'eyebrow', label: 'Small label', max: 140 },
+      { type: 'text', key: 'buttonLabel', label: 'Button', hint: 'Opens the contact form for partnership enquiries.', max: 40 },
+    ],
+  },
+];
+---
+
+<PageEditor
+  name="partners"
+  title="Partners page"
+  intro="Change the wording and photo on the Partners & Sponsors page."
+  sections={sections}
+  data={getPage('partners')}
+  viewHref="/partners/"
+/>

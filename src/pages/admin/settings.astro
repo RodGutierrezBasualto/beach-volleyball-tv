@@ -1,0 +1,56 @@
+---
+export const prerender = false;
+import PageEditor from '../../components/admin/PageEditor.astro';
+import type { Section } from '../../components/admin/page-fields';
+import { getPage } from '../../lib/content';
+
+const sections: Section[] = [
+  {
+    key: 'contact', title: 'Email addresses',
+    intro: 'Shown in the footer and on the Contact and Partners pages. Messages from the contact form go to these addresses.',
+    fields: [
+      { type: 'text', key: 'email', label: 'Main email address', hint: 'For general, media, events and volunteering enquiries.', max: 120 },
+      { type: 'text', key: 'partnershipsName', label: 'Partnerships contact name', hint: 'Shown as “Email …” on the Partners page.', max: 60, width: 'half' },
+      { type: 'text', key: 'partnershipsEmail', label: 'Partnerships email address', hint: 'For sponsorship and partnership enquiries.', max: 120, width: 'half' },
+    ],
+  },
+  {
+    key: 'social', title: 'Social media',
+    intro: 'The accounts linked in the header, footer and across the website. The name is shown as text (e.g. @beachvolleyballtv); the link is where it goes.',
+    fields: [
+      { type: 'text', key: 'instagramHandle', label: 'Instagram name', max: 60, width: 'third' },
+      { type: 'text', key: 'instagramUrl', label: 'Instagram link', max: 400, width: 'wide' },
+      { type: 'text', key: 'youtubeHandle', label: 'YouTube name', max: 60, width: 'third' },
+      { type: 'text', key: 'youtubeUrl', label: 'YouTube link', hint: 'The channel page. “Subscribe” buttons use it too.', max: 400, width: 'wide' },
+      { type: 'text', key: 'tiktokHandle', label: 'TikTok name', max: 60, width: 'third' },
+      { type: 'text', key: 'tiktokUrl', label: 'TikTok link', max: 400, width: 'wide' },
+    ],
+  },
+  {
+    key: 'community', title: 'Community groups',
+    intro: 'Invite links for the groups. If a link is reset in the app, paste the new one here and every button on the website updates.',
+    fields: [
+      { type: 'text', key: 'instagramGroupUrl', label: 'Instagram group invite link', max: 400 },
+      { type: 'text', key: 'whatsappGroupUrl', label: 'WhatsApp group invite link', max: 400 },
+      { type: 'text', key: 'whatsappCommunityUrl', label: 'WhatsApp community invite link', max: 400 },
+    ],
+  },
+  {
+    key: 'site', title: 'Website text',
+    intro: 'Text used across the whole website.',
+    fields: [
+      { type: 'textarea', key: 'footerText', label: 'Footer text', hint: 'Shown under the logo at the bottom of every page.', max: 600 },
+      { type: 'textarea', key: 'description', label: 'Search engine description', hint: 'What Google shows under the site name, and the text shown when the home page is shared. One or two sentences (about 160 characters) work best.', max: 600 },
+    ],
+  },
+];
+---
+
+<PageEditor
+  name="settings"
+  title="Settings"
+  intro="Email addresses, social media and community group links, and text used across the whole website."
+  sections={sections}
+  data={getPage('settings')}
+  viewHref="/contact/"
+/>

@@ -4,16 +4,18 @@ import '../styles/admin.css';
 
 interface Props {
   title: string;
-  active?: 'dashboard' | 'home' | 'about' | 'events' | 'news' | 'videos';
+  active?: 'dashboard' | 'home' | 'about' | 'partners' | 'settings' | 'events' | 'news' | 'videos';
 }
 const { title, active } = Astro.props;
 const nav = [
   { key: 'dashboard', label: 'Dashboard', href: '/admin/', icon: 'level' },
   { key: 'home', label: 'Home page', href: '/admin/home/', icon: 'star' },
   { key: 'about', label: 'About page', href: '/admin/about/', icon: 'users' },
+  { key: 'partners', label: 'Partners page', href: '/admin/partners/', icon: 'handshake' },
   { key: 'events', label: 'Events', href: '/admin/events/', icon: 'calendar' },
   { key: 'news', label: 'News', href: '/admin/news/', icon: 'megaphone' },
   { key: 'videos', label: 'Videos', href: '/admin/videos/', icon: 'youtube' },
+  { key: 'settings', label: 'Settings', href: '/admin/settings/', icon: 'settings' },
 ] as const;
 ---
 

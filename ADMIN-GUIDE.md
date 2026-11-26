@@ -21,6 +21,8 @@ The admin has four sections, in the menu on the left:
 | **Videos** | The YouTube library | **Videos** page, **News & Media** page, **Athletes** page and the Home page |
 | **Home page** | The home page's wording and photos | The Home page |
 | **About page** | The About page's wording, photos, values, team profile and Instagram figures | **About** page (Instagram figures also on **Partners & Sponsors**) |
+| **Partners page** | The Partners & Sponsors page's wording and photo | **Partners & Sponsors** page |
+| **Settings** | Email addresses, social media and group links, footer text | Every page |
 
 **Saving takes about a minute to appear.** When you press Save, the website rebuilds itself. A brand-new page may say "not found" for a minute. Wait and refresh.
 
@@ -141,6 +143,25 @@ Click **About page** in the left menu. It works just like the Home page screen: 
 - **Lists** (the Instagram figures and Our values): each row is one item, shown in the same order. To **add** one, fill in an empty row at the end. To **remove** one, clear its boxes. After saving you get new empty rows again. Values are numbered for you.
 - **Team profile:** in the profile text, put \*stars\* around words for *italic* (e.g. a newspaper name) and \*\*two stars\*\* for **bold**.
 - **Photos:** the photo at the top is cropped 4:3 (a little wider than tall), and the profile photo is cropped as a portrait (taller than wide).
+
+## Partners page
+
+Click **Partners page** in the left menu. It works like the Home and About screens.
+
+- **Happening now** is the highlighted card for current news, such as an upcoming event. **Update it or untick “Show this section” when the news is over**, so the page never shows an old date.
+- **Ways to partner:** one per row. Fill in an empty row to add one, and clear a row to remove it.
+- The **Instagram figures** come from **About page → Instagram statistics**, and the partnerships **name and email** come from **Settings**.
+
+## Settings
+
+Click **Settings** at the bottom of the left menu. Changes here apply to **every page** of the website.
+
+- **Email addresses:** the main email, and the partnerships contact (name and email). Messages from the contact form go to these addresses: partnership enquiries to the partnerships email, everything else to the main email.
+- **Social media:** each account has a **name** (shown as text, e.g. @beachvolleyballtv) and a **link** (where it goes).
+- **Community groups:** the Instagram group, WhatsApp group and WhatsApp community invite links. **If a group's invite link is reset in the app, paste the new one here.** Every button on the website updates.
+- **Website text:** the footer text, and the **search engine description** (what Google shows under the site name).
+
+Links must be full web addresses starting with `https://`. Copy them from the browser's address bar, or from the app's **Share** or **Invite via link** button. If one isn't right, a red box at the top will tell you.
 
 ## Photos
 

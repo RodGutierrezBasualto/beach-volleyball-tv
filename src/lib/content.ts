@@ -1,5 +1,5 @@
 /**
- * Content store: events, news, videos, editable pages (home, about) and the uploaded-photo registry.
+ * Content store: events, news, videos, editable pages (home, about, partners), settings and the uploaded-photo registry.
  *
  * Content is held in memory for fast page rendering and persisted through
  * the storage backend (local files, or the GitHub repository on Cloudflare —

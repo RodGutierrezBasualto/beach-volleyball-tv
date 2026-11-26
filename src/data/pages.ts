@@ -1,9 +1,12 @@
-// Pages whose wording and photos are edited in the admin. Each is saved to
-// content/<name>.json; its defaults fill in anything not saved yet.
+// Pages whose wording and photos are edited in the admin (plus the site-wide
+// Settings). Each is saved to content/<name>.json; its defaults fill in
+// anything not saved yet.
 import { defaultHome, type HomeContent } from './home';
 import { defaultAbout, type AboutContent } from './about';
+import { defaultPartners, type PartnersContent } from './partners';
+import { defaultSettings, type SettingsContent } from './settings';
 
-export interface PageContents { home: HomeContent; about: AboutContent }
+export interface PageContents { home: HomeContent; about: AboutContent; partners: PartnersContent; settings: SettingsContent }
 export type PageName = keyof PageContents;
 
 export const pages: { [N in PageName]: { defaults: PageContents[N]; path: string; sections: Record<keyof PageContents[N], string> } } = {
@@ -19,6 +22,16 @@ export const pages: { [N in PageName]: { defaults: PageContents[N]; path: string
     defaults: defaultAbout,
     path: '/about/',
     sections: { header: 'Top of the page', story: 'Our story', growth: 'Instagram statistics', values: 'Our values', team: 'Team' },
+  },
+  partners: {
+    defaults: defaultPartners,
+    path: '/partners/',
+    sections: { header: 'Top of the page', intro: 'Introduction', now: 'Happening now', reach: 'Our reach', talk: 'Talk to us' },
+  },
+  settings: {
+    defaults: defaultSettings,
+    path: '/contact/',
+    sections: { contact: 'Email addresses', social: 'Social media', community: 'Community groups', site: 'Website text' },
   },
 };
 

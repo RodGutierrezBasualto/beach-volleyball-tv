@@ -5,23 +5,19 @@ import ContactButton from '../components/ContactButton.astro';
 import InstagramStats from '../components/InstagramStats.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
+import { getPage } from '../lib/content';
+import { headlineHtml } from '../lib/utils';
 
-const ways = ['Sponsorships', 'Advertising', 'Branded content', 'Event partnerships', 'Media collaborations', 'Podcasts & athlete interviews'];
+const { header, intro, now, reach, talk } = getPage('partners');
 ---
 
 <BaseLayout
   title="Partners & Sponsors — Advertising, Sponsorship & Commercial Partnerships"
   description="Partner with Beach Volleyball TV and connect your brand with a growing community of athletes, sporting enthusiasts, families and fans across Australia and beyond."
 >
-  <PageHeader
-    eyebrow="Partners & sponsors"
-    title="Advertising, sponsorship <em>& commercial partnerships</em>"
-    lede="Partner with Beach Volleyball TV and connect your brand with a growing community of athletes, sporting enthusiasts, families and fans across Australia and beyond."
-    image="bv-ball-sand"
-    imageAlt="A volleyball resting in the sand beside the court line"
-  >
+  <PageHeader eyebrow={header.eyebrow} title={headlineHtml(header)} lede={header.lede} image={header.photo} imageAlt={header.photoAlt}>
     <Fragment slot="actions">
-      <ContactButton label="Partner with us" href="/contact/?type=partnership" />
+      <ContactButton label={header.buttonLabel} href="/contact/?type=partnership" />
       <a class="btn btn--ghost" href={`mailto:${site.partnerships.email}`}><Icon name="mail" /> Email {site.partnerships.name}</a>
     </Fragment>
   </PageHeader>
@@ -29,47 +25,51 @@ const ways = ['Sponsorships', 'Advertising', 'Branded content', 'Event partnersh
   <section class="section">
     <div class="container split">
       <div data-reveal>
-        <span class="eyebrow">Let’s make a difference together</span>
-        <h2 class="display-l" style="margin-top:14px">More than a partnership — <em>a shared purpose</em></h2>
-        <p class="lede" style="margin-top:20px">Explore advertising, sponsorship and commercial partnership opportunities through our digital media platforms, podcasts, athlete interviews, event coverage and community initiatives.</p>
-        <p class="lede" style="margin-top:14px">We work with businesses, brands and organisations to create meaningful collaborations that increase visibility, strengthen brand engagement and deliver mutual value. Together, we can support athletes, grow the sport and make a positive impact in our communities.</p>
-        <p class="lede" style="margin-top:14px">By partnering with Beach Volleyball TV, you’re helping us tell inspiring stories, support athletes, create opportunities and make sport more accessible to everyone — building meaningful relationships, increasing brand visibility and making a lasting impact locally, nationally and globally.</p>
+        <span class="eyebrow">{intro.eyebrow}</span>
+        <h2 class="display-l" style="margin-top:14px" set:html={headlineHtml(intro)} />
+        {intro.paragraphs.map((p, i) => <p class="lede" style={`margin-top:${i ? 14 : 20}px`}>{p}</p>)}
       </div>
       <div class="info-cards">
         <article class="info-card" data-reveal style="--d:.06s">
           <span class="info-card__icon"><Icon name="handshake" /></span>
-          <h3>Ways to partner</h3>
-          <ul class="tick-list" role="list">{ways.map((w) => <li>{w}</li>)}</ul>
+          <h3>{intro.waysTitle}</h3>
+          <ul class="tick-list" role="list">{intro.ways.map((w) => <li>{w.title}</li>)}</ul>
         </article>
-        <article class="info-card info-card--accent" data-reveal style="--d:.12s">
-          <span class="info-card__icon"><Icon name="megaphone" /></span>
-          <h3>Happening now</h3>
-          <p><b>We are currently running a 10-week podcast at the Budgy Smuggler store in Bondi, with a beach volleyball community day and gala night coming 12 December.</b></p>
-          <a class="link-arrow" href="/events/">See the community day <Icon name="arrow" /></a>
-        </article>
+        {now.show && (
+          <article class="info-card info-card--accent" data-reveal style="--d:.12s">
+            <span class="info-card__icon"><Icon name="megaphone" /></span>
+            <h3>{now.title}</h3>
+            {now.text && <p><b>{now.text}</b></p>}
+            {now.linkText && <a class="link-arrow" href="/events/">{now.linkText} <Icon name="arrow" /></a>}
+          </article>
+        )}
       </div>
     </div>
   </section>
 
+  {reach.show && (
   <section class="section section--soft" aria-labelledby="reach-title">
     <div class="container">
       <div class="section-head" data-reveal>
         <div class="section-head__text">
-          <span class="eyebrow">Our reach</span>
-          <h2 id="reach-title" class="display-l">A fast-growing <em>community</em></h2>
+          <span class="eyebrow">{reach.eyebrow}</span>
+          <h2 id="reach-title" class="display-l" set:html={headlineHtml(reach)} />
         </div>
       </div>
       <InstagramStats />
     </div>
   </section>
+  )}
 
+  {talk.show && (
   <section class="section">
     <div class="container connect" data-reveal>
       <div>
-        <span class="eyebrow">Talk to us</span>
+        <span class="eyebrow">{talk.eyebrow}</span>
         <h2 class="display-m" style="margin-top:12px">Contact {site.partnerships.name} at <a class="text-link" href={`mailto:${site.partnerships.email}`}>{site.partnerships.email}</a></h2>
       </div>
-      <ContactButton label="Enquire about partnering" href="/contact/?type=partnership" />
+      <ContactButton label={talk.buttonLabel} href="/contact/?type=partnership" />
     </div>
   </section>
+  )}
 </BaseLayout>
