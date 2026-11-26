@@ -2,6 +2,10 @@
 // content/about.json. These defaults are used for anything not saved there yet.
 import type { Headline } from './home';
 
+export interface TeamMember { name: string; role: string; photo: string; photoAlt: string; bio: string }
+/** An empty team member: the boxes each one has. */
+export const emptyTeamMember: TeamMember = { name: '', role: '', photo: '', photoAlt: '', bio: '' };
+
 export interface AboutContent {
   header: Headline & { eyebrow: string; lede: string; photo: string; photoAlt: string };
   story: Headline & {
@@ -15,6 +19,8 @@ export interface AboutContent {
     show: boolean; eyebrow: string;
     name: string; role: string; photo: string; photoAlt: string; photoCredit: string;
     paragraphs: string[]; quote: string;
+    /** Optional other team members, shown under the main profile. */
+    members: TeamMember[];
   };
 }
 
@@ -87,5 +93,6 @@ export const defaultAbout: AboutContent = {
       'Today, as Founder and Managing Director of **Beach Volleyball TV**, Christie combines her experience in elite sport, media, advocacy and community engagement to create a platform that celebrates athletes, shares meaningful stories and brings people together through sport.',
     ],
     quote: 'Her mission is to uplift, serve and support others through sport.',
+    members: [],
   },
 };

@@ -14,7 +14,6 @@ const sectionData = (s: string) => (data as Record<string, Record<string, unknow
 const val = (s: string, k: string) => String(sectionData(s)[k] ?? '');
 const listItems = (s: string, k: string) => (sectionData(s)[k] ?? []) as Record<string, string>[];
 const FORMAT_HINT = 'Put *stars* around words for italic, and **two stars** for bold.';
-const EXTRA_ROWS = 2;
 const MAX_ROWS = 12;
 ---
 
@@ -74,37 +73,58 @@ const MAX_ROWS = 12;
                 );
                 if (f.type === 'list') {
                   const items = listItems(sec.key, f.key);
-                  const rows = f.itemNames ? f.itemNames.length : Math.min(MAX_ROWS, items.length + EXTRA_ROWS);
-                  const cols = f.fields.length > 1 ? `field-row field-row--${f.fields.length >= 3 ? 3 : 2}` : '';
+                  const fixed = !!f.itemNames;
+                  const rows = fixed ? (f.itemNames ?? []).length : Math.max(items.length, Math.min(MAX_ROWS, f.max ?? MAX_ROWS));
+                  const itemLabel = f.itemLabel ?? 'Item';
+                  const compact = f.fields.length === 1 && !f.fields[0].photo;
+                  const inputId = (i: number, k: string) => id(`${f.key}-${i}-${k}`);
+                  const name = (i: number, k: string) => field(`${f.key}.${i}.${k}`);
                   return (
                     <div class="field">
                       <span class="label">{f.label}</span>
-                      <div class="list-rows">
-                        {f.fields.length === 1 ? Array.from({ length: rows }, (_, i) => {
-                          const lf = f.fields[0];
+                      <div class="list-rows" data-list-items={fixed ? undefined : field(f.key)}>
+                        {Array.from({ length: rows }, (_, i) => {
+                          const item = items[i] ?? {};
+                          const remove = !fixed && <button class="list-remove" type="button" data-list-remove aria-label={`Remove ${itemLabel.toLowerCase()}`}>Remove</button>;
+                          if (compact) {
+                            const lf = f.fields[0];
+                            return (
+                              <div class="list-row list-row--compact" data-list-row hidden={i >= items.length}>
+                                <span class="list-n" aria-hidden="true"></span>
+                                <input type="text" name={name(i, lf.key)} value={item[lf.key] ?? ''} maxlength={lf.max} placeholder={lf.placeholder} aria-label={lf.label} />
+                                {remove}
+                              </div>
+                            );
+                          }
                           return (
-                            <div class="list-row--compact">
-                              <span aria-hidden="true">{i + 1}</span>
-                              <input type="text" name={field(`${f.key}.${i}.${lf.key}`)} value={items[i]?.[lf.key] ?? ''} maxlength={lf.max} placeholder={i >= items.length ? 'Add another…' : lf.placeholder} aria-label={`${lf.label} ${i + 1}`} />
-                            </div>
+                            <fieldset class="list-row" data-list-row hidden={i >= items.length}>
+                              <legend>{f.itemNames?.[i] ?? <>{itemLabel}{' '}<span class="list-n"></span></>}</legend>
+                              {remove}
+                              <div class="home-fields">
+                                {f.fields.map((lf) => (
+                                  <div class:list={['field', lf.width && `home-${lf.width}`]}>
+                                    {lf.photo ? (
+                                      <>
+                                        <span class="label">{lf.label}</span>
+                                        <ImagePicker name={name(i, lf.key)} value={item[lf.key] ?? ''} alt={item[lf.photo.altKey] ?? ''} altName={name(i, lf.photo.altKey)} label={lf.label} ratio={lf.photo.ratio} />
+                                      </>
+                                    ) : (
+                                      <>
+                                        <label for={inputId(i, lf.key)}>{lf.label}</label>
+                                        {lf.long
+                                          ? <textarea id={inputId(i, lf.key)} name={name(i, lf.key)} rows="3" maxlength={lf.max}>{item[lf.key] ?? ''}</textarea>
+                                          : <input id={inputId(i, lf.key)} name={name(i, lf.key)} type="text" value={item[lf.key] ?? ''} maxlength={lf.max} placeholder={lf.placeholder} />}
+                                      </>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </fieldset>
                           );
-                        }) : Array.from({ length: rows }, (_, i) => (
-                          <fieldset class="list-row">
-                            <legend>{f.itemNames?.[i] ?? `${i + 1}${i >= items.length ? ' (new)' : ''}`}</legend>
-                            <div class={cols}>
-                              {f.fields.map((lf) => (
-                                <div class="field">
-                                  <label for={id(`${f.key}-${i}-${lf.key}`)}>{lf.label}</label>
-                                  {lf.long
-                                    ? <textarea id={id(`${f.key}-${i}-${lf.key}`)} name={field(`${f.key}.${i}.${lf.key}`)} rows="2" maxlength={lf.max}>{items[i]?.[lf.key] ?? ''}</textarea>
-                                    : <input id={id(`${f.key}-${i}-${lf.key}`)} name={field(`${f.key}.${i}.${lf.key}`)} type="text" value={items[i]?.[lf.key] ?? ''} maxlength={lf.max} placeholder={lf.placeholder} />}
-                                </div>
-                              ))}
-                            </div>
-                          </fieldset>
-                        ))}
+                        })}
                       </div>
-                      <span class="hint">{f.hint ?? (f.itemNames ? '' : 'Empty rows are left out. To remove an item, clear its boxes. Save to get more empty rows.')}</span>
+                      {!fixed && <button class="button list-add" type="button" data-list-add>+ Add {/^[aeiou]/i.test(itemLabel) ? 'an' : 'a'} {itemLabel.toLowerCase()}</button>}
+                      {(f.hint || !fixed) && <span class="hint">{f.hint ?? 'They appear on the website in this order. Use “Remove” to take one out.'}</span>}
                     </div>
                   );
                 }

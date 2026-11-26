@@ -32,6 +32,7 @@ Needs Node 22+. Locally, `npm run dev` reads and writes the files in `content/` 
 - **Home, About and Partners pages:** edit each page's wording, headlines, button text, lists and photos, and show or hide sections. Events, stories and videos on the home page still come from their own sections.
   - Each page is saved in `content/<page>.json`. Its defaults (which also define the fields) are in `src/data/<page>.ts`, and anything missing from the JSON falls back to them. Pages are registered in `src/data/pages.ts`.
   - The admin screens (`src/pages/admin/home.astro`, `about.astro`, `partners.astro`, `settings.astro`) list the boxes to show; `src/components/admin/PageEditor.astro` draws them and saves to `/api/admin/page/<page>`. Saved content is checked against the defaults in `cleanPage` (`src/lib/validate.ts`).
+  - Lists (values, figures, team members, ways to partner) have Add / Remove buttons; list items can include a photo. Lists that can start empty (team members) declare their boxes in `listItems` in `pages.ts`.
   - To make another page editable: add its defaults file, register it in `pages.ts`, add an admin screen and a menu item, and read it in the page with `getPage('<page>')`.
 - **Settings:** emails, social media links, community group invite links, the footer text and the search engine description. Uses the same editor; every page reads them through `site`.
 - **Videos:** paste a YouTube link to add a video (the title is fetched automatically). Reorder, recategorise, choose the featured video, remove.

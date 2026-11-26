@@ -140,8 +140,9 @@ Click **Save changes**. The home page updates about a minute later. Every headli
 Click **About page** in the left menu. It works just like the Home page screen: one box per section, headlines with **Words in italic**, and a **Show this section** tickbox.
 
 - **Instagram statistics:** update the figures and the dates they cover whenever you have new numbers. They also appear on the **Partners & Sponsors** page.
-- **Lists** (the Instagram figures and Our values): each row is one item, shown in the same order. To **add** one, fill in an empty row at the end. To **remove** one, clear its boxes. After saving you get new empty rows again. Values are numbered for you.
+- **Lists** (the Instagram figures, Our values and Team members): items are shown on the website in the same order. Click **+ Add…** under a list to add one at the end, and **Remove** on an item to take it out. Values are numbered for you.
 - **Team profile:** in the profile text, put \*stars\* around words for *italic* (e.g. a newspaper name) and \*\*two stars\*\* for **bold**.
+- **Other team members** (optional): click **+ Add a team member** under the main profile. Each one has a name, and optionally a role, a photo and a short bio. They're shown as smaller cards under the main profile. Someone without a photo gets a tile with their initials. Click **Remove** to take someone off.
 - **Photos:** the photo at the top is cropped 4:3 (a little wider than tall), and the profile photo is cropped as a portrait (taller than wide).
 
 ## Partners page
@@ -149,7 +150,7 @@ Click **About page** in the left menu. It works just like the Home page screen: 
 Click **Partners page** in the left menu. It works like the Home and About screens.
 
 - **Happening now** is the highlighted card for current news, such as an upcoming event. **Update it or untick “Show this section” when the news is over**, so the page never shows an old date.
-- **Ways to partner:** one per row. Fill in an empty row to add one, and clear a row to remove it.
+- **Ways to partner:** one per row. Click **+ Add a way to partner** to add one, and **Remove** to take one out.
 - The **Instagram figures** come from **About page → Instagram statistics**, and the partnerships **name and email** come from **Settings**.
 
 ## Settings

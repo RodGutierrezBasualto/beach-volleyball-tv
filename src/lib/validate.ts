@@ -143,14 +143,14 @@ export function cleanVideos(input: unknown): { videos: Video[]; errors: string[]
 /* ---------- Editable pages (home, about, partners) and Settings ---------- */
 /** Fields that can't be left empty (headlines, names and button text), when the section is shown. */
 const isRequired = (key: string) => key === 'title' || key === 'name' || key === 'email' || /(Title|Label|Link|Url|Email|Handle|Name)$/.test(key);
-const maxLength = (key: string) => (/text|Text|note|lede|quote|description/.test(key) ? 600 : /Url$/.test(key) ? 400 : key.endsWith('Alt') ? 200 : 140);
+const maxLength = (key: string) => (/text|Text|note|lede|quote|description|bio/.test(key) ? 600 : /Url$/.test(key) ? 400 : key.endsWith('Alt') ? 200 : 140);
 const isEmailKey = (key: string) => key === 'email' || key.endsWith('Email');
 const isWebAddress = (v: string) => /^https:\/\/[^\s/]+\.[^\s]+$/.test(v);
 const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 /** Lists that always have the same number of items (e.g. one card per platform). Other lists drop empty items. */
 const FIXED_LISTS = new Set(['platforms']);
 const LIST_MAX = 12;
-const ITEM_NAMES: Record<string, string> = { title: 'a title', value: 'a figure' };
+const ITEM_NAMES: Record<string, string> = { title: 'a title', value: 'a figure', name: 'a name' };
 
 /**
  * Cleans a page's content against its defaults: every field the defaults have
@@ -159,6 +159,7 @@ const ITEM_NAMES: Record<string, string> = { title: 'a title', value: 'a figure'
 export function cleanPage<N extends PageName>(name: N, input: unknown): { content: PageContents[N]; errors: string[] } {
   const errors: string[] = [];
   const { defaults, sections } = pages[name];
+  const listItems = (pages[name] as { listItems?: Record<string, Record<string, string>> }).listItems ?? {};
   const raw = (input && typeof input === 'object' ? input : {}) as Record<string, Input>;
   const content = structuredClone(defaults);
   for (const [section, out] of Object.entries(content) as [string, Record<string, unknown>][]) {
@@ -169,12 +170,13 @@ export function cleanPage<N extends PageName>(name: N, input: unknown): { conten
       if (typeof fallback === 'boolean') out[key] = bool(src[key]);
       else if (key === 'paragraphs') out[key] = paragraphs(src[key]).map((p) => p.slice(0, 1200));
       else if (Array.isArray(fallback)) {
-        const fields = Object.keys(fallback[0] ?? {});
+        const fields = Object.keys(listItems[key] ?? fallback[0] ?? {});
         const list = (Array.isArray(src[key]) ? src[key] : []) as Input[];
         const fixed = FIXED_LISTS.has(key);
         const items = Array.from({ length: fixed ? fallback.length : Math.min(list.length, LIST_MAX) }, (_, i) =>
-          Object.fromEntries(fields.map((f) => [f, str(list[i]?.[f], maxLength(f))])),
+          Object.fromEntries(fields.map((f) => [f, str(list[i]?.[f], /^photo[A-Z]?$/.test(f) ? 120 : maxLength(f))])),
         ).filter((item) => fixed || fields.some((f) => item[f]));
+        for (const item of items) for (const f of fields) if (/^photo[A-Z]?$/.test(f)) checkImage(item[f], errors, `${label}: a photo`);
         if (items.some((item) => !item[fields[0]])) missing.push(`${label}: every item in the list needs ${ITEM_NAMES[fields[0]] ?? 'its first box filled in'}.`);
         out[key] = items;
       } else if (/^photo[A-Z]?$/.test(key)) {

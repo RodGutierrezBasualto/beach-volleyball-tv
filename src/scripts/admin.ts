@@ -136,6 +136,60 @@ function initList(root: HTMLElement) {
 /* ===================================================================== */
 /* Editors (events / news)                                               */
 /* ===================================================================== */
+/* ===================================================================== */
+/* Lists on the page editors: add and remove items                       */
+/* ===================================================================== */
+/** Puts a photo picker back to "no photo chosen". */
+function resetPicker(root: HTMLElement) {
+  const value = $<HTMLInputElement>('[data-picker-value]', root);
+  if (value) value.value = '';
+  const drop = $('[data-picker-drop]', root)!;
+  drop.classList.remove('has-image');
+  $('img', drop)?.remove();
+  if (!$('[data-picker-empty]', drop)) drop.prepend(h('div', { class: 'picker__empty', 'data-picker-empty': true }, h('b', {}, 'Choose a photo'), h('br'), h('small', {}, 'or drag one here')));
+  $('[data-picker-choose]', root)!.textContent = 'Choose photo';
+  $('[data-picker-note]', root)!.hidden = true;
+}
+
+/** Spare (hidden) rows wait at the end of each list: "Add" shows the next one, "Remove" empties a row and moves it back there. */
+function initLists(form: HTMLFormElement, markDirty: () => void) {
+  $$('[data-list-items]', form).forEach((list) => {
+    const add = list.parentElement?.querySelector<HTMLButtonElement>('[data-list-add]');
+    const rows = () => $$('[data-list-row]', list);
+    const sync = () => { if (add) add.disabled = !rows().some((r) => r.hidden); };
+    add?.addEventListener('click', () => {
+      const row = rows().find((r) => r.hidden);
+      if (!row) return;
+      row.hidden = false;
+      $<HTMLElement>('input[type="text"], textarea', row)?.focus();
+      sync();
+      markDirty();
+    });
+    list.addEventListener('click', (e) => {
+      const row = (e.target as Element).closest('[data-list-remove]')?.closest<HTMLElement>('[data-list-row]');
+      if (!row) return;
+      $$<HTMLInputElement>('input:not([type="file"]), textarea', row).forEach((el) => (el.value = ''));
+      $$('[data-image-picker]', row).forEach(resetPicker);
+      row.hidden = true;
+      list.append(row);
+      sync();
+      markDirty();
+    });
+    sync();
+  });
+}
+
+/** Numbers each list's items in the order they're shown, so the website shows them in that order. */
+function renumberLists(form: HTMLFormElement) {
+  $$('[data-list-items]', form).forEach((list) => {
+    const prefix = list.dataset.listItems!;
+    const re = new RegExp(`^${prefix.replace(/\./g, '\\.')}\\.\\d+\\.`);
+    $$('[data-list-row]', list).forEach((row, i) => {
+      $$<HTMLInputElement>('[name]', row).forEach((el) => (el.name = el.name.replace(re, `${prefix}.${i}.`)));
+    });
+  });
+}
+
 /** Turns fields named like "hero.title" or "welcome.platforms.0.text" into nested objects/arrays. Tickboxes become true/false. */
 function nestedValues(form: HTMLFormElement) {
   const out: Record<string, unknown> = {};
@@ -162,6 +216,7 @@ function initEditor(form: HTMLFormElement) {
   window.addEventListener('beforeunload', (e) => { if (dirty) e.preventDefault(); });
 
   $$('[data-image-picker]', form).forEach((p) => bindPicker(p));
+  initLists(form, markDirty);
   // The Word-style story editor is loaded only where it's needed.
   let getContent: (() => unknown) | null = null;
   const richEl = $('[data-rich]', form);
@@ -193,6 +248,7 @@ function initEditor(form: HTMLFormElement) {
     submit.disabled = true;
     submit.textContent = 'Saving…';
     errorsBox.hidden = true;
+    if ('nested' in form.dataset) renumberLists(form);
     const item: Record<string, unknown> = 'nested' in form.dataset ? nestedValues(form) : Object.fromEntries(new FormData(form));
     if (!('nested' in form.dataset)) item.featured = form.querySelector<HTMLInputElement>('[name="featured"]')?.checked ?? false;
     if (richEl) {

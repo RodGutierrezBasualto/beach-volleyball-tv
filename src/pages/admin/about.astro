@@ -40,11 +40,11 @@ const sections: Section[] = [
       { type: 'headline' },
       { type: 'textarea', key: 'text', label: 'Text under the headline', max: 600 },
       {
-        type: 'list', key: 'stats', label: 'Figures',
+        type: 'list', key: 'stats', label: 'Figures', itemLabel: 'Figure', max: 8,
         fields: [
-          { key: 'value', label: 'Figure', placeholder: 'e.g. 294,008', max: 20 },
-          { key: 'label', label: 'What it is', placeholder: 'e.g. followers', max: 80 },
-          { key: 'change', label: 'Change (optional)', placeholder: 'e.g. +31.4%', max: 20 },
+          { key: 'value', label: 'Figure', placeholder: 'e.g. 294,008', max: 20, width: 'third' },
+          { key: 'label', label: 'What it is', placeholder: 'e.g. followers', max: 80, width: 'third' },
+          { key: 'change', label: 'Change (optional)', placeholder: 'e.g. +31.4%', max: 20, width: 'third' },
         ],
       },
       { type: 'text', key: 'period', label: 'Dates the figures cover', hint: 'Shown under the figures as “Instagram statistics, …”.', max: 80 },
@@ -56,12 +56,12 @@ const sections: Section[] = [
     fields: [
       eyebrow,
       { type: 'headline' },
-      { type: 'list', key: 'items', label: 'Values', fields: [{ key: 'title', label: 'Value', max: 80 }, { key: 'text', label: 'Description', max: 400, long: true }] },
+      { type: 'list', key: 'items', label: 'Values', itemLabel: 'Value', fields: [{ key: 'title', label: 'Value', max: 80 }, { key: 'text', label: 'Description', max: 400, long: true }] },
     ],
   },
   {
     key: 'team', title: 'Team', toggle: true,
-    intro: 'The profile at the bottom of the page.',
+    intro: 'The main profile at the bottom of the page, and any other team members under it.',
     fields: [
       eyebrow,
       { type: 'headline' },
@@ -71,6 +71,17 @@ const sections: Section[] = [
       { type: 'text', key: 'photoCredit', label: 'Photo credit (optional)', hint: 'Shown under the photo, e.g. Photo: @photographer.', max: 140, width: 'half' },
       { type: 'paragraphs', label: 'Profile', formatted: true },
       { type: 'textarea', key: 'quote', label: 'Closing quote (optional)', hint: 'Shown large in italic at the end.', max: 600 },
+      { type: 'sub', label: 'Other team members (optional)' },
+      {
+        type: 'list', key: 'members', label: 'Team members', itemLabel: 'Team member', max: 8,
+        hint: 'Shown as smaller cards under the main profile, in this order. Use “Remove” to take someone off. Only the name is required.',
+        fields: [
+          { key: 'name', label: 'Name', max: 80, width: 'half' },
+          { key: 'role', label: 'Role (optional)', placeholder: 'e.g. Presenter', max: 140, width: 'half' },
+          { key: 'photo', label: 'Photo (optional)', width: 'half', photo: { altKey: 'photoAlt', ratio: 3 / 4 } },
+          { key: 'bio', label: 'Short bio (optional)', max: 600, long: true, width: 'half' },
+        ],
+      },
     ],
   },
 ];

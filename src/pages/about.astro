@@ -9,6 +9,7 @@ import { getPage } from '../lib/content';
 import { headlineHtml, formatInline } from '../lib/utils';
 
 const { header, story, growth, values, team } = getPage('about');
+const initials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 ---
 
 <BaseLayout
@@ -100,6 +101,20 @@ const { header, story, growth, values, team } = getPage('about');
           </div>
         </div>
       </article>
+      {team.members.length > 0 && (
+        <div class="team-grid">
+          {team.members.map((m, i) => (
+            <article class="team-member" data-reveal style={`--d:${(i % 3) * 0.06}s`}>
+              {m.photo
+                ? <Photo name={m.photo} alt={m.photoAlt} sizes="(min-width: 900px) 300px, (min-width: 560px) 45vw, 100vw" />
+                : <div class="team-member__initials" aria-hidden="true">{initials(m.name)}</div>}
+              <h3>{m.name}</h3>
+              {m.role && <p class="team-member__role">{m.role}</p>}
+              {m.bio && <p class="team-member__bio" set:html={formatInline(m.bio)} />}
+            </article>
+          ))}
+        </div>
+      )}
     </div>
   </section>
   )}

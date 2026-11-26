@@ -32,7 +32,7 @@ const sections: Section[] = [
         type: 'list', key: 'platforms', label: 'The three platform cards',
         itemNames: ['YouTube card', 'Instagram card', 'TikTok card'],
         hint: 'The cards link to the YouTube, Instagram and TikTok accounts.',
-        fields: [{ key: 'title', label: 'Title', max: 80 }, { key: 'text', label: 'Text', max: 200 }],
+        fields: [{ key: 'title', label: 'Title', max: 80, width: 'half' }, { key: 'text', label: 'Text', max: 200, width: 'half' }],
       },
       { type: 'sub', label: 'Photos' },
       { type: 'photo', key: 'photoA', altKey: 'photoAAlt', label: 'Large photo', ratio: HOME_PHOTO_RATIO, width: 'half' },
